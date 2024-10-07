@@ -1,0 +1,34 @@
+name: Lint Code
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '**.py'
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print Message
+        run: echo "New activity in repository detected"
+      
+      - name: checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.12'
+
+      - name: "Find and install all requirements.txt files"
+        run: |
+          find . -name 'requirements.txt' -exec pip install -r {} \;
+
+      - name: Run pylint
+        run: pylint **/*.py --fail-under=8

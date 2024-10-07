@@ -1,0 +1,30 @@
+name: Test Code
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: "Checkout the repository"
+      uses: actions/checkout@v4
+
+    - name: "Install Python"
+      uses: actions/setup-python@v5.1.1
+      with:
+        python-version: '3.12'
+
+    - name: "Find and install all requirements.txt files"
+      run: |
+        find . -name 'requirements.txt' -exec pip install -r {} \;
+
+    - name: "Run pytest"
+      run: pytest
