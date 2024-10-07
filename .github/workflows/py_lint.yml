@@ -11,13 +11,8 @@ on:
 
 
 jobs:
-  print_message:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        node: [14]
+  lint:
+    runs-on: ubuntu-latest
     
     steps:
       - name: Print Message
