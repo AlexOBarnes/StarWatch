@@ -13,7 +13,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Print Message
         run: echo "New activity in repository detected"
@@ -25,10 +25,10 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.12'
-      
-    - name: "Find and install all requirements.txt files"
-      run: |
-        find . -name 'requirements.txt' -exec pip install -r {} \;
-      
+
+      - name: "Find and install all requirements.txt files"
+        run: |
+          find . -name 'requirements.txt' -exec pip install -r {} \;
+
       - name: Run pylint
         run: pylint **/*.py --fail-under=8
