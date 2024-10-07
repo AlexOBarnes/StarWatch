@@ -1,0 +1,41 @@
+name: Lint Code
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '**.py'
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+
+jobs:
+  print_message:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [14]
+    
+    steps:
+      - name: Print Message
+        run: echo "New activity in repository detected"
+      
+      - name: checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pylint
+      
+      - name: Run pylint
+        run: pylint **/*.py --fail-under=8
