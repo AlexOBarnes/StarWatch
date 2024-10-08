@@ -1,4 +1,4 @@
-"""File to extract sample APi data for database experimentation"""
+"""File to extract sample API data for database experimentation"""
 
 from os import environ as ENV
 from datetime import datetime, date, timedelta
@@ -79,7 +79,7 @@ def get_star_chart():
         "view": {
             "type": "constellation",
             "parameters": {
-                "constellation": "ori"  # 3 letter constellation ID
+                "constellation": "vir"  # 3 letter constellation ID
             }
         }
     }
@@ -92,7 +92,7 @@ def get_star_chart():
 
     headers = {"Authorization": f"Basic {auth_string}"}
 
-    return requests.post(url, headers=headers, json=example_body).json()["data"]["imageUrl"]
+    return requests.post(url, headers=headers, json=example_body).json().get("data")["imageUrl"]
 
 
 def get_moon_phase():
