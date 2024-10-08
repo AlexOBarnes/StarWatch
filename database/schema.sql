@@ -45,3 +45,16 @@ CREATE TABLE body (
     PRIMARY KEY (body_id),
     FOREIGN KEY (constellation_id) REFERENCES constellation(constellation_id)
 );
+
+CREATE TABLE body_assignment (
+    assignment_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    region_id SMALLINT NOT NULL,
+    body_id BIGINT NOT NULL,
+    from TIMESTAMP NOT NULL,
+    to TIMESTAMP NOT NULL,
+    latitude FLOAT NOT NULL,
+    longitude FLOAT NOT NULL,
+    PRIMARY KEY (assignment_id),
+    FOREIGN KEY (region_id) REFERENCES region(region_id),
+    FOREIGN KEY (body_id) REFERENCES body(body_id)
+);
