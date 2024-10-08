@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS body, constellation, region, aurora_alert, aurora_colour, image;
+DROP TABLE IF EXISTS county, body_assignment, body, constellation, region, aurora_alert, aurora_colour, image;
 
 CREATE TABLE image (
     image_id BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -57,4 +57,14 @@ CREATE TABLE body_assignment (
     PRIMARY KEY (assignment_id),
     FOREIGN KEY (region_id) REFERENCES region(region_id),
     FOREIGN KEY (body_id) REFERENCES body(body_id)
+);
+
+CREATE TABLE county (
+    county_id SMALLINT,
+    county_name VARCHAR(35) NOT NULL,
+    latitude FLOAT NOT NULL,
+    longitude FLOAT NOT NULL,
+    region_id SMALLINT NOT NULL,
+    PRIMARY KEY (county_id),
+    FOREIGN KEY (region_id) REFERENCES region(region_id)
 );
