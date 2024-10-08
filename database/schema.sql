@@ -36,7 +36,7 @@ CREATE TABLE constellation (
     constellation_id SMALLINT,
     constellation_name VARCHAR(35) NOT NULL,
     PRIMARY KEY (constellation_id)
-)
+);
 
 CREATE TABLE body (
     body_id BIGINT,
@@ -50,8 +50,8 @@ CREATE TABLE body_assignment (
     assignment_id BIGINT GENERATED ALWAYS AS IDENTITY,
     region_id SMALLINT NOT NULL,
     body_id BIGINT NOT NULL,
-    from TIMESTAMP NOT NULL,
-    to TIMESTAMP NOT NULL,
+    begin_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
     PRIMARY KEY (assignment_id),
@@ -106,7 +106,7 @@ CREATE TABLE subscriber_county_assignment (
     assignment_id BIGINT GENERATED ALWAYS AS IDENTITY,
     subscriber_id BIGINT NOT NULL,
     county_id SMALLINT NOT NULL,
-    PRIMARY KEY (assignment_id)
+    PRIMARY KEY (assignment_id),
     FOREIGN KEY (subscriber_id) REFERENCES subscriber(subscriber_id),
     FOREIGN KEY (county_id) REFERENCES county(county_id)
 );
