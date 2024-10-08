@@ -60,7 +60,7 @@ CREATE TABLE body_assignment (
 );
 
 CREATE TABLE county (
-    county_id SMALLINT,
+    county_id SMALLINT GENERATED ALWAYS AS IDENTITY,
     county_name VARCHAR(35) NOT NULL,
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
