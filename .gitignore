@@ -81,7 +81,7 @@ venv/
 .terraform
 *.parquet
 .env
-.venv
+venv
 *.xlsx
 terraform.tfstate
 terraform.tfstate.backup
@@ -94,3 +94,4 @@ terraform.tfstate.backup
 *.xml
 logs/
 *.log
+*.json
