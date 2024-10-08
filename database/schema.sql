@@ -39,7 +39,7 @@ CREATE TABLE constellation (
 );
 
 CREATE TABLE body (
-    body_id BIGINT,
+    body_id INT GENERATED ALWAYS AS IDENTITY,
     body_name VARCHAR(35) NOT NULL,
     constellation_id SMALLINT,
     PRIMARY KEY (body_id),
