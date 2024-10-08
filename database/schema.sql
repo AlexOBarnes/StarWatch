@@ -70,7 +70,7 @@ CREATE TABLE county (
 );
 
 CREATE TABLE solar_feature (
-    sunrise_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    feature_id BIGINT GENERATED ALWAYS AS IDENTITY,
     sunrise_timestamp TIMESTAMP NOT NULL,
     sunset_timestamp TIMESTAMP NOT NULL,
     county_id SMALLINT NOT NULL,
