@@ -114,3 +114,10 @@ CREATE TABLE image (
     FOREIGN KEY (region_id) REFERENCES region(region_id),
     FOREIGN KEY (constellation_id) REFERENCES constellation(constellation_id)
 );
+
+INSERT INTO aurora_colour (aurora_colour_id, colour, description, meaning) VALUES
+(0, 'Green', 'No significant activity', 'Aurora is unlikely to be visible by eye or camera from anywhere in the UK.'),
+(1, 'Yellow', 'Minor geomagnetic activity', 'Aurora may be visible by eye from Scotland and may be visible by camera from Scotland, northern England and Northern Ireland.'),
+(2, 'Amber', 'Amber alert: possible aurora', 'Aurora is likely to be visible by eye from Scotland, northern England and Northern Ireland; possibly visible from elsewhere in the UK. Photographs of aurora are likely from anywhere in the UK.'),
+(3, 'Red', 'Red alert: aurora likely', 'It is likely that aurora will be visible by eye and camera from anywhere in the UK.');
+
