@@ -10,14 +10,14 @@ CREATE TABLE aurora_colour (
 
 CREATE TABLE aurora_alert (
     alert_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    alert_time TIMESTAMP NOT NULL,
+    alert_time TIMESTAMP NOT NULL CHECK(alert_time<=CURRENT_TIMESTAMP),
     aurora_colour_id SMALLINT NOT NULL,
     PRIMARY KEY (alert_id),
     FOREIGN KEY (aurora_colour_id) REFERENCES aurora_colour(aurora_colour_id)
 );
 
 CREATE TABLE region (
-    region_id SMALLINT,
+    region_id SMALLINT GENERATED ALWAYS AS IDENTITY,
     region_name VARCHAR(25) NOT NULL,
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
@@ -25,14 +25,14 @@ CREATE TABLE region (
 );
 
 CREATE TABLE constellation (
-    constellation_id SMALLINT,
+    constellation_id SMALLINT GENERATED ALWAYS AS IDENTITY,
     constellation_name VARCHAR(35) NOT NULL,
     constellation_short_name VARCHAR(3),
     PRIMARY KEY (constellation_id)
 );
 
 CREATE TABLE body (
-    body_id BIGINT,
+    body_id INT GENERATED ALWAYS AS IDENTITY,
     body_name VARCHAR(35) NOT NULL,
     constellation_id SMALLINT,
     PRIMARY KEY (body_id),
@@ -52,7 +52,7 @@ CREATE TABLE body_assignment (
 );
 
 CREATE TABLE county (
-    county_id SMALLINT,
+    county_id SMALLINT GENERATED ALWAYS AS IDENTITY,
     county_name VARCHAR(35) NOT NULL,
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE county (
 );
 
 CREATE TABLE solar_feature (
-    sunrise_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    feature_id BIGINT GENERATED ALWAYS AS IDENTITY,
     sunrise_timestamp TIMESTAMP NOT NULL,
     sunset_timestamp TIMESTAMP NOT NULL,
     county_id SMALLINT NOT NULL,
