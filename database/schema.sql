@@ -25,7 +25,7 @@ CREATE TABLE aurora_alert (
 );
 
 CREATE TABLE region (
-    region_id SMALLINT,
+    region_id SMALLINT GENERATED ALWAYS AS IDENTITY,
     region_name VARCHAR(25) NOT NULL,
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
