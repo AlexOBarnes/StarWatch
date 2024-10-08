@@ -26,7 +26,7 @@ CREATE TABLE region (
 
 CREATE TABLE constellation (
     constellation_id SMALLINT GENERATED ALWAYS AS IDENTITY,
-    constellation_name VARCHAR(35) NOT NULL,
+    constellation_name VARCHAR(35) NOT NULL UNIQUE,
     constellation_short_name VARCHAR(3),
     PRIMARY KEY (constellation_id)
 );
