@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS aurora_colour, image;
+DROP TABLE IF EXISTS aurora_alert, aurora_colour, image;
 
 CREATE TABLE image (
     image_id BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -14,4 +14,12 @@ CREATE TABLE aurora_colour (
     description VARCHAR(30) NOT NULL,
     meaning VARCHAR(50) NOT NULL,
     PRIMARY KEY (aurora_colour_id)
+);
+
+CREATE TABLE aurora_alert (
+    alert_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    alert_time TIMESTAMP NOT NULL,
+    aurora_colour_id SMALLINT NOT NULL,
+    PRIMARY KEY (alert_id),
+    FOREIGN KEY (aurora_colour_id) REFERENCES aurora_colour(aurora_colour_id)
 );
