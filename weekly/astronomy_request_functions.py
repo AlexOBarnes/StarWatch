@@ -3,7 +3,6 @@
 from os import environ as ENV
 from datetime import datetime, date, timedelta
 import base64
-import json
 
 from dotenv import load_dotenv
 import requests
