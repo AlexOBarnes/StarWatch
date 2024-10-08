@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS county, body_assignment, body, constellation, region, aurora_alert, aurora_colour, image;
+DROP TABLE IF EXISTS solar_feature, county, body_assignment, body, constellation, region, aurora_alert, aurora_colour, image;
 
 CREATE TABLE image (
     image_id BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -67,4 +67,13 @@ CREATE TABLE county (
     region_id SMALLINT NOT NULL,
     PRIMARY KEY (county_id),
     FOREIGN KEY (region_id) REFERENCES region(region_id)
+);
+
+CREATE TABLE solar_feature (
+    sunrise_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    sunrise_timestamp TIMESTAMP NOT NULL,
+    sunset_timestamp TIMESTAMP NOT NULL,
+    county_id SMALLINT NOT NULL,
+    PRIMARY KEY (sunrise_id),
+    FOREIGN KEY (county_id) REFERENCES county(county_id)
 );
