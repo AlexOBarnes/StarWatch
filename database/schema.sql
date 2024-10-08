@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS solar_feature, county, body_assignment, body, constellation, region, aurora_alert, aurora_colour, image;
+DROP TABLE IF EXISTS subscriber, forecast, solar_feature, county, body_assignment, body, constellation, region, aurora_alert, aurora_colour, image;
 
 CREATE TABLE image (
     image_id BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -89,4 +89,15 @@ CREATE TABLE forecast (
     at TIMESTAMP NOT NULL,
     PRIMARY KEY (forecast_id),
     FOREIGN KEY (county_id) REFERENCES county(county_id)
+);
+
+CREATE TABLE subscriber (
+    subscriber_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    subscriber_username VARCHAR(30) NOT NULL,
+    subscriber_phone VARCHAR(15),
+    subscriber_email VARCHAR(255),
+    PRIMARY KEY (subscriber_id),
+    CONSTRAINT phone_or_email_exist CHECK (
+        subscriber_phone IS NOT NULL OR subscriber_email IS NOT NULL
+    )
 );
