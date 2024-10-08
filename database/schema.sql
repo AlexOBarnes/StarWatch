@@ -1,12 +1,4 @@
-DROP TABLE IF EXISTS subscriber_county_assignment, subscriber, forecast, solar_feature, county, body_assignment, body, constellation, region, aurora_alert, aurora_colour, image;
-
-CREATE TABLE image (
-    image_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    image_name VARCHAR(10) NOT NULL,
-    image_url VARCHAR(255) NOT NULL,
-    image_date DATE NOT NULL,
-    PRIMARY KEY (image_id)
-);
+DROP TABLE IF EXISTS image, subscriber_county_assignment, subscriber, forecast, solar_feature, county, body_assignment, body, constellation, region, aurora_alert, aurora_colour;
 
 CREATE TABLE aurora_colour (
     aurora_colour_id SMALLINT,
@@ -35,6 +27,7 @@ CREATE TABLE region (
 CREATE TABLE constellation (
     constellation_id SMALLINT,
     constellation_name VARCHAR(35) NOT NULL,
+    constellation_short_name VARCHAR(3),
     PRIMARY KEY (constellation_id)
 );
 
@@ -50,10 +43,9 @@ CREATE TABLE body_assignment (
     assignment_id BIGINT GENERATED ALWAYS AS IDENTITY,
     region_id SMALLINT NOT NULL,
     body_id BIGINT NOT NULL,
-    begin_time TIMESTAMP NOT NULL,
-    end_time TIMESTAMP NOT NULL,
-    latitude FLOAT NOT NULL,
-    longitude FLOAT NOT NULL,
+    at TIMESTAMP NOT NULL,
+    azimuth FLOAT NOT NULL,
+    altitude FLOAT NOT NULL,
     PRIMARY KEY (assignment_id),
     FOREIGN KEY (region_id) REFERENCES region(region_id),
     FOREIGN KEY (body_id) REFERENCES body(body_id)
@@ -109,4 +101,16 @@ CREATE TABLE subscriber_county_assignment (
     PRIMARY KEY (assignment_id),
     FOREIGN KEY (subscriber_id) REFERENCES subscriber(subscriber_id),
     FOREIGN KEY (county_id) REFERENCES county(county_id)
+);
+
+CREATE TABLE image (
+    image_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    image_name VARCHAR(10) NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    image_date DATE NOT NULL,
+    region_id SMALLINT,
+    constellation_id SMALLINT,
+    PRIMARY KEY (image_id),
+    FOREIGN KEY (region_id) REFERENCES region(region_id),
+    FOREIGN KEY (constellation_id) REFERENCES constellation(constellation_id)
 );
