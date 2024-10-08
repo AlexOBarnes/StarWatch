@@ -100,7 +100,7 @@ VALUES
 ('amandacook', '+12345678920', 'amandacook@example.com');
 
 
-INSERT INTO subscriber_county_assignment (subscriber_id, county_id)
+INSERT INTO subscriber_county_assignment (county_id, subscriber_id)
 VALUES
 (5, 3),
 (12, 7),
