@@ -2,9 +2,9 @@ DROP TABLE IF EXISTS image, subscriber_county_assignment, subscriber, forecast, 
 
 CREATE TABLE aurora_colour (
     aurora_colour_id SMALLINT,
-    colour VARCHAR(6) NOT NULL,
-    description VARCHAR(30) NOT NULL,
-    meaning VARCHAR(255) NOT NULL,
+    colour VARCHAR(6) NOT NULL UNIQUE,
+    description VARCHAR(30) NOT NULL UNIQUE,
+    meaning VARCHAR(255) NOT NULL UNIQUE,
     PRIMARY KEY (aurora_colour_id)
 );
 
@@ -18,7 +18,7 @@ CREATE TABLE aurora_alert (
 
 CREATE TABLE region (
     region_id SMALLINT GENERATED ALWAYS AS IDENTITY,
-    region_name VARCHAR(25) NOT NULL,
+    region_name VARCHAR(25) NOT NULL UNIQUE,
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
     PRIMARY KEY (region_id)
@@ -26,14 +26,14 @@ CREATE TABLE region (
 
 CREATE TABLE constellation (
     constellation_id SMALLINT GENERATED ALWAYS AS IDENTITY,
-    constellation_name VARCHAR(35) NOT NULL,
-    constellation_short_name VARCHAR(3),
+    constellation_name VARCHAR(35) NOT NULL UNIQUE,
+    constellation_short_name VARCHAR(3) NOT NULL UNIQUE,
     PRIMARY KEY (constellation_id)
 );
 
 CREATE TABLE body (
     body_id INT GENERATED ALWAYS AS IDENTITY,
-    body_name VARCHAR(35) NOT NULL,
+    body_name VARCHAR(35) NOT NULL UNIQUE,
     constellation_id SMALLINT,
     PRIMARY KEY (body_id),
     FOREIGN KEY (constellation_id) REFERENCES constellation(constellation_id)
@@ -53,7 +53,7 @@ CREATE TABLE body_assignment (
 
 CREATE TABLE county (
     county_id SMALLINT GENERATED ALWAYS AS IDENTITY,
-    county_name VARCHAR(35) NOT NULL,
+    county_name VARCHAR(35) NOT NULL UNIQUE,
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
     region_id SMALLINT NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE forecast (
 
 CREATE TABLE subscriber (
     subscriber_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    subscriber_username VARCHAR(30) NOT NULL,
+    subscriber_username VARCHAR(30) NOT NULL UNIQUE,
     subscriber_phone VARCHAR(15),
     subscriber_email VARCHAR(255),
     PRIMARY KEY (subscriber_id),
