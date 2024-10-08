@@ -18,7 +18,7 @@ CREATE TABLE aurora_colour (
 
 CREATE TABLE aurora_alert (
     alert_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    alert_time TIMESTAMP NOT NULL,
+    alert_time TIMESTAMP NOT NULL CHECK(alert_time<=CURRENT_TIMESTAMP),
     aurora_colour_id SMALLINT NOT NULL,
     PRIMARY KEY (alert_id),
     FOREIGN KEY (aurora_colour_id) REFERENCES aurora_colour(aurora_colour_id)
