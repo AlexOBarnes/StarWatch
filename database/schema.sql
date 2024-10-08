@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS image;
+DROP TABLE IF EXISTS aurora_colour, image;
 
 CREATE TABLE image (
     image_id BIGINT,
@@ -8,3 +8,10 @@ CREATE TABLE image (
     PRIMARY KEY (image_id)
 );
 
+CREATE TABLE aurora_colour (
+    aurora_colour_id SMALLINT,
+    colour VARCHAR(6),
+    description VARCHAR(30),
+    meaning VARCHAR(50),
+    PRIMARY KEY (aurora_colour_id)
+);
