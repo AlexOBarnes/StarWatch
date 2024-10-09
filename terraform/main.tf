@@ -61,7 +61,10 @@ resource "aws_db_instance" "default" {
 }
 
 # Defining ecah lambda function for the StarWatch project, would lead to 
-# a very long and verbose main.tf file.
+# a very long and verbose main.tf file. So instead, a lambda function variable
+# dictionary has been defined that outlines that name of each pipeline and the 
+# ECR image it is using. This way, we can traverse it build lambda functions for each,
+# without having to manually list each configuration out.
 variable "lambda_functions" {
   type = map(object({
     function_name = string
@@ -91,7 +94,7 @@ variable "lambda_functions" {
   }
 }
 
-# Lambda Functions
+# Lambda Functions beign build, using the lanbda functions variable.
 resource "aws_lambda_function" "lambda_functions" {
   for_each = var.lambda_functions
 
