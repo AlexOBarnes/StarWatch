@@ -14,6 +14,17 @@ variable "AWS_SECRET_KEY" {
   
 }
 
+variable "DB_HOST" {
+  type = string
+  
+}
+
+
+variable "DB_NAME" {
+  type = string
+  
+}
+
 variable "DB_USER" {
   type = string
   
