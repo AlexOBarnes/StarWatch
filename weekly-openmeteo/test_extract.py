@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 from requests import Response
 from extract import request_solar_data,get_county_coordinates,\
-                    convert_to_params,get_connection
+                    convert_to_params
 from api_error import APIError
 
 class TestExtractFunction():
@@ -81,7 +81,7 @@ class TestExtractFunction():
 
 
 class TestDatabaseFunctions:
-
+    '''Contains tests to do with psycopg2 functions'''
     @patch.dict("os.environ", {
         "DB_HOST": "test_host",
         "DB_PORT": "1433",
@@ -92,30 +92,19 @@ class TestDatabaseFunctions:
     @patch("extract.get_connection")
     def test_get_county_coordinates(self,mock_get_connection):
         """Test that the get_county_coordinates function returns the correct coordinates."""
-
-        # Mocking the connection and cursor
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
-
-        # Setup mock connection behavior
         mock_get_connection.return_value.__enter__.return_value = mock_connection
         mock_connection.cursor.return_value.__enter__.return_value = mock_cursor
 
-        # Setting up the return value for the cursor's fetchall method
-        mock_cursor.fetchall.return_value = [
-            (0.1278, 51.5074),  # London
-            (-3.7038, 40.4168),  # Madrid
-            (0.1276, 51.5033)   # Another sample
-        ]
-
-        # Call the function being tested
-        longitudes, latitudes = get_county_coordinates()
-
-        # Expected output
+        mock_cursor.fetchall.return_value = [(0.1278, 51.5074),
+                                             (-3.7038, 40.4168),
+                                             (0.1276, 51.5033)]
         expected_longitudes = [0.1278, -3.7038, 0.1276]
         expected_latitudes = [51.5074, 40.4168, 51.5033]
 
-        # Assertions to verify the returned coordinates
+        longitudes, latitudes = get_county_coordinates()
+
         assert longitudes == expected_longitudes
         assert latitudes == expected_latitudes
 
