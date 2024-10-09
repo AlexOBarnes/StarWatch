@@ -1,28 +1,27 @@
 '''Transforms solar data and ready for loading'''
 import logging
-from dotenv import load_dotenv
-from extract import get_connection
+from datetime import datetime as dt
 
-def get_county_ids() -> dict:
-    '''Returns a dictionary of longitude to county_id'''
-    ...
+def format_time(event_time: str) -> dt:
+    '''Returns a datetime object from a string'''
+    return dt.strptime(event_time,'%Y-%m-%dT%H:%M')
 
 def clean_data(county_data: dict) -> dict:
     '''Returns a dictionary of county_id, sunset and sunrise times'''
-    ...
+    return {'sunrise':county_data['daily']['sunrise'],
+            'sunset':county_data['daily']['sunset']}
 
-def format_data(clean_county_data: dict) -> list[list]:
+def format_data(clean_county_data: dict, county_id: int) -> list[list]:
     '''Returns a list of lists containing county_id, sunset and sunrise times'''
-    ...
-
+    return [[county_id, format_time(clean_county_data['sunrise'][i]),
+            format_time(clean_county_data['sunset'][i])] for i in range(7)]
 
 def transform(data: list[dict]) -> list[list]:
     '''Returns a list of lists containing county_id, sunset and sunrise times'''
     ...
 
+
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
-    load_dotenv()
-    logging.info('Environment variables loaded.')
-    transform()
+    transform([{}])
