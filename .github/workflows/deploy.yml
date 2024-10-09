@@ -33,7 +33,7 @@ jobs:
         if: ${{ hashFiles('dashboard/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_DASHBOARD }}
-          docker build -t dashboard:latest ./dashboard
+          docker build -t dashboard:latest ./dashboard --platform "linux/amd64"
           docker tag dashboard:latest ${{ secrets.ECR_DASHBOARD }}:latest
           docker push ${{ secrets.ECR_DASHBOARD }}:latest
 
@@ -41,7 +41,7 @@ jobs:
         if: ${{ hashFiles('quadhoral-openmeteo/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_QUADHORAL_OPENMETEO }}
-          docker build -t quadhoral-openmeteo:latest ./quadhoral-openmeteo
+          docker build -t quadhoral-openmeteo:latest ./quadhoral-openmeteo --platform "linux/amd64"
           docker tag quadhoral-openmeteo:latest ${{ secrets.ECR_QUADHORAL_OPENMETEO }}:latest
           docker push ${{ secrets.ECR_QUADHORAL_OPENMETEO }}:latest
 
@@ -49,7 +49,7 @@ jobs:
         if: ${{ hashFiles('weekly-openmeteo/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_WEEKLY_OPENMETEO }}
-          docker build -t weekly-openmeteo:latest ./weekly-openmeteo
+          docker build -t weekly-openmeteo:latest ./weekly-openmeteo --platform "linux/amd64"
           docker tag weekly-openmeteo:latest ${{ secrets.ECR_WEEKLY_OPENMETEO }}:latest
           docker push ${{ secrets.ECR_WEEKLY_OPENMETEO }}:latest
 
@@ -57,7 +57,7 @@ jobs:
         if: ${{ hashFiles('astronomy-pipeline/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_ASTRONOMY_PIPELINE }}
-          docker build -t astronomy-pipeline:latest ./astronomy-pipeline
+          docker build -t astronomy-pipeline:latest ./astronomy-pipeline --platform "linux/amd64"
           docker tag astronomy-pipeline:latest ${{ secrets.ECR_ASTRONOMY_PIPELINE }}:latest
           docker push ${{ secrets.ECR_ASTRONOMY_PIPELINE }}:latest
 
@@ -65,7 +65,7 @@ jobs:
         if: ${{ hashFiles('aurorawatch-pipeline/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_AURORAWATCH_PIPELINE }}
-          docker build -t aurorawatch-pipeline:latest ./aurorawatch-pipeline
+          docker build -t aurorawatch-pipeline:latest ./aurorawatch-pipeline --platform "linux/amd64"
           docker tag aurorawatch-pipeline:latest ${{ secrets.ECR_AURORAWATCH_PIPELINE }}:latest
           docker push ${{ secrets.ECR_AURORAWATCH_PIPELINE }}:latest
 
@@ -73,6 +73,6 @@ jobs:
         if: ${{ hashFiles('sms-checker/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_SMS_CHECKER }}
-          docker build -t sms-checker:latest ./sms-checker
+          docker build -t sms-checker:latest ./sms-checker --platform "linux/amd64"
           docker tag sms-checker:latest ${{ secrets.ECR_SMS_CHECKER }}:latest
           docker push ${{ secrets.ECR_SMS_CHECKER }}:latest
