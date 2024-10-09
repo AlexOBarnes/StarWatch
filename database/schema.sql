@@ -343,3 +343,15 @@ INSERT INTO constellation (constellation_name, constellation_short_name) VALUES
 ('Virgo', 'Vir'),
 ('Volans', 'Vol'),
 ('Vulpecula', 'Vul');
+
+INSERT INTO body (body_name, constellation_id) VALUES
+('Mercury', 86),
+('Venus', 49),
+('Mars', 38),
+('Jupiter', 78),
+('Saturn', 4),
+('Uranus', 78),
+('Neptune', 66),
+('Pluto', 4),
+('Sun', 86),
+('Moon', 72);
