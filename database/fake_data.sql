@@ -45,35 +45,27 @@ VALUES
 
 INSERT INTO image (image_name, image_url, image_date, region_id, constellation_id)
 VALUES
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-01', 1, 1),
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-02', 2, 2),
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-03', 3, 3),
-('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-04', 4, 4),
-('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-05', 5, 5),
+('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-01', NULL, 1),
+('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-02', NULL, 2),
+('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-03', NULL, 3),
+('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-04', NULL, 4),
+('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-05', NULL, 5),
 ('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-06', 6, 6),
 ('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-07', 7, 7),
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-08', 8, 8),
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-09', 9, 9),
-('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-10', 10, 10),
+('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-08', NULL, 8),
+('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-09', NULL, 9),
+('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-10', NULL, 10),
 ('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-11', 11, 11),
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-12', 12, 12),
-('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-13', 13, 13),
+('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-12', NULL, 12),
+('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-13', NULL, 13),
 ('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-14', 14, 14),
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-15', 15, 15),
+('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-15', NULL, 15),
 ('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-16', 3, 25),
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-17', 5, 12),
-('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-18', 7, 45),
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-19', 10, 88),
+('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-17', NULL, 12),
+('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-18', NULL, 45),
+('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-19', NULL, 88),
 ('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-20', 12, 36),
-('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-21', 15, 55),
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-22', 20, 8),
-('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-23', 25, 73),
-('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-24', 30, 21),
-('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-25', 35, 50);
 
--- NASA_apod: https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg
--- ASTRO_moon: https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg
--- ASTRO_star: https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg
 
 
 INSERT INTO subscriber (subscriber_username, subscriber_phone, subscriber_email)
@@ -162,7 +154,7 @@ VALUES
 ('2024-10-01 06:56:00', '2024-10-01 19:11:00', 27),
 ('2024-10-01 06:57:00', '2024-10-01 19:12:00', 28),
 ('2024-10-01 06:58:00', '2024-10-01 19:13:00', 29),
-('2024-10-01 06:59:00', '2024-10-01 19:14:00', 30),
+('2024-10-01 06:59:00', '2024-10-01 19:14:00', 92),
 ('2024-10-01 07:00:00', '2024-10-01 19:15:00', 31),
 ('2024-10-01 07:01:00', '2024-10-01 19:16:00', 32),
 ('2024-10-01 07:02:00', '2024-10-01 19:17:00', 33),
