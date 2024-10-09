@@ -71,10 +71,6 @@ VALUES
 ('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-24', 30, 21),
 ('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-25', 35, 50);
 
--- NASA_apod: https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg
--- ASTRO_moon: https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg
--- ASTRO_star: https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg
-
 
 INSERT INTO subscriber (subscriber_username, subscriber_phone, subscriber_email)
 VALUES
@@ -162,7 +158,7 @@ VALUES
 ('2024-10-01 06:56:00', '2024-10-01 19:11:00', 27),
 ('2024-10-01 06:57:00', '2024-10-01 19:12:00', 28),
 ('2024-10-01 06:58:00', '2024-10-01 19:13:00', 29),
-('2024-10-01 06:59:00', '2024-10-01 19:14:00', 30),
+('2024-10-01 06:59:00', '2024-10-01 19:14:00', 92),
 ('2024-10-01 07:00:00', '2024-10-01 19:15:00', 31),
 ('2024-10-01 07:01:00', '2024-10-01 19:16:00', 32),
 ('2024-10-01 07:02:00', '2024-10-01 19:17:00', 33),
