@@ -26,7 +26,7 @@ class TestCleanData:
         '''Tests that a valid input returns the expected result'''
 
         assert clean_data(valid_unclean_data) == valid_cleaned_data
-    
+
     def test_missing_keys(self):
         '''Tests that missing keys cause error'''
         county_data = {'daily': {}}
@@ -51,7 +51,7 @@ class TestFormatData:
         '''Tests that an invalid set of data will raise a index error'''
         with pytest.raises(IndexError):
             format_data(invalid_times, 1)
-    
+
     def test_format_data_mismatched_times(self, valid_times):
         '''Tests that an invalid set of data will raise a index error'''
         invalid_times = valid_times
@@ -65,5 +65,15 @@ class TestTransform:
 
     def test_transform(self, valid_openmeteo_data):
         '''Tests for an expected output from the transform function'''
+        data = transform(valid_openmeteo_data)
+        assert len(data) == 700
+        assert data[-1][0] == 100
 
-        assert len(transform(valid_openmeteo_data)) == 700
+    def test_transform_empty_data(self):
+        '''Tests that empty data raises an error'''
+        with pytest.raises(ValueError):
+            transform([])
+    
+    def test_transform_invalid_data(self,invalid_openmeteo_data):
+        with pytest.raises(IndexError):
+            transform(invalid_openmeteo_data)
