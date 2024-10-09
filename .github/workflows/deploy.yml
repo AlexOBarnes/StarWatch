@@ -1,0 +1,78 @@
+name: Dockerise and Push to ECR
+
+on:
+  pull_request:
+    types:
+      - merged
+    branches:
+      - main
+    paths:
+      - 'dashboard/**'
+      - 'quadhoral-openmeteo/**'
+      - 'weekly-openmeteo/**'
+      - 'astronomy-pipeline/**'
+      - 'aurorawatch-pipeline/**'
+      - 'sms-checker/**'
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Build and Push Dashboard Docker Image
+        if: ${{ hashFiles('dashboard/Dockerfile') != '' }}
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_DASHBOARD }}
+          docker build -t dashboard:latest ./dashboard --platform "linux/amd64"
+          docker tag dashboard:latest ${{ secrets.ECR_DASHBOARD }}:latest
+          docker push ${{ secrets.ECR_DASHBOARD }}:latest
+
+      - name: Build and Push Quadhoral-Openmeteo Docker Image
+        if: ${{ hashFiles('quadhoral-openmeteo/Dockerfile') != '' }}
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_QUADHORAL_OPENMETEO }}
+          docker build -t quadhoral-openmeteo:latest ./quadhoral-openmeteo --platform "linux/amd64"
+          docker tag quadhoral-openmeteo:latest ${{ secrets.ECR_QUADHORAL_OPENMETEO }}:latest
+          docker push ${{ secrets.ECR_QUADHORAL_OPENMETEO }}:latest
+
+      - name: Build and Push Weekly-Openmeteo Docker Image
+        if: ${{ hashFiles('weekly-openmeteo/Dockerfile') != '' }}
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_WEEKLY_OPENMETEO }}
+          docker build -t weekly-openmeteo:latest ./weekly-openmeteo --platform "linux/amd64"
+          docker tag weekly-openmeteo:latest ${{ secrets.ECR_WEEKLY_OPENMETEO }}:latest
+          docker push ${{ secrets.ECR_WEEKLY_OPENMETEO }}:latest
+
+      - name: Build and Push Astronomy Pipeline Docker Image
+        if: ${{ hashFiles('astronomy-pipeline/Dockerfile') != '' }}
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_ASTRONOMY_PIPELINE }}
+          docker build -t astronomy-pipeline:latest ./astronomy-pipeline --platform "linux/amd64"
+          docker tag astronomy-pipeline:latest ${{ secrets.ECR_ASTRONOMY_PIPELINE }}:latest
+          docker push ${{ secrets.ECR_ASTRONOMY_PIPELINE }}:latest
+
+      - name: Build and Push Aurorawatch Pipeline Docker Image
+        if: ${{ hashFiles('aurorawatch-pipeline/Dockerfile') != '' }}
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_AURORAWATCH_PIPELINE }}
+          docker build -t aurorawatch-pipeline:latest ./aurorawatch-pipeline --platform "linux/amd64"
+          docker tag aurorawatch-pipeline:latest ${{ secrets.ECR_AURORAWATCH_PIPELINE }}:latest
+          docker push ${{ secrets.ECR_AURORAWATCH_PIPELINE }}:latest
+
+      - name: Build and Push SMS-Checker Docker Image
+        if: ${{ hashFiles('sms-checker/Dockerfile') != '' }}
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_SMS_CHECKER }}
+          docker build -t sms-checker:latest ./sms-checker --platform "linux/amd64"
+          docker tag sms-checker:latest ${{ secrets.ECR_SMS_CHECKER }}:latest
+          docker push ${{ secrets.ECR_SMS_CHECKER }}:latest
