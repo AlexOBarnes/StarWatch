@@ -6,6 +6,13 @@ on:
       - merged
     branches:
       - main
+    paths:
+      - 'dashboard/**'
+      - 'quadhoral-openmeteo/**'
+      - 'weekly-openmeteo/**'
+      - 'astronomy-pipeline/**'
+      - 'aurorawatch-pipeline/**'
+      - 'sms-checker/**'
 
 jobs:
   build_and_push:
@@ -23,7 +30,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Build and Push Dashboard Docker Image
-        if: contains(github.event.pull_request.head.ref, 'dashboard') && (hashFiles('dashboard/Dockerfile') != '')
+        if: ${{ hashFiles('dashboard/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_DASHBOARD }}
           docker build -t dashboard:latest ./dashboard
@@ -31,7 +38,7 @@ jobs:
           docker push ${{ secrets.ECR_DASHBOARD }}:latest
 
       - name: Build and Push Quadhoral-Openmeteo Docker Image
-        if: contains(github.event.pull_request.head.ref, 'quadhoral-openmeteo') && (hashFiles('quadhoral-openmeteo/Dockerfile') != '')
+        if: ${{ hashFiles('quadhoral-openmeteo/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_QUADHORAL_OPENMETEO }}
           docker build -t quadhoral-openmeteo:latest ./quadhoral-openmeteo
@@ -39,7 +46,7 @@ jobs:
           docker push ${{ secrets.ECR_QUADHORAL_OPENMETEO }}:latest
 
       - name: Build and Push Weekly-Openmeteo Docker Image
-        if: contains(github.event.pull_request.head.ref, 'weekly-openmeteo') && (hashFiles('weekly-openmeteo/Dockerfile') != '')
+        if: ${{ hashFiles('weekly-openmeteo/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_WEEKLY_OPENMETEO }}
           docker build -t weekly-openmeteo:latest ./weekly-openmeteo
@@ -47,7 +54,7 @@ jobs:
           docker push ${{ secrets.ECR_WEEKLY_OPENMETEO }}:latest
 
       - name: Build and Push Astronomy Pipeline Docker Image
-        if: contains(github.event.pull_request.head.ref, 'astronomy-pipeline') && (hashFiles('astronomy-pipeline/Dockerfile') != '')
+        if: ${{ hashFiles('astronomy-pipeline/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_ASTRONOMY_PIPELINE }}
           docker build -t astronomy-pipeline:latest ./astronomy-pipeline
@@ -55,7 +62,7 @@ jobs:
           docker push ${{ secrets.ECR_ASTRONOMY_PIPELINE }}:latest
 
       - name: Build and Push Aurorawatch Pipeline Docker Image
-        if: contains(github.event.pull_request.head.ref, 'aurorawatch-pipeline') && (hashFiles('aurorawatch-pipeline/Dockerfile') != '')
+        if: ${{ hashFiles('aurorawatch-pipeline/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_AURORAWATCH_PIPELINE }}
           docker build -t aurorawatch-pipeline:latest ./aurorawatch-pipeline
@@ -63,7 +70,7 @@ jobs:
           docker push ${{ secrets.ECR_AURORAWATCH_PIPELINE }}:latest
 
       - name: Build and Push SMS-Checker Docker Image
-        if: contains(github.event.pull_request.head.ref, 'sms-checker') && (hashFiles('sms-checker/Dockerfile') != '')
+        if: ${{ hashFiles('sms-checker/Dockerfile') != '' }}
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_SMS_CHECKER }}
           docker build -t sms-checker:latest ./sms-checker
