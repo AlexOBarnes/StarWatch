@@ -58,13 +58,13 @@ VALUES
 ('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-11', 11, 11),
 ('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-12', NULL, 12),
 ('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-13', NULL, 13),
-('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-14', 14, 14),
+('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-14', 1, 14),
 ('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-15', NULL, 15),
 ('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-16', 3, 25),
 ('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-17', NULL, 12),
 ('ASTRO_moon', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg', '2024-10-18', NULL, 45),
 ('NASA_apod', 'https://science.nasa.gov/wp-content/uploads/2023/09/Carina_Nebula-1.jpeg', '2024-10-19', NULL, 88),
-('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-20', 12, 36),
+('ASTRO_star', 'https://dq0hsqwjhea1.cloudfront.net/Interactive-Sky-Chart-600px.jpg', '2024-10-20', 12, 36);
 
 
 
@@ -79,7 +79,7 @@ VALUES
 ('davidjohnson', '+12345678907', 'davidjohnson@example.com'),
 ('sarahwilson', '+12345678908', 'sarahwilson@example.com'),
 ('chrislee', '+12345678909', 'chrislee@example.com'),
-('lauragarcia', '+12345678910', 'lauragarcia@example.com')
+('lauragarcia', '+12345678910', 'lauragarcia@example.com'),
 ('robertmartin', '+12345678911', 'robertmartin@example.com'),
 ('lisawalker', '+12345678912', 'lisawalker@example.com'),
 ('tommyadams', '+12345678913', 'tommyadams@example.com'),
@@ -103,7 +103,7 @@ VALUES
 (89, 4),
 (19, 10),
 (76, 2),
-(41, 13)
+(41, 13),
 (14, 9),
 (27, 11),
 (33, 5),
