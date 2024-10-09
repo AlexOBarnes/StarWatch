@@ -416,7 +416,7 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy" {
 # Attaching a basic executon role to step-functions, to allow for logging.
 resource "aws_iam_role_policy_attachment" "sfn_logging_policy" {
 	role       = aws_iam_role.sfn_exec_role.name
-	policy_arn = "arn:aws:iam::aws:policy/service-role/AWSStepFunctionsLogging"
+	policy_arn = "arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess"
 }
 
 
