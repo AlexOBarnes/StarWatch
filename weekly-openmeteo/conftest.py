@@ -1,6 +1,6 @@
 '''Contains the configurations for the tests in this folder'''
-import pytest
 from datetime import datetime as dt
+import pytest
 
 @pytest.fixture
 def valid_params():
@@ -59,7 +59,7 @@ def valid_cleaned_data():
 @pytest.fixture
 def valid_times():
     '''Returns valid solar data'''
-    return {'sunrise': ['2024-10-09T06:00', '2024-10-10T06:01', '2024-10-11T06:02', 
+    return {'sunrise': ['2024-10-09T06:00', '2024-10-10T06:01', '2024-10-11T06:02',
                         '2024-10-12T06:03', '2024-10-13T06:04', '2024-10-14T06:05',
                          '2024-10-15T06:06'],
             'sunset': ['2024-10-09T18:00', '2024-10-10T18:01', '2024-10-11T18:02',
@@ -89,10 +89,22 @@ def invalid_times():
 
 @pytest.fixture
 def valid_openmeteo_data():
+    '''Returns a sample dataset akin to openmeteo'''
     return [{'daily': {
             'sunrise': ['2024-10-09T06:00', '2024-10-10T06:01', '2024-10-11T06:02', 
                         '2024-10-12T06:03', '2024-10-13T06:04', '2024-10-14T06:05', 
                         '2024-10-15T06:06'],
             'sunset': ['2024-10-09T18:00', '2024-10-10T18:01', '2024-10-11T18:02', 
                        '2024-10-12T18:03', '2024-10-13T18:04', '2024-10-14T18:05', 
+                       '2024-10-15T18:06']}}]*100
+
+
+@pytest.fixture
+def invalid_openmeteo_data():
+    '''Returns a sample dataset akin to openmeteo'''
+    return [{'daily': {
+            'sunrise': ['2024-10-09T06:00', '2024-10-10T06:01', '2024-10-11T06:02',
+                        '2024-10-12T06:03', '2024-10-13T06:04', '2024-10-14T06:05'],
+            'sunset': ['2024-10-09T18:00', '2024-10-10T18:01', '2024-10-11T18:02',
+                       '2024-10-12T18:03', '2024-10-13T18:04', '2024-10-14T18:05',
                        '2024-10-15T18:06']}}]*100
