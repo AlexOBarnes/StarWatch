@@ -67,6 +67,10 @@ variable "QUADHOURLY_WEATHER_IMAGE_URI" {
 }
 
 
-variable "DASHBOARD_IMAGE_ID" {
+variable "DASHBOARD_IMAGE_URI" {
+    type = string
+}
+
+variable "CLUSTER_NAME" {
     type = string
 }
