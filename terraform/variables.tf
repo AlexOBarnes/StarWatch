@@ -14,10 +14,6 @@ variable "AWS_SECRET_KEY" {
   
 }
 
-variable "DB_HOST" {
-  type = string
-  
-}
 
 
 variable "DB_NAME" {
@@ -50,3 +46,27 @@ variable "SUBNET_ID_B" {
 }
 
 
+variable "WEEKLY_ASTRONOMY_IMAGE_URI" {
+    type = string
+}
+
+variable "WEEKLY_SET_RISE_IMAGE_URI" {
+    type = string
+}
+
+variable "HOURLY_AURORA_IMAGE_URI" {
+    type = string
+}
+
+variable "HOURLY_VISIBLE_IMAGE_URI" {
+    type = string
+}
+
+variable "QUADHOURLY_WEATHER_IMAGE_URI" {
+    type = string
+}
+
+
+variable "DASHBOARD_IMAGE_ID" {
+    type = string
+}
