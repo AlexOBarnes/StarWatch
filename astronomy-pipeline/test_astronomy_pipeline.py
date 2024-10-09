@@ -9,7 +9,7 @@ import pytest
 from psycopg2 import extensions, extras
 
 from extract_functions import get_db_connection, get_auth_string, get_db_regions, get_all_body_positions
-from extract_functions import make_clean_body_dict, refine_bodies_data
+from extract_functions import make_clean_body_dict, refine_bodies_data, get_position_data
 
 ENV = {
     "DB_NAME": "test_db",
@@ -171,3 +171,49 @@ class TestExtractFunctions():
         res = refine_bodies_data(input_data)
 
         assert isinstance(res, list)
+
+    @mock.patch("extract_functions.refine_bodies_data")
+    @mock.patch("extract_functions.get_all_body_positions")
+    def test_get_position_data_returns_dict(self, fake_body_pos, fake_refine):
+        """Tests that the correct data types are returned by the
+        named function."""
+
+        fake_refine.return_value = [1, 2, 3]
+
+        input_dict = {1: {}, 2: {}}
+
+        regions = [{"region_id": 1, "latitude": 1.2, "longitude": 1.3},
+                   {"region_id": 2, "latitude": 1.4, "longitude": 1.5}]
+
+        times = ["18:00:00", "21:00:00", "00:00:00"]
+
+        start_date, end_date = date.today(), date.today()
+
+        res = get_position_data(input_dict, times, regions,
+                                start_date, end_date)
+
+        assert isinstance(res, dict)
+        assert isinstance(res[1], dict)
+        assert isinstance(res[1]["18"], list)
+
+    @mock.patch("extract_functions.refine_bodies_data")
+    @mock.patch("extract_functions.get_all_body_positions")
+    def test_get_position_data_returns_correct_vals(self, fake_body_pos, fake_refine):
+        """Tests that the correct data values are returned
+        in the output of the named function"""
+
+        fake_refine.return_value = [1, 2, 3]
+
+        input_dict = {1: {}, 2: {}}
+
+        regions = [{"region_id": 1, "latitude": 1.2, "longitude": 1.3},
+                   {"region_id": 2, "latitude": 1.4, "longitude": 1.5}]
+
+        times = ["18:00:00", "21:00:00", "00:00:00"]
+
+        start_date, end_date = date.today(), date.today()
+
+        res = get_position_data(input_dict, times, regions,
+                                start_date, end_date)
+
+        assert res[1]["18"][2] == 3

@@ -66,15 +66,15 @@ def get_all_body_positions(start_date: date, end_date: date, lat: float,
 def make_clean_body_dict(entry: dict) -> dict:
     """Creates refined body data from astronomy API body data."""
 
-    new_dict = {}
-    new_dict["datetime"] = entry["date"]
-    new_dict["body_name"] = entry["id"]
-    new_dict["distance_km"] = entry["distance"]["fromEarth"]["km"]
-    new_dict["azimuth"] = entry["position"]["horizontal"]["azimuth"]["degrees"]
-    new_dict["altitude"] = entry["position"]["horizontal"]["altitude"]["degrees"]
-    new_dict["constellation"] = entry["position"]["constellation"]["id"]
+    clean_dict = {}
+    clean_dict["datetime"] = entry["date"]
+    clean_dict["body_name"] = entry["id"]
+    clean_dict["distance_km"] = entry["distance"]["fromEarth"]["km"]
+    clean_dict["azimuth"] = entry["position"]["horizontal"]["azimuth"]["degrees"]
+    clean_dict["altitude"] = entry["position"]["horizontal"]["altitude"]["degrees"]
+    clean_dict["constellation"] = entry["position"]["constellation"]["id"]
 
-    return new_dict
+    return clean_dict
 
 
 def refine_bodies_data(bodies: dict) -> list:
@@ -126,8 +126,10 @@ def get_moon_phase(input_date: str) -> str:
 
 
 def get_position_data(input_dict: dict, times: list[str], regions: list[dict],
-                      start: date, end: date) -> dict:
+                      start_date: date, end_date: date) -> dict:
     """Returns all positional data for astronomical bodies as dictionary."""
+
+    output_dict = input_dict.copy()
 
     for region in regions:
 
@@ -138,13 +140,13 @@ def get_position_data(input_dict: dict, times: list[str], regions: list[dict],
         for time in times:
 
             bodies_pos = get_all_body_positions(
-                start, end, lat, long, time)
+                start_date, end_date, lat, long, time)
 
             refined_pos = refine_bodies_data(bodies_pos)
 
-            input_dict[region_id][time[:2]] = refined_pos
+            output_dict[region_id][time[:2]] = refined_pos
 
-    return input_dict
+    return output_dict
 
 
 def get_moon_urls(start: date) -> list[dict]:
