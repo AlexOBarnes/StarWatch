@@ -1,4 +1,5 @@
 '''Contains tests for extract.py'''
+#pylint: disable=W0212
 import json
 from unittest.mock import patch
 import pytest
@@ -8,7 +9,7 @@ from api_error import APIError
 
 
 class TestExtractFunction():
-
+    '''Contains tests for the extract function'''
     @patch('extract.get')
     def test_extract_success(self, mock_get, valid_response):
         '''Tests that a 200 status codes results in the return of the data'''
@@ -30,7 +31,7 @@ class TestExtractFunction():
         mock_response._content = b''
         mock_get.return_value = mock_response
 
-        with pytest.raises(APIError) as exc_info:
+        with pytest.raises(APIError):
             extract()
 
     @patch('extract.get')
@@ -43,7 +44,7 @@ class TestExtractFunction():
 
         with pytest.raises(ValueError):
             extract()
-    
+
     @patch('extract.get')
     def test_extract_type_error(self,mock_get, invalid_response_type):
         """Test for erroneous data structure returned by the API."""
@@ -71,8 +72,9 @@ class TestExtractFunction():
     def test_extract_no_status_code(self,mock_get):
         """Test for API response with no status code."""
         mock_response = Response()
-        mock_response._content = json.dumps({"daily": {"sunrise": [], "sunset": []}}).encode('utf-8')
+        mock_response._content = json.dumps({"daily":
+                                {"sunrise": [], "sunset": []}}).encode('utf-8')
         mock_get.return_value = mock_response
 
-        with pytest.raises(APIError) as exc_info:
+        with pytest.raises(APIError):
             extract()
