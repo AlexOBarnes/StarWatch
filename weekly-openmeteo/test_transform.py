@@ -1,6 +1,6 @@
 '''Contains tests for transform.py'''
-import pytest
 from datetime import datetime as dt
+import pytest
 from transform import format_time, clean_data, format_data, transform
 
 class TestFormatTime:
@@ -73,7 +73,8 @@ class TestTransform:
         '''Tests that empty data raises an error'''
         with pytest.raises(ValueError):
             transform([])
-    
+
     def test_transform_invalid_data(self,invalid_openmeteo_data):
+        '''Tests that invalid data raises and error'''
         with pytest.raises(IndexError):
             transform(invalid_openmeteo_data)
