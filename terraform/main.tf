@@ -1,4 +1,4 @@
-# Defining provider.
+# Defining provider - AWS.
 # AWS access and secret key are passed in a environment
 # variables from the terraform.tfvars file.
 provider "aws"{
@@ -59,25 +59,25 @@ resource "aws_security_group" "c13-andrew-starwatch-rds-sg" {
 # Egress is set to any protocol for any IP-address, as the script hosted on
 # the ECS as a service also has to fetch data from external APIs (NASA and ISS location APIs). 
 resource "aws_security_group" "c13_ecs_service_sg" {
-  name   = "c13-ecs-task-sg"
-  vpc_id = data.aws_vpc.c13-vpc.id
+	name   = "c13-ecs-task-sg"
+	vpc_id = data.aws_vpc.c13-vpc.id
 
   ingress {
-    from_port   = 8501
-    to_port     = 8501
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Allows access from anywhere
+		from_port   = 8501
+		to_port     = 8501
+		protocol    = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]  # Allows access from anywhere
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+		from_port   = 0
+		to_port     = 0
+		protocol    = "-1"
+		cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
-    Name = "c13-ecs-task-sg"
+    	Name = "c13-ecs-task-sg"
   }
 }
 
@@ -122,6 +122,7 @@ resource "aws_db_instance" "default" {
         prevent_destroy = true
     }
 }
+
 
 # Defining each individual lambda function for the StarWatch project would lead to 
 # a very long and verbose main.tf file. Instead, a lambda function dictionary has
@@ -251,8 +252,15 @@ resource "aws_sfn_state_machine" "weekly_pipelines_step_function" {
         }
         }
     STATE_MACHINE_DEFINITION
-    }
+	
+	logging_configuration {
+		level = "ALL"
+		include_execution_data = true
+    	log_destination = aws_cloudwatch_log_group.sfn_log_group.arn
 
+    		}
+		}
+    
 
 # Step Function for Hourly Pipelines (Aurora and Nearest Bodies/Events in Parallel).
 resource "aws_sfn_state_machine" "hourly_pipelines_step_function" {
@@ -298,7 +306,14 @@ resource "aws_sfn_state_machine" "hourly_pipelines_step_function" {
         }
         }
     STATE_MACHINE_DEFINITION
-    }
+
+	logging_configuration {
+		level = "ALL"
+		include_execution_data = true
+    	log_destination = aws_cloudwatch_log_group.sfn_log_group.arn
+
+    		}
+		}
 
 
 # EventBridge target to trigger Step Function for weekly pipelines
@@ -337,8 +352,8 @@ resource "aws_iam_role" "lambda_exec_role" {
 		},
 		"Effect": "Allow",
 		"Sid": ""
-    }]
-  })
+    	}]
+  	})
 }
 
 
@@ -356,8 +371,8 @@ resource "aws_iam_role" "sfn_exec_role" {
 		},
 		"Effect": "Allow",
 		"Sid": ""
-    }]
-  })
+    	}]
+  	})
 }
 
 
@@ -366,28 +381,28 @@ resource "aws_iam_role" "sfn_exec_role" {
 # Importantly, the project RDS is open to connections, so ECS can 
 # has read and write access to it.
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs_task_execution_role"
+	name = "ecs_task_execution_role"
 
-  assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Action": "sts:AssumeRole",
-        "Principal": {
-          "Service": "ecs-tasks.amazonaws.com"
-        },
-        "Effect": "Allow",
-        "Sid": ""
-      }
-    ]
-  })
+	assume_role_policy = jsonencode({
+		"Version": "2012-10-17",
+		"Statement": [
+		{
+			"Action": "sts:AssumeRole",
+			"Principal": {
+			"Service": "ecs-tasks.amazonaws.com"
+			},
+			"Effect": "Allow",
+			"Sid": ""
+			}
+		]
+	})
 }
 
 
 # Attaching the above explained policy to the ECS IAM role.
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
-  role       = aws_iam_role.ecs_task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  	role       = aws_iam_role.ecs_task_execution_role.name
+  	policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 
@@ -463,72 +478,80 @@ resource "aws_lambda_permission" "allow_invoke" {
   )
 }
 
+
 # The ECS task definition or blueprint for the ECS dashboard service.
 # Containing all necessary environment variables, on Streamlit's standard port 8501.
 resource "aws_ecs_task_definition" "c13_starwatch_task" {
-  family                   = "c13_starwatch_dashboard"
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"   
-  memory                   = "512"  
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+	family                   = "c13_starwatch_dashboard"
+	network_mode             = "awsvpc"
+	requires_compatibilities = ["FARGATE"]
+	cpu                      = "256"   
+	memory                   = "512"  
+	execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
 
-  container_definitions = jsonencode([
-    {
-      name      = "dashboard-container"
-      image     = var.DASHBOARD_IMAGE_URI
-      essential = true
-      portMappings = [
-        {
-          containerPort = 8501 
-          hostPort      = 8501
-          protocol      = "tcp"
-        }
-      ]
-
-      environment = [
-        {
-          name  = "RDS_HOSTNAME"
-          value = aws_db_instance.default.address
-        },
-        {
-          name  = "DB_NAME"
-          value = var.DB_NAME
-        },
-        {
-          name  = "DB_USER"
-          value = var.DB_USER
-        },
-        {
-          name  = "DB_PASSWORD"
-          value = var.DB_PASSWORD
-        }
+	container_definitions = jsonencode([
+		{
+		name      = "dashboard-container"
+		image     = var.DASHBOARD_IMAGE_URI
+		essential = true
+		portMappings = [
+			{
+			containerPort = 8501 
+			hostPort      = 8501
+			protocol      = "tcp"
+			}
 		]
-		logConfiguration = {
-			logDriver = "awslogs"
-			options = {
-			awslogs-group         = "/ecs/c13_starwatch_dashboard"
-			awslogs-region        = var.AWS_REGION
-			awslogs-stream-prefix = "ecs"
-        	}
+
+		environment = [
+			{
+			name  = "RDS_HOSTNAME"
+			value = aws_db_instance.default.address
+			},
+			{
+			name  = "DB_NAME"
+			value = var.DB_NAME
+			},
+			{
+			name  = "DB_USER"
+			value = var.DB_USER
+			},
+			{
+			name  = "DB_PASSWORD"
+			value = var.DB_PASSWORD
+			}
+			]
+			logConfiguration = {
+				logDriver = "awslogs"
+				options = {
+				awslogs-group         = "/ecs/c13_starwatch_dashboard"
+				awslogs-region        = var.AWS_REGION
+				awslogs-stream-prefix = "ecs"
+				}
+			}
 		}
-    }
-  ])
-}
+	])
+}	
 
 
 # Running the task definition as a service, to make the dashboard more robust,
 # meaning in the event of a failure, the ECS image will run again automatically.
 resource "aws_ecs_service" "c13_starwatch_service" {
-  name            = "c13_starwatch_dashboard_service"
-  cluster         = data.aws_ecs_cluster.c13-cluster.id  
-  task_definition = aws_ecs_task_definition.c13_starwatch_task.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
-  
-  network_configuration {
-    subnets          = [data.aws_subnet.c13-public-subnet-a.id, data.aws_subnet.c13-public-subnet-b.id]
-    security_groups  = [aws_security_group.c13_ecs_service_sg.id]  
-    assign_public_ip = true  # Required for internet access, similar to the toggle in the AWS UI. 
-  }
+	name            = "c13_starwatch_dashboard_service"
+	cluster         = data.aws_ecs_cluster.c13-cluster.id  
+	task_definition = aws_ecs_task_definition.c13_starwatch_task.arn
+	desired_count   = 1
+	launch_type     = "FARGATE"
+	
+	network_configuration {
+		subnets          = [data.aws_subnet.c13-public-subnet-a.id, data.aws_subnet.c13-public-subnet-b.id]
+		security_groups  = [aws_security_group.c13_ecs_service_sg.id]  
+		assign_public_ip = true  # Required for internet access, similar to the toggle in the AWS UI. 
+	}
 }
+
+
+resource "aws_cloudwatch_log_group" "sfn_log_group" {
+  	name = "/aws/states/starwatch_state_machines"
+  	retention_in_days = 14 # Will be deleted after the two week project, 
+						   # if not already terraform destroyed.
+}	
