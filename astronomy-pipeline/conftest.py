@@ -64,7 +64,7 @@ def sample_filtered_body_data():
     """Sample refined body position data."""
 
     data = {
-        "datetime": "2020-12-20T09:00:00.000-05:00",
+        "timestamp": "2020-12-20T09:00:00.000-05:00",
         "body_name": "sun",
         "distance_km": "147171382.76144",
         "azimuth": "131.21",
