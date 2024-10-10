@@ -33,9 +33,9 @@ data "aws_ecs_cluster" "c13-cluster" {
 }
 
 # This locals defined the environment variables needed by our
-# Lambdas and ECS dashboard service. A sensitive tag is sometimes
-# applied to ensure the values themselves don't appear in terminal 
-# logs out ouputs of any kind. Truly secure!
+# Lambdas and ECS dashboard service. In the variables.tf file 
+# a sensitive tag is sometimes applied to ensure the values themselves
+# don't appear in terminal logs, or ouputs of any kind. Truly secure!
 locals {
   common_env_vars = {
     # Database connection variables
@@ -519,6 +519,8 @@ resource "aws_ecs_task_definition" "c13_starwatch_task" {
 		essential = true
 		portMappings = [
 			{
+			# containerPort and hostPost are set to the same default Streamlit port number,
+			# as for simplicity, the container and the dhasboard can both listen to requests to the same port.
 			containerPort = 8501
 			hostPort      = 8501
 			protocol      = "tcp"
