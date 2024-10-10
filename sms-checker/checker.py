@@ -1,9 +1,8 @@
 '''This script will check the database to see whether any subscribers require notification'''
 import logging
 from os import environ as ENV
-from datetime import datetime as dt
 from dotenv import load_dotenv
-from psycopg2 import connect, extras
+from psycopg2 import connect
 
 def get_connection():
     '''Returns a psycopg2 connection'''
@@ -28,11 +27,15 @@ def get_subscribers() ->list[dict]:
     AND ba.at > CURRENT_TIMESTAMP '''
 
     with get_connection() as conn:
+        logging.info('Connection established')
         with conn.cursor() as cur:
+            logging.info('Cursor generated')
             cur.execute(query)
+            logging.info('Query executed')
             subscribers = cur.fetchall()
 
-    return [{'user':sub[0],'phone':sub[1],'email':sub[2],'body':sub[3],'time':sub[4]} for sub in subscribers]
+    return [{'user':sub[0],'phone':sub[1],'email':sub[2],
+             'body':sub[3],'time':sub[4]} for sub in subscribers]
 
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
