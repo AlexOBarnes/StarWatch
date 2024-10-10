@@ -44,6 +44,7 @@ CREATE TABLE body_assignment (
     at TIMESTAMP NOT NULL,
     azimuth FLOAT NOT NULL,
     altitude FLOAT NOT NULL,
+    distance_km FLOAT NOT NULL,
     constellation_id SMALLINT,
     PRIMARY KEY (assignment_id),
     FOREIGN KEY (region_id) REFERENCES region(region_id),
