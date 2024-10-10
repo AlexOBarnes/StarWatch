@@ -1,9 +1,6 @@
 '''Contains tests for checker script'''
-import pytest
 from unittest import mock
-from datetime import datetime as dt
-from checker import get_connection, get_subscribers
-from psycopg2 import connect
+from checker import get_subscribers
 
 
 class TestGetSubscribers:
