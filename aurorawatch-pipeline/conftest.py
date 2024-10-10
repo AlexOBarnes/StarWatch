@@ -52,5 +52,5 @@ def valid_xml_no_status_id() -> bytes:
 
 @pytest.fixture
 def valid_insertion_data() -> tuple:
-    ''''''
+    '''Returns a valid tuple to load.'''
     return ('2024-10-07 08:15:30', 1)
