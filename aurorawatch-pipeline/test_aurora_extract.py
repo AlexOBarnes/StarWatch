@@ -2,6 +2,7 @@
 
 from unittest.mock import patch
 import pytest
+
 from requests import Response
 
 from aurora_extract import make_request, get_status, extract
@@ -21,19 +22,29 @@ class TestMakeRequest():
 
         data = make_request()
 
+        assert mock_get.called
         assert data == valid_XML
-        assert isinstance(data, bytes)
 
-    def test_make_request_fail(self):
+    @patch('aurora_extract.requests.get')
+    def test_make_request_fail(self, mock_get):
         '''Tests that an error is raised if the request fails.'''
+        mock_response = Response()
+        mock_response.status_code = 404
+        mock_get.return_value = mock_response
+
+        with pytest.raises(ConnectionError):
+            make_request()
 
 
 class TestGetStatus():
     '''Tests for the get status function.'''
 
-    def test_get_status_success(self):
+    def test_get_status_success(self, valid_XML):
         '''Tests that get status runs correctly and returns a string
         given a valid XML as bytes input.'''
+        result = get_status(valid_XML)
+
+        assert result == 'green'
 
     @pytest.mark.parametrize('input', [(1), (['list', 'test']),
                                        ('test'), ((1, 2)), ({})])
@@ -42,24 +53,50 @@ class TestGetStatus():
         with pytest.raises(TypeError):
             get_status(input)
 
-    def test_get_status_no_root(self):
+    def test_get_status_no_root(self, invalid_XML):
         '''Tests that get status raises a ParseError if no root is found
         in the XML.'''
+        with pytest.raises(ValueError) as err:
+            get_status(invalid_XML)
 
-    def test_get_status_no_site_status(self):
+        assert err.value.args[0] == 'Invalid XML, no root found.'
+
+    def test_get_status_no_site_status(self, valid_XML_no_site_status):
         '''Tests that get status raise a KeyError if no site status
         is found in the root.'''
+        with pytest.raises(KeyError) as err:
+            get_status(valid_XML_no_site_status)
 
-    def test_get_status_no_status_id(self):
+        assert err.value.args[0] == 'No site status found in current status root.'
+
+    def test_get_status_no_status_id(self, valid_XML_no_status_id):
         '''Tests that get status raise a KeyError if no status id
         attribute is found in the site status tag.'''
+        with pytest.raises(KeyError) as err:
+            get_status(valid_XML_no_status_id)
+
+        assert err.value.args[0] == 'No status id attribute found in site status.'
 
 
 class TestExtract():
     '''Tests for the extract function.'''
 
-    def test_extract_correct_functions(self):
+    @patch('aurora_extract.get_status')
+    @patch('aurora_extract.make_request')
+    def test_extract_correct_functions(self, mock_make_request, mock_get_status):
         '''Tests that the extract function calls the other functions correctly.'''
+        extract()
 
-    def test_extract_returns_string(self):
+        assert mock_make_request.called
+        assert mock_get_status.called
+
+    @patch('aurora_extract.get_status')
+    @patch('aurora_extract.make_request')
+    def test_extract_returns_string(self, mock_make_request, mock_get_status, valid_XML):
         '''Tests that the extract function returns a string.'''
+        mock_make_request.return_value = valid_XML
+        mock_get_status.return_value = 'green'
+
+        result = extract()
+
+        assert result == 'green'
