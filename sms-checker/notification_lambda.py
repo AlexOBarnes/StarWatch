@@ -8,6 +8,7 @@ def lambda_handler(event,context) -> None:
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
 
+
 if __name__ == '__main__':
     lambda_handler({},{})
     
