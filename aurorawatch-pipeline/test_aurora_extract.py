@@ -2,8 +2,8 @@
 # pylint: disable=W0212
 
 from unittest.mock import patch
-import pytest
 
+import pytest
 from requests import Response
 
 from aurora_extract import make_request, get_status, extract
