@@ -2,6 +2,16 @@
 
 from unittest.mock import patch
 
+from aurora_extract import make_request, get_status, extract
 
-class TestExtractFunction:
+
+class TestMakeRequest:
+    ''''''
+
+
+class TestGetStatus:
+    ''''''
+
+
+class TestExtract:
     ''''''
