@@ -1,4 +1,4 @@
-import pytest
+'''Contains tests for the load script'''
 from unittest import mock
 from load import load_data
 
