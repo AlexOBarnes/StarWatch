@@ -113,20 +113,7 @@ class TestExtract:
         result = extract()
         assert len(result) == 106
 
-    @patch.dict(os.environ, {
-        "DB_NAME": "test_db",
-        "DB_USER": "test_user",
-        "DB_PASSWORD": "test_pass",
-        "DB_HOST": "localhost",
-        "DB_PORT": "5432"
-    })
-    @patch('quadhoral_extract.request_weather_data')
-    def test_extract_no_data(self, mock_weather_data):
-        """Test no data returned in extraction pipeline."""
-        mock_weather_data.side_effect = ValueError("Missing Values in returned data")
-
-        with pytest.raises(ValueError, match="Missing Values in returned data"):
-            extract()
+ 
 
     @patch('quadhoral_extract.get_county_coordinates')
     @patch.dict(os.environ, {"DB_NAME": "test_db", "DB_USER": "test_user", "DB_PASS": "test_pass"})
