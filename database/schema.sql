@@ -34,9 +34,7 @@ CREATE TABLE constellation (
 CREATE TABLE body (
     body_id INT GENERATED ALWAYS AS IDENTITY,
     body_name VARCHAR(35) NOT NULL UNIQUE,
-    constellation_id SMALLINT,
-    PRIMARY KEY (body_id),
-    FOREIGN KEY (constellation_id) REFERENCES constellation(constellation_id)
+    PRIMARY KEY (body_id)
 );
 
 CREATE TABLE body_assignment (
@@ -46,9 +44,11 @@ CREATE TABLE body_assignment (
     at TIMESTAMP NOT NULL,
     azimuth FLOAT NOT NULL,
     altitude FLOAT NOT NULL,
+    constellation_id SMALLINT,
     PRIMARY KEY (assignment_id),
     FOREIGN KEY (region_id) REFERENCES region(region_id),
-    FOREIGN KEY (body_id) REFERENCES body(body_id)
+    FOREIGN KEY (body_id) REFERENCES body(body_id),
+    FOREIGN KEY (constellation_id) REFERENCES constellation(constellation_id)
 );
 
 CREATE TABLE county (
@@ -344,14 +344,14 @@ INSERT INTO constellation (constellation_name, constellation_short_name) VALUES
 ('Volans', 'Vol'),
 ('Vulpecula', 'Vul');
 
-INSERT INTO body (body_name, constellation_id) VALUES
-('Mercury', 86),
-('Venus', 49),
-('Mars', 38),
-('Jupiter', 78),
-('Saturn', 4),
-('Uranus', 78),
-('Neptune', 66),
-('Pluto', 4),
-('Sun', 86),
-('Moon', 72);
+INSERT INTO body (body_name) VALUES
+('Mercury'),
+('Venus'),
+('Mars'),
+('Jupiter'),
+('Saturn'),
+('Uranus'),
+('Neptune'),
+('Pluto'),
+('Sun'),
+('Moon');
