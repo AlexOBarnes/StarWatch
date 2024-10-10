@@ -31,6 +31,7 @@ def invalid_json_data():
             'precipitation_probability': [], 'precipitation': [],
               'cloud_cover': [], 'visibility': []}}] * 106
 
+
 @pytest.fixture
 def valid_clean_county_data():
     '''Returns valid clean county data'''
@@ -79,9 +80,7 @@ def valid_input_data():
             'precipitation_probability': [20 + i for i in range(24)],
             'precipitation': [0.1 * i for i in range(24)],
             'cloud_cover': [50 + i for i in range(24)],
-            'visibility': [10000 - (i * 100) for i in range(24)]
-        }
-    }]
+            'visibility': [10000 - (i * 100) for i in range(24)]}}]
 
 @pytest.fixture
 def expected_clean_data():
