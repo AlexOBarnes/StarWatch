@@ -69,7 +69,7 @@ def make_clean_body_dict(entry: dict) -> dict:
     """Creates refined body data from astronomy API body data."""
 
     clean_dict = {}
-    clean_dict["datetime"] = entry["date"]
+    clean_dict["timestamp"] = entry["date"]
     clean_dict["body_name"] = entry["id"]
     clean_dict["distance_km"] = entry["distance"]["fromEarth"]["km"]
     clean_dict["azimuth"] = entry["position"]["horizontal"]["azimuth"]["degrees"]
