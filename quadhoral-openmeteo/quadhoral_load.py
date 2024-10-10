@@ -15,7 +15,7 @@ def truncate_database() -> None:
 
 def load_data(data: list[list]) -> None:
     '''Inserts data into a postgres database'''
-    query = '''INSERT INTO forecast 
+    query = '''INSERT INTO forecast
     (county_id, at, temperature_c, precipitation_probability_percent, 
     precipitation_mm, cloud_coverage_percent, visibility_m) 
     VALUES %s'''
