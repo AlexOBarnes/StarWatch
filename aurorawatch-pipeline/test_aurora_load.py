@@ -24,5 +24,5 @@ class TestLoadData:
         mock_get_connection.return_value.__enter__.return_value = mock_conn
         mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
 
-        load_data([])
+        load_data(())
         mock_conn.commit.assert_called_once()
