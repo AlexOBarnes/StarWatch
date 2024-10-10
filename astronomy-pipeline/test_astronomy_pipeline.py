@@ -27,8 +27,8 @@ class TestExtractFunctions():
         "ASTRONOMY_SECRET": "test_secret"
     }
 
-    @mock.patch.dict("extract_functions.ENV", ENV)
-    @mock.patch("extract_functions.connect")
+    @mock.patch.dict("astronomy_extract_functions.ENV", ENV)
+    @mock.patch("astronomy_extract_functions.connect")
     def test_get_db_connection_called_with_correct_parameters(self, mock_connect):
         """Tests get_db_connection successfully connects
         using the correct parameters."""
@@ -47,8 +47,8 @@ class TestExtractFunctions():
             port=self.ENV["DB_PORT"]
         )
 
-    @mock.patch("extract_functions.ENV", ENV)
-    @mock.patch("extract_functions.connect")
+    @mock.patch("astronomy_extract_functions.ENV", ENV)
+    @mock.patch("astronomy_extract_functions.connect")
     def test_get_db_connection_expected_output(self, mock_connect):
         """Tests get_db_connection successfully connects
         using the correct parameters."""
@@ -60,7 +60,7 @@ class TestExtractFunctions():
 
         assert conn == mock_conn
 
-    @mock.patch("extract_functions.ENV", ENV)
+    @mock.patch("astronomy_extract_functions.ENV", ENV)
     def test_get_auth_string_returns_string(self):
         """Tests auth_string output is string data."""
 
@@ -68,7 +68,7 @@ class TestExtractFunctions():
 
         assert isinstance(res, str)
 
-    @mock.patch("extract_functions.ENV", ENV)
+    @mock.patch("astronomy_extract_functions.ENV", ENV)
     def test_get_auth_string(self):
         """Tests expected output is provided by the
         get_auth_string function."""
@@ -80,7 +80,7 @@ class TestExtractFunctions():
 
         assert actual == expected
 
-    @mock.patch("extract_functions.get_db_connection")
+    @mock.patch("astronomy_extract_functions.get_db_connection")
     def test_get_db_regions_returns_expected_result(self, mock_connection):
         """Tests that data is passed through into the output correctly."""
 
@@ -95,7 +95,7 @@ class TestExtractFunctions():
 
         assert res == [{"key1": 1}, {"key2": 2}]
 
-    @mock.patch("extract_functions.get_db_connection")
+    @mock.patch("astronomy_extract_functions.get_db_connection")
     def test_get_db_regions_returns_list(self, mock_connection):
         """Tests that data is passed through into the output correctly."""
 
@@ -110,8 +110,8 @@ class TestExtractFunctions():
 
         assert isinstance(res, list)
 
-    @mock.patch("extract_functions.get_auth_string")
-    @mock.patch("extract_functions.requests.get")
+    @mock.patch("astronomy_extract_functions.get_auth_string")
+    @mock.patch("astronomy_extract_functions.requests.get")
     def test_get_all_bodies_returns_json_dict(self, mock_get, mock_auth_string):
         """Asserts that a dictionary is returned by the body function."""
 
@@ -156,7 +156,7 @@ class TestExtractFunctions():
 
         assert res == expected
 
-    @mock.patch("extract_functions.make_clean_body_dict")
+    @mock.patch("astronomy_extract_functions.make_clean_body_dict")
     def test_refine_bodies_data_creates_list_of_dicts(self, fake_clean, sample_raw_positions):
         """Asserts that the function returns a list of dicts."""
 
@@ -168,8 +168,8 @@ class TestExtractFunctions():
 
         assert isinstance(res, list)
 
-    @mock.patch("extract_functions.refine_bodies_data")
-    @mock.patch("extract_functions.get_all_body_positions")
+    @mock.patch("astronomy_extract_functions.refine_bodies_data")
+    @mock.patch("astronomy_extract_functions.get_all_body_positions")
     def test_get_position_data_returns_dict(self, fake_body_pos, fake_refine):
         """Tests that the correct data types are returned by the
         named function."""
@@ -193,8 +193,8 @@ class TestExtractFunctions():
         assert isinstance(res[1], dict)
         assert isinstance(res[1]["18"], list)
 
-    @mock.patch("extract_functions.refine_bodies_data")
-    @mock.patch("extract_functions.get_all_body_positions")
+    @mock.patch("astronomy_extract_functions.refine_bodies_data")
+    @mock.patch("astronomy_extract_functions.get_all_body_positions")
     def test_get_position_data_returns_correct_vals(self, fake_body_pos, fake_refine):
         """Tests that the correct data values are returned
         in the output of the named function"""
@@ -216,7 +216,7 @@ class TestExtractFunctions():
 
         assert res[1]["18"][2] == 3
 
-    @mock.patch("extract_functions.get_moon_phase")
+    @mock.patch("astronomy_extract_functions.get_moon_phase")
     def test_get_moon_urls_returns_list_of_dicts(self, fake_moon_phase):
         """tests that the get moon url function outputs
         a list"""
@@ -248,10 +248,10 @@ class TestExtractFunctions():
         assert isinstance(res[1]["00"], dict)
         assert not res[1]["00"]
 
-    @mock.patch("extract.get_moon_urls")
-    @mock.patch("extract.get_position_data")
-    @mock.patch("extract.fill_region_time_dict")
-    @mock.patch("extract.get_db_regions")
+    @mock.patch("astronomy_extract.get_moon_urls")
+    @mock.patch("astronomy_extract.get_position_data")
+    @mock.patch("astronomy_extract.fill_region_time_dict")
+    @mock.patch("astronomy_extract.get_db_regions")
     def test_extract_astronomy_data(self, fake_regions, fake_positions,
                                     fake_moon_urls, sample_filtered_body_data,
                                     sample_moon_urls):
