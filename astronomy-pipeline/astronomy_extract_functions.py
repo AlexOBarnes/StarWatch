@@ -28,7 +28,7 @@ def get_db_connection() -> extensions.connection:
 
 
 def get_auth_string() -> str:
-    """Generates AstronomyAPI authorization key from env values."""
+    """Generates AstronomyAPI authorisation key from env values."""
 
     user_pass = f"{ENV["ASTRONOMY_ID"]}:{ENV["ASTRONOMY_SECRET"]}"
 
@@ -96,8 +96,7 @@ def refine_bodies_data(bodies: dict) -> list:
 
 
 def get_moon_phase(input_date: str) -> str:
-    """Returns a url for an image of the moon phase for a given
-    location and date."""
+    """Returns a url for an image of the moon phase for a given date."""
 
     example_body = {
         "format": "png",
