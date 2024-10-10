@@ -1,14 +1,14 @@
 '''Contains fixtures for this files tests'''
-import pytest
 from datetime import datetime as dt
+import pytest
 
 @pytest.fixture
 def valid_clean_data():
     '''Returns the expected data shape after cleaning'''
-    return [{'user': 'davidjohnson', 'phone': None, 
+    return [{'user': 'davidjohnson', 'phone': None,
              'email': 'davidjohnson@example.com',
              'body': 'Venus', 'time': dt(2024, 10, 1, 12, 30)},
-            {'user': 'johndoe', 'phone': '+12345678901', 
+            {'user': 'johndoe', 'phone': '+12345678901',
              'email': 'johndoe@example.com',
              'body': 'Mars', 'time': dt(2024, 10, 1, 15, 30)}]
 
