@@ -74,7 +74,7 @@ def make_clean_body_dict(entry: dict) -> dict:
     clean_dict["distance_km"] = entry["distance"]["fromEarth"]["km"]
     clean_dict["azimuth"] = entry["position"]["horizontal"]["azimuth"]["degrees"]
     clean_dict["altitude"] = entry["position"]["horizontal"]["altitude"]["degrees"]
-    clean_dict["constellation"] = entry["position"]["constellation"]["id"]
+    clean_dict["constellation_name"] = entry["position"]["constellation"]["id"]
 
     return clean_dict
 

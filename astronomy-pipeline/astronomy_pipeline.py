@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     # transform_astronomy_data returns dictionary as follows:
     # {
-    #   "position_df": body_position_dataframe,
-    #   "moon_df": moon_phase_dataframe
+    #   "positions_list": body_position_list,
+    #   "moon_phase_list": moon_phase_list
     # }
     transformed_data = transform_astronomy_data(extract_data)

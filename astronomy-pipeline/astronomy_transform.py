@@ -1,22 +1,25 @@
 """Transform script to reshape Astronomy API data into a format
 for upload to the RDS database."""
 
-from astronomy_transform_functions import (get_data_into_database, clean_position_data,
-                                           get_moon_df)
+from astronomy_transform_functions import (get_data_into_dataframe, clean_position_data,
+                                           get_moon_df, convert_positions_datetime,
+                                           convert_moon_datetime)
 
 
 def transform_astronomy_data(raw_data: dict) -> list:
     """Main function for converting the extracted astronomy data into flat dataframes."""
 
-    merged_df = get_data_into_database(raw_data)
+    merged_df = get_data_into_dataframe(raw_data)
 
-    position_df = clean_position_data(merged_df)
+    position_list = clean_position_data(merged_df)
+    position_list = convert_positions_datetime(position_list)
 
     moon_phase_data = raw_data["moon_phase_urls"]
 
-    moon_df = get_moon_df(moon_phase_data)
+    moon_phase_list = get_moon_df(moon_phase_data)
+    moon_phase_list = convert_moon_datetime(moon_phase_list)
 
     return {
-        "position_df": position_df,
-        "moon_df": moon_df
+        "positions_list": position_list,
+        "moon_phase_list": moon_phase_list
     }

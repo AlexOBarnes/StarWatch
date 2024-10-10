@@ -1,6 +1,8 @@
 """Functions for the astronomy API transform script."""
 
 import json
+from datetime import datetime
+
 import pandas as pd
 
 from astronomy_extract_functions import get_db_connection
@@ -13,11 +15,11 @@ def load_from_file(filename: str) -> dict:
         return json.load(f_obj)
 
 
-def get_data_into_database(raw_data: dict) -> pd.DataFrame:
+def get_data_into_dataframe(raw_data: dict) -> pd.DataFrame:
     """Converts a list of body position dictionaries into a dataframe."""
 
     regions = list(raw_data["body_positions"].keys())
-    times = list(raw_data["body_positions"]["1"].keys())
+    times = list(raw_data["body_positions"][1].keys())
 
     df_list = []
     for r in regions:
@@ -51,7 +53,29 @@ def get_body_mapping() -> dict:
     return b_mapping
 
 
-def clean_position_data(df: pd.DataFrame) -> pd.DataFrame:
+def get_constellation_mapping() -> dict:
+    """Returns constellation name to ID mapping from the RDS database."""
+
+    with get_db_connection() as conn:
+
+        cur = conn.cursor()
+
+        cur.execute(
+            "SELECT constellation_id, constellation_short_name from constellation;")
+
+        results = cur.fetchall()
+
+    c_mapping = {}
+
+    for body in results:
+        const_name = body["constellation_short_name"].lower()
+        const_id = body["constellation_id"]
+        c_mapping[const_name] = const_id
+
+    return c_mapping
+
+
+def clean_position_data(df: pd.DataFrame) -> list:
     """Removes unnecessary dataframe entries and converts data 
     to more appropriate data types."""
 
@@ -62,24 +86,46 @@ def clean_position_data(df: pd.DataFrame) -> pd.DataFrame:
     body_mapping = get_body_mapping()
     df["body_id"] = df["body_name"].map(body_mapping)
 
-    # Convert datatypes:
-    # datetime to datetime
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    # Gets constellation IDs from database
+    constellation_mapping = get_constellation_mapping()
+    df["constellation_id"] = df["constellation_name"].map(
+        constellation_mapping)
 
     # distance_km to float
+    df["distance_km"] = df["distance_km"].astype(float)
     # azimuth to float
+    df["azimuth"] = df["azimuth"].astype(float)
     # altitude to float
-    for col in ["distance_km", "azimuth", "altitude"]:
-        df[col] = df[col].astype(float)
+    df["altitude"] = df["altitude"].astype(float)
 
-    return df
+    df = df.drop(columns=["body_name", "constellation_name"])
+
+    return df.values.tolist()
 
 
-def get_moon_df(phase_data: list["dict"]):
+def get_moon_df(phase_data: list["dict"]) -> list:
     """Returns a dataframe of moon phase dates and image URLs."""
 
     df = pd.DataFrame(phase_data)
 
-    df["day"] = pd.to_datetime(df["day"])
+    return df.values.tolist()
 
-    return df
+
+def convert_positions_datetime(position_list: list) -> list:
+    """Converts body position time string to a datetime object."""
+
+    for entry in position_list:
+
+        entry[0] = datetime.strptime(entry[0], "%Y-%m-%dT%H:%M:%S.%f%z")
+
+    return position_list
+
+
+def convert_moon_datetime(moon_list: list) -> list:
+    """Converts moon phase time string to a datetime object."""
+
+    for entry in moon_list:
+
+        entry[0] = datetime.strptime(entry[0], "%Y-%m-%d")
+
+    return moon_list
