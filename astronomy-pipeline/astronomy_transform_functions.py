@@ -53,6 +53,28 @@ def get_body_mapping() -> dict:
     return b_mapping
 
 
+def get_constellation_mapping() -> dict:
+    """Returns constellation name to ID mapping from the RDS database."""
+
+    with get_db_connection() as conn:
+
+        cur = conn.cursor()
+
+        cur.execute(
+            "SELECT constellation_id, constellation_short_name from constellation;")
+
+        results = cur.fetchall()
+
+    c_mapping = {}
+
+    for body in results:
+        const_name = body["constellation_short_name"].lower()
+        const_id = body["constellation_id"]
+        c_mapping[const_name] = const_id
+
+    return c_mapping
+
+
 def clean_position_data(df: pd.DataFrame) -> list:
     """Removes unnecessary dataframe entries and converts data 
     to more appropriate data types."""
@@ -64,13 +86,19 @@ def clean_position_data(df: pd.DataFrame) -> list:
     body_mapping = get_body_mapping()
     df["body_id"] = df["body_name"].map(body_mapping)
 
-    # distance_km to float
-    # azimuth to float
-    # altitude to float
-    for col in ["distance_km", "azimuth", "altitude"]:
-        df[col] = df[col].astype(float)
+    # Gets constellation IDs from database
+    constellation_mapping = get_constellation_mapping()
+    df["constellation_id"] = df["constellation_name"].map(
+        constellation_mapping)
 
-    print(df.head())
+    # distance_km to float
+    df["distance_km"] = df["distance_km"].astype(float)
+    # azimuth to float
+    df["azimuth"] = df["azimuth"].astype(float)
+    # altitude to float
+    df["altitude"] = df["altitude"].astype(float)
+
+    df = df.drop(columns=["body_name", "constellation_name"])
 
     return df.values.tolist()
 
