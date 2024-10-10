@@ -69,7 +69,7 @@ def sample_filtered_body_data():
         "distance_km": "147171382.76144",
         "azimuth": "131.21",
         "altitude": "10.04",
-        "constellation": "sgr"
+        "constellation_name": "sgr"
     }
 
     return data
