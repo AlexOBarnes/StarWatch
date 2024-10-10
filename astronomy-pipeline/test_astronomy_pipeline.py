@@ -61,7 +61,7 @@ class TestExtractFunctions():
 
     @mock.patch("extract_functions.ENV", ENV)
     def test_get_auth_string_returns_string(self):
-        """Tests auth string output is string data."""
+        """Tests auth_string output is string data."""
 
         res = get_auth_string()
 
