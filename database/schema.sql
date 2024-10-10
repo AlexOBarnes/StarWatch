@@ -10,7 +10,7 @@ CREATE TABLE aurora_colour (
 
 CREATE TABLE aurora_alert (
     alert_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    alert_time TIMESTAMP NOT NULL CHECK(alert_time<=CURRENT_TIMESTAMP),
+    alert_time TIMESTAMP NOT NULL,
     aurora_colour_id SMALLINT NOT NULL,
     PRIMARY KEY (alert_id),
     FOREIGN KEY (aurora_colour_id) REFERENCES aurora_colour(aurora_colour_id)
@@ -44,6 +44,7 @@ CREATE TABLE body_assignment (
     at TIMESTAMP NOT NULL,
     azimuth FLOAT NOT NULL,
     altitude FLOAT NOT NULL,
+    distance_km FLOAT NOT NULL,
     constellation_id SMALLINT,
     PRIMARY KEY (assignment_id),
     FOREIGN KEY (region_id) REFERENCES region(region_id),
@@ -77,7 +78,7 @@ CREATE TABLE forecast (
     precipitation_probability_percent SMALLINT NOT NULL,
     precipitation_mm FLOAT NOT NULL,
     cloud_coverage_percent SMALLINT NOT NULL,
-    visibility_m SMALLINT NOT NULL,
+    visibility_m INT NOT NULL,
     at TIMESTAMP NOT NULL,
     PRIMARY KEY (forecast_id),
     FOREIGN KEY (county_id) REFERENCES county(county_id)
