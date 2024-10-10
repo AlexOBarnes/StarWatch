@@ -1,4 +1,5 @@
 '''Orchestrates weekly ETL pipeline'''
+#pylint: disable=W0612,W0613,E0606
 import logging
 from dotenv import load_dotenv
 from extract import extract
