@@ -116,7 +116,7 @@ class TestExtract:
     @patch.dict(os.environ, {
         "DB_NAME": "test_db",
         "DB_USER": "test_user",
-        "DB_PASS": "test_pass",
+        "DB_PASSWORD": "test_pass",
         "DB_HOST": "localhost",
         "DB_PORT": "5432"
     })
