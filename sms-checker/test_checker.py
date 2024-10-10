@@ -4,7 +4,7 @@ from checker import get_subscribers
 
 
 class TestGetSubscribers:
-
+    '''Tests for get subscriber function'''
     @mock.patch('checker.get_connection')
     def test_get_subscribers(self, mock_get_connection,valid_clean_data,valid_queried_data):
         '''Tests that a valid return produces the expected output'''
@@ -15,9 +15,10 @@ class TestGetSubscribers:
         mock_cursor.fetchall.return_value = valid_queried_data
         result = get_subscribers()
         assert result == valid_clean_data
-    
+
     @mock.patch('checker.get_connection')
-    def test_get_subscribers_erroneous_data(self, mock_get_connection,invalid_queried_data,invalid_clean_data):
+    def test_get_subscribers_erroneous_data(self, mock_get_connection,
+                                            invalid_queried_data,invalid_clean_data):
         '''Tests that an invalid return does not cause an error'''
         mock_conn = mock.MagicMock()
         mock_cursor = mock.MagicMock()
