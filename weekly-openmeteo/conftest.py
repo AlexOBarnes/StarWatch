@@ -2,12 +2,14 @@
 from datetime import datetime as dt
 import pytest
 
+
 @pytest.fixture
 def valid_params():
     '''Returns valid parameters'''
     return {'latitude': [],
             'longitude': [],
             "daily": ["sunrise", "sunset"], "timezone": "Europe/London"}
+
 
 @pytest.fixture
 def valid_response():
@@ -19,10 +21,11 @@ def valid_response():
         }
     }] * 106
 
+
 @pytest.fixture
 def invalid_response_value():
     """Fixture for invalid API response data."""
-    return [{'daily':{
+    return [{'daily': {
         "sunrise": "not_a_list",
         "sunset": "not_a_list"
     }}]
@@ -42,6 +45,7 @@ def valid_coords():
     """Fixture for valid coords."""
     return [51.5074, 51.5072], [0.1276, -0.1280]
 
+
 @pytest.fixture
 def valid_unclean_data():
     '''Returns a valid dictionary with solar data'''
@@ -53,7 +57,7 @@ def valid_unclean_data():
 def valid_cleaned_data():
     '''Returns a valid dictionary with solar data'''
     return {'sunrise': ['2024-10-09T06:00', '2024-10-10T06:01'],
-        'sunset': ['2024-10-09T18:00', '2024-10-10T18:01']}
+            'sunset': ['2024-10-09T18:00', '2024-10-10T18:01']}
 
 
 @pytest.fixture
@@ -61,10 +65,10 @@ def valid_times():
     '''Returns valid solar data'''
     return {'sunrise': ['2024-10-09T06:00', '2024-10-10T06:01', '2024-10-11T06:02',
                         '2024-10-12T06:03', '2024-10-13T06:04', '2024-10-14T06:05',
-                         '2024-10-15T06:06'],
+                        '2024-10-15T06:06'],
             'sunset': ['2024-10-09T18:00', '2024-10-10T18:01', '2024-10-11T18:02',
-                        '2024-10-12T18:03', '2024-10-13T18:04', '2024-10-14T18:05',
-                          '2024-10-15T18:06']}
+                       '2024-10-12T18:03', '2024-10-13T18:04', '2024-10-14T18:05',
+                       '2024-10-15T18:06']}
 
 
 @pytest.fixture
@@ -85,17 +89,18 @@ def expected_valid_times():
 def invalid_times():
     '''Returns an invalid time set'''
     return {'sunrise': ['2024-10-09T06:00', '2024-10-10T18:01'],
-        'sunset': ['2024-10-09T18:00', '2024-10-10T18:01']}
+            'sunset': ['2024-10-09T18:00', '2024-10-10T18:01']}
+
 
 @pytest.fixture
 def valid_openmeteo_data():
     '''Returns a sample dataset akin to openmeteo'''
     return [{'daily': {
-            'sunrise': ['2024-10-09T06:00', '2024-10-10T06:01', '2024-10-11T06:02', 
-                        '2024-10-12T06:03', '2024-10-13T06:04', '2024-10-14T06:05', 
+            'sunrise': ['2024-10-09T06:00', '2024-10-10T06:01', '2024-10-11T06:02',
+                        '2024-10-12T06:03', '2024-10-13T06:04', '2024-10-14T06:05',
                         '2024-10-15T06:06'],
-            'sunset': ['2024-10-09T18:00', '2024-10-10T18:01', '2024-10-11T18:02', 
-                       '2024-10-12T18:03', '2024-10-13T18:04', '2024-10-14T18:05', 
+            'sunset': ['2024-10-09T18:00', '2024-10-10T18:01', '2024-10-11T18:02',
+                       '2024-10-12T18:03', '2024-10-13T18:04', '2024-10-14T18:05',
                        '2024-10-15T18:06']}}]*100
 
 
@@ -108,3 +113,10 @@ def invalid_openmeteo_data():
             'sunset': ['2024-10-09T18:00', '2024-10-10T18:01', '2024-10-11T18:02',
                        '2024-10-12T18:03', '2024-10-13T18:04', '2024-10-14T18:05',
                        '2024-10-15T18:06']}}]*100
+
+
+@pytest.fixture
+def valid_insertion_data():
+    '''Returns a valid dataset for insertion'''
+    return [[1, '2024-10-09 06:00:00', '2024-10-09 18:00:00'],
+            [2, '2024-10-10 06:01:00', '2024-10-10 18:01:00']]
