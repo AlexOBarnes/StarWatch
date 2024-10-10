@@ -8,10 +8,10 @@ from datetime import date
 
 from psycopg2 import extras
 
-from extract_functions import get_db_connection, get_auth_string, get_db_regions
-from extract_functions import get_all_body_positions, make_clean_body_dict, get_moon_urls
-from extract_functions import refine_bodies_data, get_position_data, fill_region_time_dict
-from extract import extract_weekly_astronomy_data
+from astronomy_extract_functions import get_db_connection, get_auth_string, get_db_regions
+from astronomy_extract_functions import get_all_body_positions, make_clean_body_dict, get_moon_urls
+from astronomy_extract_functions import refine_bodies_data, get_position_data, fill_region_time_dict
+from astronomy_extract import extract_weekly_astronomy_data
 
 
 class TestExtractFunctions():
