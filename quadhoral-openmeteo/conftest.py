@@ -94,3 +94,10 @@ def expected_formatted_data():
     '''Returns formatted data that matches previous fixtures'''
     return [[1, dt(2024, 10, 1, 0, 0), 10, 20, 0.0, 50, 10000],
             [1, dt(2024, 10, 1, 1, 0), 11, 21, 0.1, 51, 9900]]
+
+
+@pytest.fixture
+def valid_db_data():
+    '''Returns a valid dataset for the database'''
+    return [[1, '2024-10-01T10:00', 15.0, 20, 0.1, 30, 10000],
+    [2, '2024-10-01T11:00', 16.0, 25, 0.2, 35, 9500]]
