@@ -101,7 +101,9 @@ class TestExtract:
     @patch('quadhoral_extract.get_county_coordinates')
     @patch('quadhoral_extract.convert_to_params')
     @patch('quadhoral_extract.request_weather_data')
-    def test_extract_valid(self, mock_weather_data, mock_params, mock_coords,valid_json_data):
+    @patch.dict(os.environ, {"DB_NAME": "test_db", "DB_USER": "test_user", "DB_PASS": "test_pass"})
+    def test_extract_valid(self, mock_weather_data, mock_params, 
+                                           mock_coords, valid_json_data):
         """Test successful data extraction pipeline."""
         mock_coords.return_value = ([1.0], [51.0])
         mock_params.return_value = {'latitude': [1.0], 'longitude': [51.0]}
@@ -111,6 +113,7 @@ class TestExtract:
         assert len(result) == 106
 
     @patch('quadhoral_extract.request_weather_data')
+    @patch.dict(os.environ, {"DB_NAME": "test_db", "DB_USER": "test_user", "DB_PASS": "test_pass"})
     def test_extract_no_data(self, mock_weather_data):
         """Test no data returned in extraction pipeline."""
         mock_weather_data.side_effect = ValueError(
@@ -120,6 +123,7 @@ class TestExtract:
             extract()
 
     @patch('quadhoral_extract.get_county_coordinates')
+    @patch.dict(os.environ, {"DB_NAME": "test_db", "DB_USER": "test_user", "DB_PASS": "test_pass"})
     def test_extract_db_error(self, mock_coords):
         """Test extraction pipeline fails due to DB connection."""
         mock_coords.side_effect = Exception("Database connection error")
