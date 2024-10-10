@@ -26,4 +26,5 @@ class TestDatabaseFunctions:
         mock_get_connection.return_value.__enter__.return_value = mock_conn
         mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
         load_data(valid_db_data)
+        assert mock_execute_values.called
         mock_conn.commit.assert_called_once()
