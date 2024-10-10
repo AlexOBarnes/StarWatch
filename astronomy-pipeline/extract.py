@@ -1,20 +1,20 @@
 """Extracts astronomical data from the Astronomy API."""
 
-
 from datetime import date, timedelta, datetime
 import json
 
-
-from extract_functions import get_db_regions, get_position_data, get_moon_urls, fill_region_time_dict
+from extract_functions import get_db_regions, get_position_data, get_moon_urls
+from extract_functions import fill_region_time_dict
 
 
 def save_to_file(filename: str, data: list[dict]) -> None:
     """Save the data to a file called stories.json"""
+
     with open(filename, "w", encoding="utf-8") as f_obj:
         json.dump(data, f_obj, indent=4)
 
 
-def extract_astronomy_data():
+def extract_weekly_astronomy_data():
     """Main function for extracting astronomical for a week"""
 
     start_date = date.today()  # + timedelta(days=7)
@@ -38,4 +38,8 @@ def extract_astronomy_data():
 
 
 if __name__ == "__main__":
-    pass
+
+    time1 = datetime.now()
+    res = extract_weekly_astronomy_data()
+
+    print(f"Time: {(datetime.now() - time1).seconds}")

@@ -70,3 +70,20 @@ def sample_filtered_body_data():
     }
 
     return data
+
+
+@pytest.fixture
+def sample_moon_urls():
+
+    data = [
+        {
+            "day": "today",
+            "url": "fake_url1"
+        },
+        {
+            "day": "today",
+            "url": "fake_url1"
+        }
+    ]
+
+    return data

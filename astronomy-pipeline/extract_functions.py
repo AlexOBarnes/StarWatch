@@ -39,6 +39,7 @@ def get_auth_string() -> str:
 
 def get_db_regions() -> list:
     """Returns the regions data from an RDS instance"""
+
     with get_db_connection() as conn:
         cur = conn.cursor()
 
@@ -53,6 +54,7 @@ def get_all_body_positions(start_date: date, end_date: date, lat: float,
                            long: float, time: str, elev: int = 50) -> dict:
     """Returns the inclusive body positional information from
     the Astronomy API for a given date range."""
+
     url = f"{ASTRO_URL}/bodies/positions?latitude={lat}&longitude={
         long}&elevation={elev}&from_date={start_date}&to_date={end_date}&time={time}"
 
@@ -60,7 +62,7 @@ def get_all_body_positions(start_date: date, end_date: date, lat: float,
 
     headers = {"Authorization": f"Basic {auth_string}"}
 
-    return (requests.get(url, headers=headers)).json()
+    return (requests.get(url, headers=headers, timeout=10)).json()
 
 
 def make_clean_body_dict(entry: dict) -> dict:
@@ -122,7 +124,8 @@ def get_moon_phase(input_date: str) -> str:
 
     headers = {"Authorization": f"Basic {auth_string}"}
 
-    return requests.post(url, headers=headers, json=example_body).json()["data"]["imageUrl"]
+    return requests.post(url, headers=headers, json=example_body,
+                         timeout=10).json()["data"]["imageUrl"]
 
 
 def get_position_data(input_dict: dict, times: list[str], regions: list[dict],
@@ -151,13 +154,32 @@ def get_position_data(input_dict: dict, times: list[str], regions: list[dict],
 
 def get_moon_urls(start: date) -> list[dict]:
     """Returns list of moon phase URLs from the Astronomy API"""
-    pass
+    output_list = []
+
+    for n in range(7):
+        moon_day_dict = {}
+        day = start + timedelta(days=n)
+        phase_url = get_moon_phase(day)
+
+        moon_day_dict["day"] = str(day)
+        moon_day_dict["url"] = phase_url
+
+        output_list.append(moon_day_dict)
+
+    return output_list
 
 
-def fill_region_time_dict(times_list: list[str], region_list: list[dict]):
+def fill_region_time_dict(times_list: list[str],
+                          region_list: list[dict]) -> dict:
     """Creates framework for body position dictionary."""
-    pass
+    region_ids = [region["region_id"] for region in region_list]
+    time_ids = [time[:2] for time in times_list]
 
+    output_dict = {}
 
-if __name__ == "__main__":
-    ...
+    for num in region_ids:
+        output_dict[num] = {}
+        for time in time_ids:
+            output_dict[num][time] = {}
+
+    return output_dict
