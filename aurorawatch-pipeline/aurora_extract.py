@@ -5,24 +5,23 @@ import logging
 
 import requests
 
-URL = 'http://aurorawatch-api.lancs.ac.uk/0.2/status/current-status.xml'
+AURORA_WATCH_URL = 'http://aurorawatch-api.lancs.ac.uk/0.2/status/current-status.xml'
 
 
 def make_request() -> bytes:
     '''Returns the result xml as a string from the
     get request made to the AuroraWatchUK API.'''
-    response = requests.get(URL)
+    response = requests.get(url=AURORA_WATCH_URL, timeout=10)
     logging.info('AuroraWatchUK request sent')
 
     if response.status_code == 200:
         logging.info('AuroraWatchUK request successful')
         return response.content
 
-    else:
-        err_msg = f'''AuroraWatchUK request unsuccessful: Error code {
-            response.status_code}'''
-        logging.error(err_msg)
-        raise ConnectionError(err_msg)
+    err_msg = f'''AuroraWatchUK request unsuccessful: Error code {
+        response.status_code}'''
+    logging.error(err_msg)
+    raise ConnectionError(err_msg)
 
 
 def get_status(xml_string: bytes) -> str:
@@ -32,10 +31,10 @@ def get_status(xml_string: bytes) -> str:
 
     try:
         current_status_root = ET.fromstring(xml_string)
-    except ET.ParseError:
+    except ET.ParseError as pe:
         err_msg = 'Invalid XML, no root found.'
         logging.error(err_msg)
-        raise ValueError(err_msg)
+        raise ValueError(err_msg) from pe
 
     site_status = current_status_root.find('site_status')
 
@@ -46,15 +45,13 @@ def get_status(xml_string: bytes) -> str:
             logging.info('Aurora status colour extracted')
             return status_colour
 
-        else:
-            err_msg = 'No status id attribute found in site status.'
-            logging.error(err_msg)
-            raise KeyError(err_msg)
-
-    else:
-        err_msg = 'No site status found in current status root.'
+        err_msg = 'No status id attribute found in site status.'
         logging.error(err_msg)
         raise KeyError(err_msg)
+
+    err_msg = 'No site status found in current status root.'
+    logging.error(err_msg)
+    raise KeyError(err_msg)
 
 
 def extract() -> str:
@@ -69,5 +66,4 @@ def extract() -> str:
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
-    # print(extract())
-    print(get_status('test'.encode('utf-8')))
+    print(extract())

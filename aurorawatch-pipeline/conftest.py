@@ -4,8 +4,8 @@ import pytest
 
 
 @pytest.fixture
-def valid_XML() -> bytes:
-    '''Valid XML example to use in testing.'''
+def valid_xml() -> bytes:
+    '''Valid xml example to use in testing.'''
     xml_string = '''<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\'?>\n
     <!DOCTYPE current_status PUBLIC "-//AuroraWatch-API//DTD REST 0.2.5//EN" 
     "http://aurorawatch-api.lancs.ac.uk/0.2.5/aurorawatch-api.dtd">\n
@@ -18,16 +18,16 @@ def valid_XML() -> bytes:
 
 
 @pytest.fixture
-def invalid_XML() -> bytes:
-    '''Invalid XML with no root for testing.'''
-    xml_string = 'Invalid XML'
+def invalid_xml() -> bytes:
+    '''Invalid xml with no root for testing.'''
+    xml_string = 'Invalid xml'
 
     return xml_string.encode('utf-8')
 
 
 @pytest.fixture
-def valid_XML_no_site_status() -> bytes:
-    '''Valid XML example without site status to use in testing.'''
+def valid_xml_no_site_status() -> bytes:
+    '''Valid xml example without site status to use in testing.'''
     xml_string = '''<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\'?>\n
     <!DOCTYPE current_status PUBLIC "-//AuroraWatch-API//DTD REST 0.2.5//EN" 
     "http://aurorawatch-api.lancs.ac.uk/0.2.5/aurorawatch-api.dtd">\n
@@ -38,8 +38,8 @@ def valid_XML_no_site_status() -> bytes:
 
 
 @pytest.fixture
-def valid_XML_no_status_id() -> bytes:
-    '''Valid XML example without status id attribute to use in testing.'''
+def valid_xml_no_status_id() -> bytes:
+    '''Valid xml example without status id attribute to use in testing.'''
     xml_string = '''<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\'?>\n
     <!DOCTYPE current_status PUBLIC "-//AuroraWatch-API//DTD REST 0.2.5//EN" 
     "http://aurorawatch-api.lancs.ac.uk/0.2.5/aurorawatch-api.dtd">\n
