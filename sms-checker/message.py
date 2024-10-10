@@ -3,11 +3,11 @@ import logging
 from dotenv import load_dotenv
 from boto3 import client
 
-def send_sms(subscriber: dict) -> None:
+def send_sms(subscribers: list[dict]) -> None:
     '''Uses boto3 to send messages to subscribers by sms'''
     ...
 
-def send_email(subscriber: dict) -> None:
+def send_email(subscriber: list[dict]) -> None:
     '''Uses boto3 to send messages to subscribers by ses'''
     ...
 
