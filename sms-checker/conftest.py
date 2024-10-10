@@ -35,3 +35,18 @@ def invalid_queried_data():
     '''Returns the invalid data in the correct shape'''
     return [('davidjohnson', None, None, 'Venus', None),
         ('johndoe', '+12345678901', None, 'Mars', None)]
+
+@pytest.fixture
+def valid_sub_list():
+    '''Returns a valid list of subscribers'''
+    return [{'user': 'davidjohnson', 'phone': '+1234567890',
+            'email': 'jadhkjgh', 'body': 'Venus', 'at': None},
+            {'user': 'johndoe', 'phone': '+0987654321',
+            'email':'aksdghashg', 'body': 'Mars', 'at': None}]
+
+
+@pytest.fixture
+def invalid_sub_list():
+    '''Returns a valid list of subscribers'''
+    return [{'user': 'davidjohnson', 'phone': '1234',
+             'email':'adghagkja', 'body': None, 'at': None}]
