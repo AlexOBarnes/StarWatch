@@ -92,7 +92,7 @@ resource "aws_security_group" "c13_ecs_service_sg" {
 		from_port   = 8501
 		to_port     = 8501
 		protocol    = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]  # Allows access from anywhere
+		cidr_blocks = ["0.0.0.0/0"]  # Allows access from anywhere, for ease in this project.
   }
 
   egress {
@@ -195,7 +195,7 @@ resource "aws_lambda_function" "lambda_functions" {
 	role          = aws_iam_role.lambda_exec_role.arn
 	package_type  = "Image"
 	image_uri     = each.value.image_uri
-	timeout       = 900
+	timeout       = 900 # Set the to maximum time of 900 seconds (15 minutes).
 	memory_size   = 512
 
 # All Lamda fucntions will have access to these tf.vars env variables at run time.
@@ -527,6 +527,8 @@ resource "aws_ecs_task_definition" "c13_starwatch_task" {
 			}
 		]
 
+			# The environement the ECS service runs in will have access
+			# to all environment variables in local.common_env_vars.
 			environment = [
 			for key, value in local.common_env_vars : {
 			name  = key
