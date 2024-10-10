@@ -24,7 +24,8 @@ def format_data(clean_county_data: dict, county_id: int) -> list[list]:
     return [[county_id, format_time(clean_county_data['time'][i]),
              clean_county_data['temp'][i], clean_county_data['prob'][i],
              clean_county_data['precip'][i], clean_county_data['clouds'][i],
-             clean_county_data['visibility'][i]] for i in range(24)]
+             clean_county_data['visibility'][i]]
+             for i in range(len(clean_county_data['time']))]
 
 def transform(data: list[dict]) -> list[list]:
     '''Orchestrates transform steps of pipeline'''
