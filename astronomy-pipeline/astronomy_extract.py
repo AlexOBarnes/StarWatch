@@ -3,8 +3,8 @@
 from datetime import date, timedelta, datetime
 import json
 
-from extract_functions import get_db_regions, get_position_data, get_moon_urls
-from extract_functions import fill_region_time_dict
+from astronomy_extract_functions import get_db_regions, get_position_data, get_moon_urls
+from astronomy_extract_functions import fill_region_time_dict
 
 
 def save_to_file(filename: str, data: list[dict]) -> None:
