@@ -1,4 +1,5 @@
 '''Contains tests for the extract script in this folder'''
+import os
 import pytest
 from unittest.mock import patch, MagicMock
 from quadhoral_extract import get_county_coordinates, convert_to_params, request_weather_data, extract
