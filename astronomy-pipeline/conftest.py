@@ -1,3 +1,5 @@
+"""Conftest file for weekly astronomy data pipeline."""
+
 import pytest
 
 
@@ -59,6 +61,7 @@ def sample_raw_body_data():
 
 @pytest.fixture
 def sample_filtered_body_data():
+    """Sample refined body position data."""
 
     data = {
         "datetime": "2020-12-20T09:00:00.000-05:00",
@@ -74,6 +77,7 @@ def sample_filtered_body_data():
 
 @pytest.fixture
 def sample_moon_urls():
+    """Example moon urls."""
 
     data = [
         {
@@ -87,3 +91,19 @@ def sample_moon_urls():
     ]
 
     return data
+
+
+@pytest.fixture
+def sample_raw_positions():
+    """Fake sample of raw body position data."""
+
+    return {
+        "data": {
+            "table": {
+                "rows": [
+                    {"cells": [1, 2, 3]},
+                    {"cells": [1, 2, 3]}
+                ]
+            }
+        }
+    }

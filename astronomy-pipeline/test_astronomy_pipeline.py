@@ -156,19 +156,10 @@ class TestExtractFunctions():
         assert res == expected
 
     @mock.patch("extract_functions.make_clean_body_dict")
-    def test_refine_bodies_data_creates_list_of_dicts(self, fake_clean):
+    def test_refine_bodies_data_creates_list_of_dicts(self, fake_clean, sample_raw_positions):
         """Asserts that the function returns a list of dicts."""
 
-        input_data = {
-            "data": {
-                "table": {
-                    "rows": [
-                        {"cells": [1, 2, 3]},
-                        {"cells": [1, 2, 3]}
-                    ]
-                }
-            }
-        }
+        input_data = sample_raw_positions
 
         fake_clean.return_value = {"key": "val"}
 
