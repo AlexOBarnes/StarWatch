@@ -48,7 +48,6 @@ class TestConvertToParams:
         assert params['latitude'] == [1.0, 51.0]
         assert params['longitude'] == [1.0, 51.0]
         assert 'hourly' in params
-        assert params['forecast_days'] == 1
 
     def test_convert_to_params_invalid(self):
         """Test invalid parameter conversion raises TypeError."""

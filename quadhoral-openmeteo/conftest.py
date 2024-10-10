@@ -31,6 +31,7 @@ def invalid_json_data():
             'precipitation_probability': [], 'precipitation': [],
               'cloud_cover': [], 'visibility': []}}] * 106
 
+
 @pytest.fixture
 def valid_clean_county_data():
     '''Returns valid clean county data'''
@@ -79,9 +80,7 @@ def valid_input_data():
             'precipitation_probability': [20 + i for i in range(24)],
             'precipitation': [0.1 * i for i in range(24)],
             'cloud_cover': [50 + i for i in range(24)],
-            'visibility': [10000 - (i * 100) for i in range(24)]
-        }
-    }]
+            'visibility': [10000 - (i * 100) for i in range(24)]}}]
 
 @pytest.fixture
 def expected_clean_data():
@@ -95,3 +94,10 @@ def expected_formatted_data():
     '''Returns formatted data that matches previous fixtures'''
     return [[1, dt(2024, 10, 1, 0, 0), 10, 20, 0.0, 50, 10000],
             [1, dt(2024, 10, 1, 1, 0), 11, 21, 0.1, 51, 9900]]
+
+
+@pytest.fixture
+def valid_db_data():
+    '''Returns a valid dataset for the database'''
+    return [[1, '2024-10-01T10:00', 15.0, 20, 0.1, 30, 10000],
+    [2, '2024-10-01T11:00', 16.0, 25, 0.2, 35, 9500]]

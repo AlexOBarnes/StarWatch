@@ -28,8 +28,7 @@ def convert_to_params(long: list[int], lat: list[int]):
 
         return {'latitude': lat, 'longitude': long,
                 "hourly": ["temperature_2m", "precipitation_probability", 
-                           "precipitation", "cloud_cover", "visibility"],
-                "forecast_days": 1}
+                           "precipitation", "cloud_cover", "visibility"]}
 
     raise TypeError('Queried data is wrong datatype')
 
