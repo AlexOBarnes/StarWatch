@@ -44,9 +44,9 @@ def request_weather_data(params:dict) -> list[dict]:
 
         if isinstance(weather_data, list):
 
-            if (len(weather_data) == 106 and 
-                all(all(len(region['hourly'][key]) > 0 for key in 
-                ['temperature_2m', 'precipitation_probability', 
+            if (len(weather_data) == 106 and
+                all(all(len(region['hourly'][key]) > 0 for key in
+                ['temperature_2m', 'precipitation_probability',
                  'precipitation', 'cloud_cover', 'visibility'])for region in weather_data)):
                 return weather_data
 

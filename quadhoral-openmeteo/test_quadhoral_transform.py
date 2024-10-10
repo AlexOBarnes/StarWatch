@@ -1,10 +1,10 @@
 '''Contains tests for transform script'''
+from datetime import datetime
 import pytest
 from quadhoral_transform import format_time, clean_data, format_data, transform
-from datetime import datetime
-
 
 class TestFormatTime:
+    '''Contains tests for format time function'''
     def test_format_time_valid(self):
         '''Test format_time with a valid string'''
         event_time = "2024-10-01T15:30"
@@ -23,6 +23,7 @@ class TestFormatTime:
 
 
 class TestCleanData:
+    '''Contains tests for clean data function'''
     def test_clean_data_valid(self, valid_input_data,expected_clean_data):
         '''Test clean_data with valid county data'''
         county_data = valid_input_data[0]
@@ -46,6 +47,7 @@ class TestCleanData:
 
 
 class TestFormatData:
+    '''Contains tests for format data function'''
     def test_format_data_valid(self, valid_clean_county_data,expected_formatted_data):
         '''Test format_data with valid clean county data'''
         county_id = 1
@@ -66,6 +68,7 @@ class TestFormatData:
 
 
 class TestTransform:
+    '''Contains tests for transform function'''
     def test_transform_valid(self, valid_input_data):
         '''Test transform with valid input data'''
         result = transform(valid_input_data)
