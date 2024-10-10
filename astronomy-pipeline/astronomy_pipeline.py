@@ -2,6 +2,7 @@
 
 from astronomy_extract import extract_weekly_astronomy_data
 from astronomy_transform import transform_astronomy_data
+from astronomy_load import upload_astronomy_data
 
 if __name__ == "__main__":
 
@@ -13,3 +14,5 @@ if __name__ == "__main__":
     #   "moon_phase_list": moon_phase_list
     # }
     transformed_data = transform_astronomy_data(extract_data)
+
+    upload_astronomy_data(transformed_data)
