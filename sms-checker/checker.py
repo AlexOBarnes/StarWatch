@@ -23,7 +23,7 @@ def get_subscribers() ->list[dict]:
     JOIN body as b USING (body_id)
     WHERE f.visibility_m > 500 AND
     f.cloud_coverage_percent < 25 AND
-    ba.at <= CURRENT_TIMESTAMP + INTERVAL '4 hours'
+    ba.at <= CURRENT_TIMESTAMP + INTERVAL '3 hours'
     AND ba.at > CURRENT_TIMESTAMP '''
 
     with get_connection() as conn:

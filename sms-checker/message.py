@@ -60,7 +60,7 @@ def get_client(service: str) -> client:
     '''Returns a AWS client'''
     return client(service, aws_access_key_id=ENV["MY_AWS_ACCESS_KEY"],
                         aws_secret_access_key=ENV["MY_AWS_SECRET_KEY"],
-                        region_name=ENV['AWS_REGION'])
+                        region_name=ENV['REGION'])
 
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
