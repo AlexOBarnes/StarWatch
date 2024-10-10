@@ -78,7 +78,7 @@ CREATE TABLE forecast (
     precipitation_probability_percent SMALLINT NOT NULL,
     precipitation_mm FLOAT NOT NULL,
     cloud_coverage_percent SMALLINT NOT NULL,
-    visibility_m SMALLINT NOT NULL,
+    visibility_m INT NOT NULL,
     at TIMESTAMP NOT NULL,
     PRIMARY KEY (forecast_id),
     FOREIGN KEY (county_id) REFERENCES county(county_id)
