@@ -13,19 +13,19 @@ from extract_functions import get_all_body_positions, make_clean_body_dict, get_
 from extract_functions import refine_bodies_data, get_position_data, fill_region_time_dict
 from extract import extract_weekly_astronomy_data
 
-ENV = {
-    "DB_NAME": "test_db",
-    "DB_HOST": "localhost",
-    "DB_PASSWORD": "test_password",
-    "DB_USER": "test_user",
-    "DB_PORT": "5432",
-    "ASTRONOMY_ID": "test_id",
-    "ASTRONOMY_SECRET": "test_secret"
-}
-
 
 class TestExtractFunctions():
     """Tests for the extract_functions file."""
+
+    ENV = {
+        "DB_NAME": "test_db",
+        "DB_HOST": "localhost",
+        "DB_PASSWORD": "test_password",
+        "DB_USER": "test_user",
+        "DB_PORT": "5432",
+        "ASTRONOMY_ID": "test_id",
+        "ASTRONOMY_SECRET": "test_secret"
+    }
 
     @mock.patch("extract_functions.ENV", ENV)
     @mock.patch("extract_functions.connect")
@@ -40,11 +40,11 @@ class TestExtractFunctions():
 
         mock_connect.assert_called_once_with(
             cursor_factory=extras.RealDictCursor,
-            dbname=ENV["DB_NAME"],
-            host=ENV["DB_HOST"],
-            password=ENV["DB_PASSWORD"],
-            user=ENV["DB_USER"],
-            port=ENV["DB_PORT"]
+            dbname=self.ENV["DB_NAME"],
+            host=self.ENV["DB_HOST"],
+            password=self.ENV["DB_PASSWORD"],
+            user=self.ENV["DB_USER"],
+            port=self.ENV["DB_PORT"]
         )
 
     @mock.patch("extract_functions.connect")
