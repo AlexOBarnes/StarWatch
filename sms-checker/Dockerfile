@@ -5,7 +5,7 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 COPY requirements.txt .
 RUN pip install -r requirements.txt 
 
-COPY notification_lambda .
+COPY notification_lambda.py .
 COPY checker.py .
 COPY message.py .
 
