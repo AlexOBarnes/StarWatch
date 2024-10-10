@@ -27,7 +27,7 @@ class TestExtractFunctions():
         "ASTRONOMY_SECRET": "test_secret"
     }
 
-    @mock.patch("extract_functions.ENV", ENV)
+    @mock.patch.dict("extract_functions.ENV", ENV)
     @mock.patch("extract_functions.connect")
     def test_get_db_connection_called_with_correct_parameters(self, mock_connect):
         """Tests get_db_connection successfully connects
@@ -47,6 +47,7 @@ class TestExtractFunctions():
             port=self.ENV["DB_PORT"]
         )
 
+    @mock.patch("extract_functions.ENV", ENV)
     @mock.patch("extract_functions.connect")
     def test_get_db_connection_expected_output(self, mock_connect):
         """Tests get_db_connection successfully connects
