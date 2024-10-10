@@ -6,6 +6,7 @@ from astronomy_transform_functions import (get_data_into_database, clean_positio
 
 
 def transform_astronomy_data(raw_data: dict) -> list:
+    """Main function for converting the extracted astronomy data into flat dataframes."""
 
     merged_df = get_data_into_database(raw_data)
 

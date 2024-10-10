@@ -14,6 +14,7 @@ def load_from_file(filename: str) -> dict:
 
 
 def get_data_into_database(raw_data: dict) -> pd.DataFrame:
+    """Converts a list of body position dictionaries into a dataframe."""
 
     regions = list(raw_data["body_positions"].keys())
     times = list(raw_data["body_positions"]["1"].keys())
@@ -30,6 +31,7 @@ def get_data_into_database(raw_data: dict) -> pd.DataFrame:
 
 
 def get_body_mapping() -> dict:
+    """Returns body name to ID mapping from the RDS database."""
 
     with get_db_connection() as conn:
 
@@ -50,6 +52,8 @@ def get_body_mapping() -> dict:
 
 
 def clean_position_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Removes unnecessary dataframe entries and converts data 
+    to more appropriate data types."""
 
     # Get rid of earth entries
     df = df[df["body_name"] != "earth"]
@@ -72,6 +76,7 @@ def clean_position_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_moon_df(phase_data: list["dict"]):
+    """Returns a dataframe of moon phase dates and image URLs."""
 
     df = pd.DataFrame(phase_data)
 
