@@ -2,3 +2,5 @@ pylint
 pytest
 requests
 pytest-cov
+psycopg2-binary
+python-dotenv

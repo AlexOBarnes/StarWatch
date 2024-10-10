@@ -48,3 +48,9 @@ def valid_xml_no_status_id() -> bytes:
     site_url="http://aurorawatch-api.lancs.ac.uk/0.2.5/project/awn/sum.xml"/></current_status>'''
 
     return xml_string.encode('utf-8')
+
+
+@pytest.fixture
+def valid_insertion_data() -> tuple:
+    ''''''
+    return ('2024-10-07 08:15:30', 1)
