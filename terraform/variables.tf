@@ -14,6 +14,10 @@ variable "AWS_SECRET_KEY" {
   
 }
 
+variable "DB_HOST" {
+  type = string
+  
+}
 
 
 variable "DB_NAME" {
@@ -26,13 +30,16 @@ variable "DB_USER" {
   
 }
 
+
 variable "DB_PASSWORD" {
   type = string
+  sensitive   = true
   
 }
 
 variable "VPC_ID" {
     type = string
+    sensitive   = true
 }
 
 
@@ -73,4 +80,25 @@ variable "DASHBOARD_IMAGE_URI" {
 
 variable "CLUSTER_NAME" {
     type = string
+}
+
+
+variable "NASA_API_KEY" {
+  type = string
+  sensitive   = true
+  
+}
+
+
+
+variable "ASTRONOMY_KEY_ID" {
+  type = string
+  sensitive   = true
+  
+}
+
+variable "ASTRONOMY_SECRET" {
+  type = string
+  sensitive   = true
+  
 }

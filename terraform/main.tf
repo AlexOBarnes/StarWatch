@@ -32,9 +32,35 @@ data "aws_ecs_cluster" "c13-cluster" {
   cluster_name = var.CLUSTER_NAME
 }
 
+# This locals defined the environment variables needed by our
+# Lambdas and ECS dashboard service. A sensitive tag is sometimes
+# applied to ensure the values themselves don't appear in terminal 
+# logs out ouputs of any kind. Truly secure!
+locals {
+  common_env_vars = {
+    # Database connection variables
+    DB_HOST        		= var.DB_HOST
+	# In case you Lambda want to refer to ports.
+	# They are hardcoded here, as they are not sensitive.
+	DB_PORT				= "5432"
+	DASHBOARD_PORT 		= "8501"
+    DB_NAME             = var.DB_NAME
+    DB_USER             = var.DB_USER
+    DB_PASSWORD         = var.DB_PASSWORD
+
+    # API Keys needed for Lambdas running pipelines.
+    NASA_API_KEY = var.NASA_API_KEY
+    ASTRONOMY_KEY_ID  = var.ASTRONOMY_KEY_ID
+	ASTRONOMY_SECRET = var.ASTRONOMY_SECRET
+		
+
+	# More to be added when other pipeline come online..
+  }
+}
+
 
 # Security group for the RDS, dictating valid inbound and outbound traffic.
-# Specifically, inbound PostgresSQL traffic on port 5432 and all outbound 
+# Specifically, inbound PostgresSQL traffic and all outbound 
 # traffic for database connections.
 resource "aws_security_group" "c13-andrew-starwatch-rds-sg" {
     name        = "c13-andrew-starwatch-db-sg"
@@ -54,7 +80,7 @@ resource "aws_security_group" "c13-andrew-starwatch-rds-sg" {
 
 
 # Security group for the ECS service hosting the dashboard.
-# Ingress is set to any traffic on port 8501, crucial for
+# Ingress is set to any traffic on the specific dashboard port, crucial for
 # people accessing the dashboard online, as in-bound traffic is blocked by default.
 # Egress is set to any protocol for any IP-address, as the script hosted on
 # the ECS as a service also has to fetch data from external APIs (NASA and ISS location APIs). 
@@ -172,16 +198,13 @@ resource "aws_lambda_function" "lambda_functions" {
 	timeout       = 900
 	memory_size   = 512
 
-	environment {
-		variables = {
-		RDS_HOSTNAME = aws_db_instance.default.address # This allows for the RDS address to update dynamically, 
-														# in the event we terraform destroy and the address changes.
-		DB_NAME      = var.DB_NAME
-		DB_USER      = var.DB_USER
-		DB_PASSWORD  = var.DB_PASSWORD
+# All Lamda fucntions will have access to these tf.vars env variables at run time.
+# Meaning scripts run in a Lambda can access them by default, like so for example - 
+# 'os.environ['DB_HOST']' in Python. This uses the pre-defined a locals on line 150.
+  	environment {
+    	variables = local.common_env_vars
+		}
 	}
-  }
-}
 
 
 # EventBridge rule for weekly pipelines (bodies and sunrise/sunset in parallel).
@@ -480,7 +503,7 @@ resource "aws_lambda_permission" "allow_invoke" {
 
 
 # The ECS task definition or blueprint for the ECS dashboard service.
-# Containing all necessary environment variables, on Streamlit's standard port 8501.
+# Containing all necessary environment variables.
 resource "aws_ecs_task_definition" "c13_starwatch_task" {
 	family                   = "c13_starwatch_dashboard"
 	network_mode             = "awsvpc"
@@ -496,30 +519,19 @@ resource "aws_ecs_task_definition" "c13_starwatch_task" {
 		essential = true
 		portMappings = [
 			{
-			containerPort = 8501 
+			containerPort = 8501
 			hostPort      = 8501
 			protocol      = "tcp"
 			}
 		]
 
-		environment = [
-			{
-			name  = "RDS_HOSTNAME"
-			value = aws_db_instance.default.address
-			},
-			{
-			name  = "DB_NAME"
-			value = var.DB_NAME
-			},
-			{
-			name  = "DB_USER"
-			value = var.DB_USER
-			},
-			{
-			name  = "DB_PASSWORD"
-			value = var.DB_PASSWORD
+			environment = [
+			for key, value in local.common_env_vars : {
+			name  = key
+			value = value
 			}
 			]
+
 			logConfiguration = {
 				logDriver = "awslogs"
 				options = {
