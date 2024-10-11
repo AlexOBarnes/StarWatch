@@ -223,7 +223,7 @@ resource "aws_cloudwatch_event_rule" "quadhourly_lambda_trigger" {
 
 # Step Function for Weekly Pipelines (Bodies and Sunrise/Sunset in Parallel).
 resource "aws_sfn_state_machine" "weekly_pipelines_step_function" {
-    name     = "WeeklyPipelinesParallelExecution"
+    name     = "starwatch-weekly-pipelines-parallel-execution"
     role_arn = aws_iam_role.sfn_exec_role.arn
 
     definition = <<-STATE_MACHINE_DEFINITION
@@ -277,7 +277,7 @@ resource "aws_sfn_state_machine" "weekly_pipelines_step_function" {
 
 # Step Function for Hourly Pipelines (Aurora and Nearest Bodies/Events in Parallel).
 resource "aws_sfn_state_machine" "hourly_pipelines_step_function" {
-    name     = "HourlyPipelinesParallelExecution"
+    name     = "starwatch-hourly-pipelines-parallel-execution"
     role_arn = aws_iam_role.sfn_exec_role.arn
 
     definition = <<-STATE_MACHINE_DEFINITION
