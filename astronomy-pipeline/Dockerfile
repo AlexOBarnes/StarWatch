@@ -1,17 +1,19 @@
 
-FROM python:3.12-slim
+FROM public.ecr.aws/lambda/python:latest
 
-# Set the working directory in the container
-WORKDIR /app
+WORKDIR ${LAMBDA_TASK_ROOT}
 
-# Copy the current directory contents into the container at /app
-COPY . .
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-# Copy the .env file to the container
-COPY .env .env
+COPY astronomy_load.py .
+COPY astronomy_extract.py .
+COPY astronomy_extract_functions.py .
+COPY astronomy_transform.py .
+COPY astronomy_transform_functions.py .
+COPY astronomy_pipeline.py .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+
 
 # Set the CMD to point to the Lambda handler
-CMD ["python", "astronomy_pipeline.py"]
+CMD ["astronomy_pipeline.lambda_handler"]

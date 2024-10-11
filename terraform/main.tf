@@ -50,7 +50,7 @@ locals {
 
     # API Keys needed for Lambdas running pipelines.
     NASA_API_KEY = var.NASA_API_KEY
-    ASTRONOMY_KEY_ID  = var.ASTRONOMY_KEY_ID
+    ASTRONOMY_ID  = var.ASTRONOMY_ID
 	ASTRONOMY_SECRET = var.ASTRONOMY_SECRET
 		
 

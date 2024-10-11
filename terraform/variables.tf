@@ -91,7 +91,7 @@ variable "NASA_API_KEY" {
 
 
 
-variable "ASTRONOMY_KEY_ID" {
+variable "ASTRONOMY_ID" {
   type = string
   sensitive   = true
   
