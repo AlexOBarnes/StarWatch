@@ -1,6 +1,6 @@
 """Full ETL pipeline lambda for the astronomy API data."""
 
-import logging
+# pylint: disable=W0613
 
 from astronomy_extract import extract_weekly_astronomy_data
 from astronomy_transform import transform_astronomy_data

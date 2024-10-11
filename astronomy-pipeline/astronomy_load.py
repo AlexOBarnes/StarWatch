@@ -2,11 +2,11 @@
 
 from psycopg2.extras import execute_values
 
-from astronomy_extract_functions import get_db_connection
+from astronomy_extract import get_db_connection
 
 
 def upload_body_position_data(body_data: list[list]) -> None:
-
+    '''Uploads the body position data to the database.'''
     # Positions list order [timestamp, distance_km, azimuth,
     #                       altitude, region_id, body_id,
     #                       constellation_id]
@@ -25,9 +25,9 @@ def upload_body_position_data(body_data: list[list]) -> None:
 
 
 def upload_moon_phase_data(moon_phase_data: list[list]) -> None:
-
+    '''Uploads the moon phase image data to the database.'''
     for entry in moon_phase_data:
-        for i in range(2):
+        for _ in range(2):
             entry.append(None)
         entry.append("moon_phase")
 
@@ -46,8 +46,8 @@ def upload_moon_phase_data(moon_phase_data: list[list]) -> None:
         execute_values(cur, q_str, moon_phase_data)
 
 
-def upload_astronomy_data(data_dict: list[dict]) -> None:
-
+def upload_astronomy_data(data_dict: dict) -> None:
+    '''Uploads both the position and  moon phase data from the given dict.'''
     position_data = data_dict["positions_list"]
     moon_data = data_dict["moon_phase_list"]
 
