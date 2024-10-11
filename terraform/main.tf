@@ -571,7 +571,10 @@ resource "aws_cloudwatch_log_group" "sfn_log_group" {
 						   # if not already terraform destroyed.
 }	
 
-
+resource "aws_cloudwatch_log_group" "ecs_dashboard_log_group" {
+    name              = "/ecs/c13_starwatch_dashboard"
+    retention_in_days = 14
+}
 
 # IAM Role for EventBridge to invoke Step Functions
 resource "aws_iam_role" "eventbridge_step_functions_role" {
