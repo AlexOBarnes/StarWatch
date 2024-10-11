@@ -163,7 +163,7 @@ locals {
 		invoked_by    = "step_function_hourly"
     },
     hourly_nearest_bodies = {
-		function_name = "c13-starwatch-HourlyNearestBodiesEventsPipeline"
+		function_name = "c13-starwatch-hourly-nearest-bodies-events-pipeline"
 		image_uri     = var.HOURLY_VISIBLE_IMAGE_URI
 		invoked_by    = "step_function_hourly"
     },
