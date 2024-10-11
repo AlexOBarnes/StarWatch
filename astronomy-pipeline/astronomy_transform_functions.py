@@ -1,4 +1,4 @@
-"""Functions for the astronomy API transform script."""
+"""astronomy_transform_functions, functions for the astronomy API transform script."""
 
 import json
 from datetime import datetime
@@ -80,23 +80,20 @@ def clean_position_data(df: pd.DataFrame) -> list:
     to more appropriate data types."""
 
     # Get rid of earth entries
-    df = df[df["body_name"] != "earth"]
+    df = df[df["body_name"] != "earth"].copy()  # Create a copy to avoid warnings
 
     # Gets body_IDs from database
     body_mapping = get_body_mapping()
-    df["body_id"] = df["body_name"].map(body_mapping)
+    df.loc[:, "body_id"] = df["body_name"].map(body_mapping)
 
     # Gets constellation IDs from database
     constellation_mapping = get_constellation_mapping()
-    df["constellation_id"] = df["constellation_name"].map(
-        constellation_mapping)
+    df.loc[:, "constellation_id"] = df["constellation_name"].map(constellation_mapping)
 
-    # distance_km to float
-    df["distance_km"] = df["distance_km"].astype(float)
-    # azimuth to float
-    df["azimuth"] = df["azimuth"].astype(float)
-    # altitude to float
-    df["altitude"] = df["altitude"].astype(float)
+    # Convert distance_km, azimuth, and altitude to float
+    df.loc[:, "distance_km"] = df["distance_km"].astype(float)
+    df.loc[:, "azimuth"] = df["azimuth"].astype(float)
+    df.loc[:, "altitude"] = df["altitude"].astype(float)
 
     df = df.drop(columns=["body_name", "constellation_name"])
 

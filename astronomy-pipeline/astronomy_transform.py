@@ -1,5 +1,8 @@
-"""Transform script to reshape Astronomy API data into a format
-for upload to the RDS database."""
+"""
+astronomy_transform
+Transform script to reshape Astronomy API data into a format
+for upload to the RDS database.
+"""
 
 from astronomy_transform_functions import (get_data_into_dataframe, clean_position_data,
                                            get_moon_df, convert_positions_datetime,
