@@ -571,12 +571,19 @@ resource "aws_cloudwatch_log_group" "sfn_log_group" {
 						   # if not already terraform destroyed.
 }	
 
+
+# The necessary permissions for allowing Step Functions to write logs
+# have been written, but a log group resource has to be created
+# in order to enact and store the logs themselves.
 resource "aws_cloudwatch_log_group" "ecs_dashboard_log_group" {
     name              = "/ecs/c13_starwatch_dashboard"
     retention_in_days = 14
 }
 
-# IAM Role for EventBridge to invoke Step Functions
+
+# IAM Role for EventBridge to invoke Step Functions, in order
+# for EventBridge to be able to interact with Step Functions 
+# and have policies attached to it.
 resource "aws_iam_role" "eventbridge_step_functions_role" {
   name = "eventbridge_step_functions_role"
 
@@ -592,7 +599,8 @@ resource "aws_iam_role" "eventbridge_step_functions_role" {
   })
 }
 
-# IAM Policy allowing EventBridge to start Step Function executions
+
+# IAM Policy allowing EventBridge to start Step Function executions. 
 resource "aws_iam_policy" "eventbridge_step_functions_policy" {
   name = "eventbridge_step_functions_policy"
 
@@ -610,7 +618,7 @@ resource "aws_iam_policy" "eventbridge_step_functions_policy" {
 }
 
 
-# Attach the policy to the IAM role
+# Attaching the policy for Step Function staging / execution to EventBridge instances.
 resource "aws_iam_role_policy_attachment" "eventbridge_step_functions_attachment" {
   role       = aws_iam_role.eventbridge_step_functions_role.name
   policy_arn = aws_iam_policy.eventbridge_step_functions_policy.arn
