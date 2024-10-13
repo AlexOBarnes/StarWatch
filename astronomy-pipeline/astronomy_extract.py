@@ -7,10 +7,13 @@ from os import environ as ENV
 from datetime import date, timedelta, datetime
 import base64
 import json
+import logging
 
 import requests
 from dotenv import load_dotenv
 from psycopg2 import connect, extensions, extras
+
+from api_error import APIError
 
 
 load_dotenv()
@@ -64,7 +67,13 @@ def get_all_body_positions(start_date: date, end_date: date, lat: float,
 
     headers = {"Authorization": f"Basic {auth_string}"}
 
-    return (requests.get(url, headers=headers, timeout=10)).json()
+    response = requests.get(url, headers=headers, timeout=10)
+
+    if response.status_code == 200:
+        return response.json()
+
+    logging.info('Body position get request unsuccessful.')
+    return APIError("Unsuccessful request.", response.status_code)
 
 
 def make_clean_body_dict(entry: dict) -> dict:
@@ -100,7 +109,7 @@ def refine_bodies_data(bodies: dict) -> list:
 def get_moon_phase(input_date: str) -> str:
     """Returns a url for an image of the moon phase for a given date."""
 
-    example_body = {
+    request_body = {
         "format": "png",
         "style": {
             "moonStyle": "default",
@@ -125,8 +134,14 @@ def get_moon_phase(input_date: str) -> str:
 
     headers = {"Authorization": f"Basic {auth_string}"}
 
-    return requests.post(url, headers=headers, json=example_body,
-                         timeout=10).json()["data"]["imageUrl"]
+    response = requests.post(url, headers=headers, json=request_body,
+                             timeout=10)
+
+    if response.status_code == 200:
+        return response.json()["data"]["imageUrl"]
+
+    logging.info('Moon phase post request unsuccessful.')
+    return APIError("Unsuccessful request.", response.status_code)
 
 
 def get_position_data(input_dict: dict, times: list[str], regions: list[dict],
