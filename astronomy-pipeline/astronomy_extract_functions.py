@@ -6,7 +6,6 @@ from os import environ as ENV
 from datetime import date, timedelta
 import base64
 
-
 from psycopg2 import connect, extensions, extras
 from dotenv import load_dotenv
 import requests
