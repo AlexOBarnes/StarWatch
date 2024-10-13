@@ -1,272 +1,242 @@
-"""Test file for the Astronomy API pipeline files."""
+"""Extracts astronomical data from the Astronomy API.
+File to obtain body positional data from the Astronomy API."""
 
-# pylint: disable=R0903, R0913, R0917
+# pylint: disable=E0401,R0913,R0917
 
+from os import environ as ENV
+from datetime import date, timedelta, datetime
 import base64
-from unittest import mock
-from datetime import date
+import json
+import logging
 
-from psycopg2 import extras
+import requests
+from dotenv import load_dotenv
+from psycopg2 import connect, extensions, extras
 
-from astronomy_extract import (get_db_connection, get_auth_string, get_db_regions,
-                               get_all_body_positions, make_clean_body_dict, get_moon_urls,
-                               refine_bodies_data, get_position_data, fill_region_time_dict,
-                               extract_weekly_astronomy_data)
+from api_error import APIError
 
 
-class TestExtractFunctions():
-    """Tests for the extract_functions file."""
+load_dotenv()
 
-    ENV = {
-        "DB_NAME": "test_db",
-        "DB_HOST": "localhost",
-        "DB_PASSWORD": "test_password",
-        "DB_USER": "test_user",
-        "DB_PORT": "5432",
-        "ASTRONOMY_ID": "test_id",
-        "ASTRONOMY_SECRET": "test_secret"
+ASTRO_URL = "https://api.astronomyapi.com/api/v2"
+
+
+def get_db_connection() -> extensions.connection:
+    """Reusable function for getting a database connection."""
+
+    return connect(cursor_factory=extras.RealDictCursor,
+                   dbname=ENV["DB_NAME"],
+                   host=ENV["DB_HOST"],
+                   password=ENV["DB_PASSWORD"],
+                   user=ENV["DB_USER"],
+                   port=ENV["DB_PORT"])
+
+
+def get_auth_string() -> str:
+    """Generates AstronomyAPI authorisation key from env values."""
+
+    user_pass = f"{ENV["ASTRONOMY_ID"]}:{ENV["ASTRONOMY_SECRET"]}"
+
+    auth_string = base64.b64encode(user_pass.encode()).decode()
+
+    return auth_string
+
+
+def get_db_regions() -> list:
+    """Returns the regions data from an RDS instance"""
+
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+
+        cur.execute("SELECT * FROM region;")
+
+        regions = cur.fetchall()
+
+    return regions
+
+
+def get_all_body_positions(start_date: date, end_date: date, lat: float,
+                           long: float, time: str, elev: int = 50) -> dict:
+    """Returns the inclusive body positional information from
+    the Astronomy API for a given date range."""
+
+    url = f"{ASTRO_URL}/bodies/positions?latitude={lat}&longitude={
+        long}&elevation={elev}&from_date={start_date}&to_date={end_date}&time={time}"
+
+    auth_string = get_auth_string()
+
+    headers = {"Authorization": f"Basic {auth_string}"}
+
+    response = requests.get(url, headers=headers, timeout=10)
+
+    if response.status_code == 200:
+        return response.json()
+
+    return APIError("Unsuccessful request.", response.status_code)
+
+
+def make_clean_body_dict(entry: dict) -> dict:
+    """Creates refined body data from astronomy API body data."""
+
+    clean_dict = {}
+    clean_dict["timestamp"] = entry["date"]
+    clean_dict["body_name"] = entry["id"]
+    clean_dict["distance_km"] = entry["distance"]["fromEarth"]["km"]
+    clean_dict["azimuth"] = entry["position"]["horizontal"]["azimuth"]["degrees"]
+    clean_dict["altitude"] = entry["position"]["horizontal"]["altitude"]["degrees"]
+    clean_dict["constellation_name"] = entry["position"]["constellation"]["id"]
+
+    return clean_dict
+
+
+def refine_bodies_data(bodies: dict) -> list:
+    """Removes unnecessary data from the astronomy positions dict."""
+
+    rows = bodies["data"]["table"]["rows"]
+
+   # Each cell contains a list of dictionaries of an entry
+   # key and a single body over a set number of days (7)
+    output_list = []
+    for obj in rows:
+        for entry in obj["cells"]:
+            clean_dict = make_clean_body_dict(entry)
+            output_list.append(clean_dict)
+
+    return output_list
+
+
+def get_moon_phase(input_date: str) -> str:
+    """Returns a url for an image of the moon phase for a given date."""
+
+    example_body = {
+        "format": "png",
+        "style": {
+            "moonStyle": "default",
+            "backgroundStyle": "stars",
+            "headingColor": "white",
+            "textColor": "white"
+        },
+        "observer": {
+            "latitude": 53.812207,
+            "longitude": -2.917976,
+            "date": f"{input_date}"
+        },
+        "view": {
+            "type": "portrait-simple",
+            "orientation": "north-up"
+        }
     }
 
-    @mock.patch.dict("astronomy_extract.ENV", ENV)
-    @mock.patch("astronomy_extract.connect")
-    def test_get_db_connection_called_with_correct_parameters(self, mock_connect):
-        """Tests get_db_connection successfully connects
-        using the correct parameters."""
+    url = f"{ASTRO_URL}/studio/moon-phase"
 
-        mock_conn = object()
-        mock_connect.return_value = mock_conn
+    auth_string = get_auth_string()
 
-        get_db_connection()
+    headers = {"Authorization": f"Basic {auth_string}"}
 
-        mock_connect.assert_called_once_with(
-            cursor_factory=extras.RealDictCursor,
-            dbname=self.ENV["DB_NAME"],
-            host=self.ENV["DB_HOST"],
-            password=self.ENV["DB_PASSWORD"],
-            user=self.ENV["DB_USER"],
-            port=self.ENV["DB_PORT"]
-        )
+    response = requests.post(url, headers=headers, json=example_body,
+                             timeout=10)
 
-    @mock.patch("astronomy_extract.ENV", ENV)
-    @mock.patch("astronomy_extract.connect")
-    def test_get_db_connection_expected_output(self, mock_connect):
-        """Tests get_db_connection successfully connects
-        using the correct parameters."""
+    if response.status_code == 200:
+        return response.json()["data"]["imageUrl"]
 
-        mock_conn = object()
-        mock_connect.return_value = mock_conn
+    return APIError("Unsuccessful request.", response.status_code)
 
-        conn = get_db_connection()
 
-        assert conn == mock_conn
+def get_position_data(input_dict: dict, times: list[str], regions: list[dict],
+                      start_date: date, end_date: date) -> dict:
+    """Returns all positional data for astronomical bodies as dictionary."""
 
-    @mock.patch("astronomy_extract.ENV", ENV)
-    def test_get_auth_string_returns_string(self):
-        """Tests auth_string output is string data."""
+    output_dict = input_dict.copy()
 
-        res = get_auth_string()
+    for region in regions:
 
-        assert isinstance(res, str)
+        region_id = region["region_id"]
+        lat = region["latitude"]
+        long = region["longitude"]
 
-    @mock.patch("astronomy_extract.ENV", ENV)
-    def test_get_auth_string(self):
-        """Tests expected output is provided by the
-        get_auth_string function."""
+        for time in times:
 
-        expected_user_pass = "test_id:test_secret"
-        expected = base64.b64encode(expected_user_pass.encode()).decode()
+            bodies_pos = get_all_body_positions(
+                start_date, end_date, lat, long, time)
 
-        actual = get_auth_string()
+            refined_pos = refine_bodies_data(bodies_pos)
 
-        assert actual == expected
+            output_dict[region_id][time[:2]] = refined_pos
 
-    @mock.patch("astronomy_extract.get_db_connection")
-    def test_get_db_regions_returns_expected_result(self, mock_connection):
-        """Tests that data is passed through into the output correctly."""
+    return output_dict
 
-        mock_conn = mock.Mock()
-        mock_cursor = mock.Mock()
 
-        mock_cursor.fetchall.return_value = [{"key1": 1}, {"key2": 2}]
-        mock_conn.cursor.return_value = mock_cursor
-        mock_connection.return_value.__enter__.return_value = mock_conn
+def get_moon_urls(start: date) -> list[dict]:
+    """Returns list of moon phase URLs from the Astronomy API"""
+    output_list = []
 
-        res = get_db_regions()
+    for n in range(7):
+        moon_day_dict = {}
+        day = start + timedelta(days=n)
+        phase_url = get_moon_phase(day)
 
-        assert res == [{"key1": 1}, {"key2": 2}]
+        moon_day_dict["day"] = str(day)
+        moon_day_dict["url"] = phase_url
 
-    @mock.patch("astronomy_extract.get_db_connection")
-    def test_get_db_regions_returns_list(self, mock_connection):
-        """Tests that data is passed through into the output correctly."""
+        output_list.append(moon_day_dict)
 
-        mock_conn = mock.Mock()
-        mock_cursor = mock.Mock()
+    return output_list
 
-        mock_cursor.fetchall.return_value = [{"key1": 1}, {"key2": 2}]
-        mock_conn.cursor.return_value = mock_cursor
-        mock_connection.return_value.__enter__.return_value = mock_conn
 
-        res = get_db_regions()
+def fill_region_time_dict(times_list: list[str],
+                          region_list: list[dict]) -> dict:
+    """Creates framework for body position dictionary."""
+    region_ids = [region["region_id"] for region in region_list]
+    time_ids = [time[:2] for time in times_list]
 
-        assert isinstance(res, list)
+    output_dict = {}
 
-    @mock.patch("astronomy_extract.get_auth_string")
-    @mock.patch("astronomy_extract.requests.get")
-    def test_get_all_bodies_returns_json_dict(self, mock_get, mock_auth_string):
-        """Asserts that a dictionary is returned by the body function."""
+    for num in region_ids:
+        output_dict[num] = {}
+        for time in time_ids:
+            output_dict[num][time] = {}
 
-        mock_auth_string.return_value = "fake_string"
+    return output_dict
 
-        class MockResponse():
-            """Simple mock class for creating object that returns a
-            dict when .json() method is used."""
 
-            def __init__(self, data: dict):
-                """Init functions for mock class."""
-                self._data = data
-                self.status_code = 200
+def save_to_file(filename: str, data: list[dict]) -> None:
+    """Save the data to a file called stories.json"""
 
-            def json(self):
-                """Function to make mock class json compatible."""
-                return self._data
+    with open(filename, "w", encoding="utf-8") as f_obj:
+        json.dump(data, f_obj, indent=4)
 
-        mock_data = {"key1": "value1", "key2": "value2"}
 
-        mock_response = MockResponse(mock_data)
+def extract_weekly_astronomy_data():
+    """Main function for extracting astronomical for a week"""
 
-        mock_get.return_value = mock_response
+    logging.info("Astronomy data extraction started.")
 
-        res = get_all_body_positions(
-            start_date=date(2024, 1, 1),
-            end_date=date(2024, 1, 10),
-            lat=40.7128,
-            long=-74.0060,
-            time="12:00")
+    start_date = date.today() + timedelta(days=7)
 
-        assert res == mock_data
+    end_date = start_date + timedelta(days=6)
 
-    def test_make_clean_body_dict_expected_outcome(self, sample_raw_body_data,
-                                                   sample_filtered_body_data):
-        """Test dictionary is filtered properly."""
+    times = ["18:00:00", "21:00:00", "00:00:00", "03:00:00", "06:00:00"]
 
-        sample_dict = sample_raw_body_data
+    regions = get_db_regions()
 
-        expected = sample_filtered_body_data
+    output_dict = fill_region_time_dict(times, regions)
 
-        res = make_clean_body_dict(sample_dict)
+    position_data = get_position_data(
+        output_dict, times, regions, start_date, end_date)
+    logging.info("Body position data extracted and refined.")
 
-        assert res == expected
+    final_dict = {}
+    final_dict["body_positions"] = position_data
+    final_dict["moon_phase_urls"] = get_moon_urls(start_date)
+    logging.info("Moon phase data extracted.")
 
-    @mock.patch("astronomy_extract.make_clean_body_dict")
-    def test_refine_bodies_data_creates_list_of_dicts(self, fake_clean, sample_raw_positions):
-        """Asserts that the function returns a list of dicts."""
+    return final_dict
 
-        input_data = sample_raw_positions
 
-        fake_clean.return_value = {"key": "val"}
+if __name__ == "__main__":
 
-        res = refine_bodies_data(input_data)
+    time1 = datetime.now()
+    result_data = extract_weekly_astronomy_data()
+    save_to_file("test_extract_data.json", result_data)
 
-        assert isinstance(res, list)
-
-    @mock.patch("astronomy_extract.refine_bodies_data")
-    @mock.patch("astronomy_extract.get_all_body_positions")
-    def test_get_position_data_returns_dict(self, fake_body_pos, fake_refine):
-        """Tests that the correct data types are returned by the
-        named function."""
-
-        fake_refine.return_value = [1, 2, 3]
-        fake_body_pos.return_value = None
-
-        input_dict = {1: {}, 2: {}}
-
-        regions = [{"region_id": 1, "latitude": 1.2, "longitude": 1.3},
-                   {"region_id": 2, "latitude": 1.4, "longitude": 1.5}]
-
-        times = ["18:00:00", "21:00:00", "00:00:00"]
-
-        start_date, end_date = date.today(), date.today()
-
-        res = get_position_data(input_dict, times, regions,
-                                start_date, end_date)
-
-        assert isinstance(res, dict)
-        assert isinstance(res[1], dict)
-        assert isinstance(res[1]["18"], list)
-
-    @mock.patch("astronomy_extract.refine_bodies_data")
-    @mock.patch("astronomy_extract.get_all_body_positions")
-    def test_get_position_data_returns_correct_vals(self, fake_body_pos, fake_refine):
-        """Tests that the correct data values are returned
-        in the output of the named function"""
-
-        fake_refine.return_value = [1, 2, 3]
-        fake_body_pos.return_value = None
-
-        input_dict = {1: {}, 2: {}}
-
-        regions = [{"region_id": 1, "latitude": 1.2, "longitude": 1.3},
-                   {"region_id": 2, "latitude": 1.4, "longitude": 1.5}]
-
-        times = ["18:00:00", "21:00:00", "00:00:00"]
-
-        start_date, end_date = date.today(), date.today()
-
-        res = get_position_data(input_dict, times, regions,
-                                start_date, end_date)
-
-        assert res[1]["18"][2] == 3
-
-    @mock.patch("astronomy_extract.get_moon_phase")
-    def test_get_moon_urls_returns_list_of_dicts(self, fake_moon_phase):
-        """tests that the get moon url function outputs
-        a list"""
-
-        fake_moon_phase.return_value = "url_string"
-
-        test_date = date.today()
-
-        res = get_moon_urls(test_date)
-
-        assert isinstance(res, list)
-        assert isinstance(res[0], dict)
-        assert isinstance(res[0].get("day"), str)
-        assert isinstance(res[0].get("url"), str)
-
-    def test_fill_region_time_dict_returns_correct_data_types(self):
-        """Tests that the correct data types are returned for the
-        named function."""
-
-        regions = [{"region_id": 1, "latitude": 1.2, "longitude": 1.3},
-                   {"region_id": 2, "latitude": 1.4, "longitude": 1.5}]
-
-        times = ["18:00:00", "21:00:00", "00:00:00"]
-
-        res = fill_region_time_dict(times, regions)
-
-        assert isinstance(res, dict)
-        assert isinstance(res[1], dict)
-        assert isinstance(res[1]["00"], dict)
-        assert not res[1]["00"]
-
-    @mock.patch("astronomy_extract.get_moon_urls")
-    @mock.patch("astronomy_extract.get_position_data")
-    @mock.patch("astronomy_extract.fill_region_time_dict")
-    @mock.patch("astronomy_extract.get_db_regions")
-    def test_extract_astronomy_data(self, fake_regions, fake_positions,
-                                    fake_moon_urls, sample_filtered_body_data,
-                                    sample_moon_urls):
-        """Tests core functionality of main extract function."""
-
-        fake_regions.return_value = [
-            {"region_id": 1, "latitude": 1.2, "longitude": 1.3},
-            {"region_id": 2, "latitude": 1.4, "longitude": 1.5}]
-
-        fake_positions.return_value = sample_filtered_body_data
-        fake_moon_urls.return_value = sample_moon_urls
-
-        res = extract_weekly_astronomy_data()
-
-        assert isinstance(res, dict)
-        assert isinstance(res["body_positions"], list)
-        assert isinstance(res["body_positions"][1], dict)
+    print(f"Time: {(datetime.now() - time1).seconds}")
