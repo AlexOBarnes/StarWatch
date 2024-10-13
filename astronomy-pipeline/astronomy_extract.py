@@ -7,10 +7,13 @@ from os import environ as ENV
 from datetime import date, timedelta, datetime
 import base64
 import json
+import logging
 
 import requests
 from dotenv import load_dotenv
 from psycopg2 import connect, extensions, extras
+
+from api_error import APIError
 
 
 load_dotenv()
@@ -64,7 +67,12 @@ def get_all_body_positions(start_date: date, end_date: date, lat: float,
 
     headers = {"Authorization": f"Basic {auth_string}"}
 
-    return (requests.get(url, headers=headers, timeout=10)).json()
+    response = requests.get(url, headers=headers, timeout=10)
+
+    if response.status_code == 200:
+        return response.json()
+
+    return APIError("Unsuccessful request.", response.status_code)
 
 
 def make_clean_body_dict(entry: dict) -> dict:
@@ -125,8 +133,13 @@ def get_moon_phase(input_date: str) -> str:
 
     headers = {"Authorization": f"Basic {auth_string}"}
 
-    return requests.post(url, headers=headers, json=example_body,
-                         timeout=10).json()["data"]["imageUrl"]
+    response = requests.post(url, headers=headers, json=example_body,
+                             timeout=10)
+
+    if response.status_code == 200:
+        return response.json()["data"]["imageUrl"]
+
+    return APIError("Unsuccessful request.", response.status_code)
 
 
 def get_position_data(input_dict: dict, times: list[str], regions: list[dict],
@@ -196,7 +209,9 @@ def save_to_file(filename: str, data: list[dict]) -> None:
 def extract_weekly_astronomy_data():
     """Main function for extracting astronomical for a week"""
 
-    start_date = date.today()  # + timedelta(days=7)
+    logging.info("Astronomy data extraction started.")
+
+    start_date = date.today() + timedelta(days=7)
 
     end_date = start_date + timedelta(days=6)
 
@@ -208,10 +223,12 @@ def extract_weekly_astronomy_data():
 
     position_data = get_position_data(
         output_dict, times, regions, start_date, end_date)
+    logging.info("Body position data extracted and refined.")
 
     final_dict = {}
     final_dict["body_positions"] = position_data
     final_dict["moon_phase_urls"] = get_moon_urls(start_date)
+    logging.info("Moon phase data extracted.")
 
     return final_dict
 
