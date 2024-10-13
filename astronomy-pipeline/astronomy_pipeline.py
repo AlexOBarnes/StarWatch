@@ -1,6 +1,6 @@
 """Full ETL pipeline lambda for the astronomy API data."""
 
-import logging
+# pylint: disable=W0613
 
 from astronomy_extract import extract_weekly_astronomy_data
 from astronomy_transform import transform_astronomy_data
@@ -9,7 +9,6 @@ from astronomy_load import upload_astronomy_data
 
 def lambda_handler(event=None, context=None) -> None:
     '''Runs the notification pipeline'''
-    print('Running Lambda')
     extract_data = extract_weekly_astronomy_data()
 
     # transform_astronomy_data returns dictionary as follows:
