@@ -124,6 +124,7 @@ class TestExtractFunctions():
             def __init__(self, data: dict):
                 """Init functions for mock class."""
                 self._data = data
+                self.status_code = 200
 
             def json(self):
                 """Function to make mock class json compatible."""
