@@ -3,3 +3,5 @@ pylint
 altair
 streamlit
 streamlit_autorefresh
+matplotlib
+numpy
