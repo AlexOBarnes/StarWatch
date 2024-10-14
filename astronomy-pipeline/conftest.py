@@ -46,8 +46,8 @@ def sample_raw_body_data():
                     "string": "17h 55m 12s"
                 },
                 "declination": {
-                    "degrees": "-23.43",
-                    "string": "-24° 34' 12\""
+                    "degrees": "23.43",
+                    "string": "24° 34' 12\""
                 }
             },
             "constellation": {
@@ -103,8 +103,15 @@ def sample_raw_positions():
         "data": {
             "table": {
                 "rows": [
-                    {"cells": [1, 2, 3]},
-                    {"cells": [1, 2, 3]}
+                    {"cells": [
+                        {"position": {
+                            "horizontal": {
+                                "altitude": {
+                                    "degrees": "23.5"
+                                }
+                            }
+                        }}
+                    ]}
                 ]
             }
         }
