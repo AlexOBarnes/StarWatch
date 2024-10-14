@@ -3,6 +3,7 @@
 from unittest.mock import patch, mock_open, MagicMock
 
 import pytest
+import pandas as pd
 
 from astronomy_transform import (transform_astronomy_data, load_from_file,
                                  get_data_into_dataframe, get_body_mapping,
@@ -155,9 +156,12 @@ class TestGetConstellationMapping():
 class TestCleanPositionData():
     '''Tests for the clean position data function.'''
 
-    def test_clean_position_data(self):
+    @patch('astronomy_transform.get_body_mapping')
+    @patch('astronomy_transform.get_constellation_mapping')
+    def test_clean_position_data(self, mock_get_constellation_mapping,
+                                 mock_get_body_mapping, position_dataframe_example):
         ''''''
-        pass
+        clean_position_data(position_dataframe_example)
 
 
 class TestGetMoonDf():

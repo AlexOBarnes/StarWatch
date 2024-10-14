@@ -1,6 +1,7 @@
 """Conftest file for weekly astronomy data pipeline."""
 
 import pytest
+import pandas as pd
 
 
 @pytest.fixture
@@ -140,3 +141,17 @@ def astronomy_data_dict():
         'positions'], 'moon_phase_list': ['moon']}
 
     return astronomy_data
+
+
+@pytest.fixture
+def position_dataframe_example():
+    '''Test dataframe for testing the cleaning of position data.'''
+    data = {
+        "body_name": ["mars", "earth", "jupiter"],
+        "constellation_name": ["Orion", "Andromeda", "Cassiopeia"],
+        "distance_km": ["50000", "100000", "200000"],
+        "azimuth": ["30", "60", "90"],
+        "altitude": ["10", "20", "30"]
+    }
+
+    return pd.DataFrame(data)
