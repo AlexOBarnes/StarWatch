@@ -20,7 +20,7 @@ pip install -r requirements.txt
     - DB_PORT - port to access RDS (typically 5432 for postgres)
     - AWS_ACCESS_KEY - your personal access key to AWS
     - AWS_SECRET_KEY - your personal secret key to AWS
-    - REGION - the region of AWS that you will be using for this project
+    - AWS_REGION - the region of AWS that you will be using for this project
 
 ### To Run on AWS:
 

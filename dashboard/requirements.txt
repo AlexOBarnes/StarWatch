@@ -1,2 +1,5 @@
 pytest
 pylint
+altair
+streamlit
+streamlit_autorefresh

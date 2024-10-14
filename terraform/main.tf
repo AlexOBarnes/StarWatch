@@ -50,7 +50,7 @@ locals {
 
     # API Keys needed for Lambdas running pipelines.
     NASA_API_KEY = var.NASA_API_KEY
-    ASTRONOMY_KEY_ID  = var.ASTRONOMY_KEY_ID
+    ASTRONOMY_ID  = var.ASTRONOMY_ID
 	ASTRONOMY_SECRET = var.ASTRONOMY_SECRET
 		
 
@@ -72,10 +72,6 @@ resource "aws_security_group" "c13-andrew-starwatch-rds-sg" {
 		protocol = "TCP"
 		cidr_blocks = ["0.0.0.0/0"]
   }
-
-    lifecycle {
-        prevent_destroy = true
-    }
 }
 
 
@@ -121,17 +117,13 @@ resource "aws_db_subnet_group" "c13_rds_subnet_group" {
   	tags = {
     	Name = "c13-rds-subnet-group"
   }
-
-	lifecycle {
-        prevent_destroy = true
-    }
 }
 
 
 # RDS - PostgreSQL Instance storing all data for the StarWatch application. 
 resource "aws_db_instance" "default" {
     allocated_storage            = 10
-    db_name                      = "tamarstarwatchrds"
+    db_name                      = var.DB_NAME
     identifier                   = "c13-tamar-starwatch-rds"
     engine                       = "postgres"
     engine_version               = "16.1"
@@ -144,9 +136,7 @@ resource "aws_db_instance" "default" {
     username                     = var.DB_USER
     password                     = var.DB_PASSWORD
 
-	lifecycle {
-        prevent_destroy = true
-    }
+
 }
 
 
@@ -158,27 +148,27 @@ resource "aws_db_instance" "default" {
 locals {
   lambda_functions = {
     weekly_bodies = {
-		function_name = "WeeklyAstronomyBodiesPipeline"
+		function_name = "c13-starwatch-weekly-astronomy-bodies-pipeline"
 		image_uri     = var.WEEKLY_ASTRONOMY_IMAGE_URI
 		invoked_by    = "step_function_weekly"
     },
     weekly_sunrise_sunset = {
-		function_name = "WeeklySunriseSunsetPipeline"
+		function_name = "c13-starwatch-weekly-sunrise-sunset-pipeline"
 		image_uri     = var.WEEKLY_SET_RISE_IMAGE_URI
 		invoked_by    = "step_function_weekly"
     },
     hourly_aurora = {
-		function_name = "HourlyAuroraWatchPipeline"
+		function_name = "c13-starwatch-hourly-aurora-watch-pipeline"
 		image_uri     = var.HOURLY_AURORA_IMAGE_URI
 		invoked_by    = "step_function_hourly"
     },
     hourly_nearest_bodies = {
-		function_name = "HourlyNearestBodiesEventsPipeline"
+		function_name = "c13-starwatch-hourly-nearest-bodies-events-pipeline"
 		image_uri     = var.HOURLY_VISIBLE_IMAGE_URI
 		invoked_by    = "step_function_hourly"
     },
     quadhourly_weather = {
-		function_name = "QuadhourlyOpenMeteoWeatherPipeline"
+		function_name = "c13-starwatch-quadhourly-openmeteo-weather-pipeline"
 		image_uri     = var.QUADHOURLY_WEATHER_IMAGE_URI
 		invoked_by    = "eventbridge_quadhourly"
     }
@@ -233,7 +223,7 @@ resource "aws_cloudwatch_event_rule" "quadhourly_lambda_trigger" {
 
 # Step Function for Weekly Pipelines (Bodies and Sunrise/Sunset in Parallel).
 resource "aws_sfn_state_machine" "weekly_pipelines_step_function" {
-    name     = "WeeklyPipelinesParallelExecution"
+    name     = "starwatch-weekly-pipelines-parallel-execution"
     role_arn = aws_iam_role.sfn_exec_role.arn
 
     definition = <<-STATE_MACHINE_DEFINITION
@@ -279,7 +269,7 @@ resource "aws_sfn_state_machine" "weekly_pipelines_step_function" {
 	logging_configuration {
 		level = "ALL"
 		include_execution_data = true
-    	log_destination = aws_cloudwatch_log_group.sfn_log_group.arn
+    	log_destination = "${aws_cloudwatch_log_group.sfn_log_group.arn}:*"
 
     		}
 		}
@@ -287,7 +277,7 @@ resource "aws_sfn_state_machine" "weekly_pipelines_step_function" {
 
 # Step Function for Hourly Pipelines (Aurora and Nearest Bodies/Events in Parallel).
 resource "aws_sfn_state_machine" "hourly_pipelines_step_function" {
-    name     = "HourlyPipelinesParallelExecution"
+    name     = "starwatch-hourly-pipelines-parallel-execution"
     role_arn = aws_iam_role.sfn_exec_role.arn
 
     definition = <<-STATE_MACHINE_DEFINITION
@@ -333,7 +323,7 @@ resource "aws_sfn_state_machine" "hourly_pipelines_step_function" {
 	logging_configuration {
 		level = "ALL"
 		include_execution_data = true
-    	log_destination = aws_cloudwatch_log_group.sfn_log_group.arn
+    	log_destination = "${aws_cloudwatch_log_group.sfn_log_group.arn}:*"
 
     		}
 		}
@@ -344,6 +334,7 @@ resource "aws_sfn_state_machine" "hourly_pipelines_step_function" {
 resource "aws_cloudwatch_event_target" "weekly_parallel_target" {
 	rule = aws_cloudwatch_event_rule.weekly_step_function_trigger.name
 	arn  = aws_sfn_state_machine.weekly_pipelines_step_function.arn
+	role_arn = aws_iam_role.eventbridge_step_functions_role.arn
 }
 
 
@@ -351,6 +342,7 @@ resource "aws_cloudwatch_event_target" "weekly_parallel_target" {
 resource "aws_cloudwatch_event_target" "hourly_parallel_target" {
 	rule = aws_cloudwatch_event_rule.hourly_step_function_trigger.name
 	arn  = aws_sfn_state_machine.hourly_pipelines_step_function.arn
+	role_arn = aws_iam_role.eventbridge_step_functions_role.arn
 }
 
 
@@ -398,6 +390,13 @@ resource "aws_iam_role" "sfn_exec_role" {
   	})
 }
 
+
+# A policy providing Step Function with the necessary permissions to interact
+# with CloudWatch is also necessary.
+resource "aws_iam_role_policy_attachment" "sfn_cloudwatch_logs_full_access" {
+  role       = aws_iam_role.sfn_exec_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
 
 # The ECS task has to be given a role so policies can be assigned to it.
 # Specifically, pulling images from ECR and writing logs to Cloudwatch.
@@ -567,7 +566,60 @@ resource "aws_ecs_service" "c13_starwatch_service" {
 
 
 resource "aws_cloudwatch_log_group" "sfn_log_group" {
-  	name = "/aws/states/starwatch_state_machines"
+  	name = "/aws/vendedlogs/states/starwatch_state_machines"
   	retention_in_days = 14 # Will be deleted after the two week project, 
 						   # if not already terraform destroyed.
 }	
+
+
+# The necessary permissions for allowing Step Functions to write logs
+# have been written, but a log group resource has to be created
+# in order to enact and store the logs themselves.
+resource "aws_cloudwatch_log_group" "ecs_dashboard_log_group" {
+    name              = "/ecs/c13_starwatch_dashboard"
+    retention_in_days = 14
+}
+
+
+# IAM Role for EventBridge to invoke Step Functions, in order
+# for EventBridge to be able to interact with Step Functions 
+# and have policies attached to it.
+resource "aws_iam_role" "eventbridge_step_functions_role" {
+  name = "eventbridge_step_functions_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "events.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+
+# IAM Policy allowing EventBridge to start Step Function executions. 
+resource "aws_iam_policy" "eventbridge_step_functions_policy" {
+  name = "eventbridge_step_functions_policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Action = "states:StartExecution",
+      Resource = [
+        aws_sfn_state_machine.weekly_pipelines_step_function.arn,
+        aws_sfn_state_machine.hourly_pipelines_step_function.arn
+      ]
+    }]
+  })
+}
+
+
+# Attaching the policy for Step Function staging / execution to EventBridge instances.
+resource "aws_iam_role_policy_attachment" "eventbridge_step_functions_attachment" {
+  role       = aws_iam_role.eventbridge_step_functions_role.name
+  policy_arn = aws_iam_policy.eventbridge_step_functions_policy.arn
+}

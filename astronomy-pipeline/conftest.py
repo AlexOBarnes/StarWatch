@@ -1,6 +1,8 @@
 """Conftest file for weekly astronomy data pipeline."""
+# pylint: disable=R0801
 
 import pytest
+import pandas as pd
 
 
 @pytest.fixture
@@ -107,3 +109,50 @@ def sample_raw_positions():
             }
         }
     }
+
+
+@pytest.fixture
+def upload_body_data_query():
+    '''Body data sql query for testing.'''
+    q_str = """
+                INSERT INTO body_assignment
+                (at, distance_km, azimuth, altitude, region_id, body_id, constellation_id)
+                VALUES
+                %s"""
+
+    return q_str
+
+
+@pytest.fixture
+def upload_moon_data_query():
+    '''Moon phase data sql query for testing.'''
+    q_str = """
+                INSERT INTO image
+                (image_date, image_url, region_id, constellation_id, image_name)
+                VALUES
+                %s"""
+
+    return q_str
+
+
+@pytest.fixture
+def astronomy_data_dict():
+    '''Test dictionary for testing the upload astronomy data.'''
+    astronomy_data = {'positions_list': [
+        'positions'], 'moon_phase_list': ['moon']}
+
+    return astronomy_data
+
+
+@pytest.fixture
+def position_dataframe_example():
+    '''Test dataframe for testing the cleaning of position data.'''
+    data = {
+        "body_name": ["mars", "earth", "jupiter"],
+        "constellation_name": ["Orion", "Andromeda", "Cassiopeia"],
+        "distance_km": ["50000", "100000", "200000"],
+        "azimuth": ["30", "60", "90"],
+        "altitude": ["10", "20", "30"]
+    }
+
+    return pd.DataFrame(data)

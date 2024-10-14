@@ -36,7 +36,7 @@ aws configure
 This will require sensitive information to be entered through the command line
 
 5. Add to your `.env` file the following:
-    - REGION - region of your ECR repository
+    - AWS_REGION - region of your ECR repository
     - ECR_URI - endpoint of the ECR repository
     - IMAGE_NAME - a name given to your docker image
 
