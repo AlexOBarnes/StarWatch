@@ -2,7 +2,7 @@
 This folder contains the code for the `Astronomy API` data pipeline. This includes `extract.py`, `transform.py`, `load.py` and `pipeline.py`. This pipeline uses the `requests` library to send HTML GET requests to the [Astronomy API](https://docs.astronomyapi.com/) and the `psycopg2` library to load this data onto our database.
 
 ## Setup
-1. Ensure that an SQL server RDS has been setup prior and is accessible
+1. Ensure that an SQL server RDS has been setup prior and is accessible.
     - Note: be sure to store the credentials for accessing this database safely.
 
 2. Signup for the [Astronomy API](https://astronomyapi.com/auth/signup) and store the id and secret key you receive securely.
