@@ -47,7 +47,18 @@ __Figure 1__ - _Starwatch Database ERD_: Shows the entity relationship diagram f
 
 ## How it works
 #### `fake_data.sql`
-- 
+- Uses SQL DML to fill the dynamic tables with fake data for testing purposes.
 #### `schema.sql`
-- 
-#### 
+- Uses SQL DDL to create all the tables in the database as per the ERD above. Then uses SQL DML to seed the static data.
+#### `connect.sh`
+- A short bash script to connect to the database.
+#### `count.sh`
+- A short bash script to get information from the database.
+#### `query.sh`
+- A short bash script to get custom information from the database.
+#### `reset.sh`
+- A short bash script to set up or reset the database.
+#### `seed_test.sh`
+- A short bash script to seed the database with test data.
+#### `truncate.sh`
+- A short bash script to remove dynamic data from the database.
