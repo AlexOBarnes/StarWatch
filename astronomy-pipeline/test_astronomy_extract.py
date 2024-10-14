@@ -1,6 +1,5 @@
 """Test file for the Astronomy API pipeline files."""
-
-# pylint: disable=R0903, R0913, R0917
+# pylint: disable=R0903,R0913,R0917,R0801
 
 import base64
 from unittest import mock

@@ -1,4 +1,5 @@
 """Conftest file for weekly astronomy data pipeline."""
+# pylint: disable=R0801
 
 import pytest
 import pandas as pd
