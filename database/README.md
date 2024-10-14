@@ -17,5 +17,19 @@ __Figure 1__ - _Starwatch Database ERD_: Shows the entity relationship diagram f
     - DB_PORT - port to access RDS (typically 5432 for postgres)
 
 ## Usage
+- To create the initial tables and seed the static data tables (aurora_colour, region, county, body, and constellation):
+```bash reset.sh```
+    - This can also be run again to reset the database back to the starting point.
+- To connect to the database in an interactive session:
+```bash connect.sh```
+- To seed that database with some test data in the dynamic tables (aurora_alert, forecast, image, subscriber, subscriber_county_assignment, solar_feature, body_assignment):
+```bash seed_test.sh```
+- To delete all the data in the dynamic tables excluding subscriber related tables (solar_feature, aurora_alert, image, forecast, body_assignment):
+```bash truncate.sh```
+- To pass in a specific query to the database (The query must be enclosed in single quotes):
+```bash query.sh 'YOUR QUERY HERE'```
+    - Example: ```bash query.sh 'SELECT * FROM body;'```
+- To get the current count of the total rows in each of the dynamic tables excluding subscriber related tables (solar_feature, aurora_alert, image, forecast, body_assignment):
+```bash count.sh```
 
 ## How it works
