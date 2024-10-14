@@ -16,7 +16,7 @@ class TestLoadFromFile():
 
     @patch('json.load')
     @patch("builtins.open")
-    def test_load_from_file_correct(self, mock_open, mock_load):
+    def test_load_from_file_correct_methods(self, mock_open, mock_load):
         '''Tests that the correct methods and functions are called 
         in the load from file function.'''
         mock_open.return_value.__enter__.return_value = MagicMock()
@@ -29,7 +29,7 @@ class TestLoadFromFile():
 
     @patch('json.load')
     @patch('builtins.open')
-    def test_load_from_file_uses_correct_input(self, mock_open, mock_load):
+    def test_load_from_file_uses_correct_calls(self, mock_open, mock_load):
         '''Tests that the open method is called with the correct
         values.'''
         mock_open.return_value.__enter__.return_value = MagicMock()
@@ -56,7 +56,7 @@ class TestGetDataIntoDataFrame():
 
     @patch('pandas.concat')
     @patch('pandas.DataFrame')
-    def test_get_data_into_dataframe_methods(self, mock_dataframe, mock_concat):
+    def test_get_data_into_dataframe_correct_methods(self, mock_dataframe, mock_concat):
         '''Tests that the correct pandas methods are called when the function runs.'''
         get_data_into_dataframe({'body_positions': {1: {1: 'test'}}})
 
@@ -68,8 +68,9 @@ class TestGetBodyMapping():
     '''Tests for the get body mapping function.'''
 
     @patch('astronomy_transform.get_db_connection')
-    def test_get_body_mapping(self, mock_get_db_connection):
-        ''''''
+    def test_get_body_mapping_correct_methods(self, mock_get_db_connection):
+        '''Tests that the correct function and methods are 
+        called within the function.'''
         mock_conn = MagicMock()
         mock_cursor = MagicMock()
         mock_get_db_connection.return_value.__enter__.return_value = mock_conn
@@ -81,13 +82,74 @@ class TestGetBodyMapping():
         assert mock_get_db_connection.called
         assert mock_conn.cursor.called
 
+    @patch('astronomy_transform.get_db_connection')
+    def test_get_body_mapping_correct_call(self, mock_get_db_connection):
+        '''Tests that the correct input is used for the execute method.'''
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_get_db_connection.return_value.__enter__.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
+
+        get_body_mapping()
+
+        mock_cursor.execute.assert_called_once_with(
+            'SELECT body_id, body_name from body;')
+
+    @patch('astronomy_transform.get_db_connection')
+    def test_get_body_mapping_returns_dict(self, mock_get_db_connection):
+        '''Tests that a dict object is returned from the function.'''
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_get_db_connection.return_value.__enter__.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
+
+        result = get_body_mapping()
+
+        assert isinstance(result, dict)
+
 
 class TestGetConstellationMapping():
     '''Tests for the get constellation mapping function.'''
 
-    def test_get_constellation_mapping(self):
-        ''''''
-        pass
+    @patch('astronomy_transform.get_db_connection')
+    def test_get_constellation_mapping_correct_methods(self, mock_get_db_connection):
+        '''Tests that the correct function and methods are 
+        called within the function.'''
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_get_db_connection.return_value.__enter__.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
+
+        get_constellation_mapping()
+
+        assert mock_cursor.execute.called
+        assert mock_get_db_connection.called
+        assert mock_conn.cursor.called
+
+    @patch('astronomy_transform.get_db_connection')
+    def test_get_constellation_mapping_correct_call(self, mock_get_db_connection):
+        '''Tests that the correct input is used for the execute method.'''
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_get_db_connection.return_value.__enter__.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
+
+        get_constellation_mapping()
+
+        mock_cursor.execute.assert_called_once_with(
+            'SELECT constellation_id, constellation_short_name from constellation;')
+
+    @patch('astronomy_transform.get_db_connection')
+    def test_get_constellation_mapping_returns_dict(self, mock_get_db_connection):
+        '''Tests that a dict object is returned from the function.'''
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_get_db_connection.return_value.__enter__.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
+
+        result = get_constellation_mapping()
+
+        assert isinstance(result, dict)
 
 
 class TestCleanPositionData():
