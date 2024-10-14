@@ -1,9 +1,7 @@
 '''Tests for the astronomy transform script.'''
+# pylint: disable=W0613
 
-from unittest.mock import patch, mock_open, MagicMock
-
-import pytest
-import pandas as pd
+from unittest.mock import patch, MagicMock
 
 from astronomy_transform import (transform_astronomy_data, load_from_file,
                                  get_data_into_dataframe, get_body_mapping,
@@ -158,10 +156,23 @@ class TestCleanPositionData():
 
     @patch('astronomy_transform.get_body_mapping')
     @patch('astronomy_transform.get_constellation_mapping')
-    def test_clean_position_data(self, mock_get_constellation_mapping,
-                                 mock_get_body_mapping, position_dataframe_example):
-        ''''''
+    def test_clean_position_data_correct_functions(self, mock_get_constellation_mapping,
+                                                   mock_get_body_mapping,
+                                                   position_dataframe_example):
+        '''Tests that the correct function are called within the function.'''
         clean_position_data(position_dataframe_example)
+
+        assert mock_get_constellation_mapping.called
+        assert mock_get_body_mapping.called
+
+    @patch('astronomy_transform.get_body_mapping')
+    @patch('astronomy_transform.get_constellation_mapping')
+    def test_clean_position_data_returns_list(self, mock_get_constellation_mapping,
+                                              mock_get_body_mapping, position_dataframe_example):
+        '''Tests that the correct function are called within the function.'''
+        result = clean_position_data(position_dataframe_example)
+
+        assert isinstance(result, list)
 
 
 class TestGetMoonDf():
