@@ -1,5 +1,5 @@
 '''Tests for the astronomy load script.'''
-# pylint: disable=W0613
+# pylint: disable=W0613,R0801
 
 from unittest.mock import patch, MagicMock
 
