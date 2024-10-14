@@ -6,6 +6,19 @@ This folder contains the scripts to create the database, database tables(as show
 __Figure 1__ - _Starwatch Database ERD_: Shows the entity relationship diagram for the database used in this project.
 
 ## Setup
+### To Run Locally:
+1. Ensure that PostgreSQL is installed on your machine.
+
+2. Create a database using ```'psql postgres -c 'CREATE DATABASE <your_database_name_here>;'```
+    - Example: `'psql postgres -c 'CREATE DATABASE starwatch;'`
+
+3. Create a `.env` file with the following:
+    - DB_HOST - the host of your database (typically localhost)
+    - DB_USER - username for accessing the database
+    - DB_NAME - the name of your database
+    - DB_PORT - port to access database (typically 5432)
+
+### To Run on AWS:
 1. Ensure that an SQL server RDS has been setup prior and is accessible.
     - Note: be sure to store the credentials for accessing this database safely.
 
@@ -28,8 +41,13 @@ __Figure 1__ - _Starwatch Database ERD_: Shows the entity relationship diagram f
 ```bash truncate.sh```
 - To pass in a specific query to the database (The query must be enclosed in single quotes):
 ```bash query.sh 'YOUR QUERY HERE'```
-    - Example: ```bash query.sh 'SELECT * FROM body;'```
+    - Example: `bash query.sh 'SELECT * FROM body;'`
 - To get the current count of the total rows in each of the dynamic tables excluding subscriber related tables (solar_feature, aurora_alert, image, forecast, body_assignment):
 ```bash count.sh```
 
 ## How it works
+#### `fake_data.sql`
+- 
+#### `schema.sql`
+- 
+#### 
