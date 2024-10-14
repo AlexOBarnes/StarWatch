@@ -5,7 +5,7 @@ This folder contains the code for the `Astronomy API` data pipeline. This includ
 1. Ensure that an SQL server RDS has been setup prior and is accessible
     - Note: be sure to store the credentials for accessing this database safely.
 
-2. Signup for the [Astronomy API](https://astronomyapi.com/auth/signup) and store the id and secret key you receive securely
+2. Signup for the [Astronomy API](https://astronomyapi.com/auth/signup) and store the id and secret key you receive securely.
 
 ### To Run Locally:
 3. Setup a venv and install the requirements
