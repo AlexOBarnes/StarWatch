@@ -3,3 +3,6 @@ pylint
 altair
 streamlit
 streamlit_autorefresh
+requests
+python-dotenv
+psycopg2-binary
