@@ -1,5 +1,5 @@
 '''Checks for todays NASA image of day and the current ISS coordinates'''
-#pylint: disable=E0401
+#pylint: disable=E0401,C0413
 from os import environ as ENV
 import sys
 import os
@@ -7,10 +7,11 @@ import logging
 from datetime import datetime as dt
 from dotenv import load_dotenv
 from requests import get
-from api_error import APIError
-from extract import get_connection
+
 sys.path.append(os.path.abspath(os.path.join(
     os.path.dirname(__file__), '..', 'weekly-openmeteo')))
+from api_error import APIError
+from extract import get_connection
 
 KEYS = ['data','title','url']
 
