@@ -4,7 +4,7 @@ from os import environ as ENV
 from dotenv import load_dotenv
 from boto3 import client
 
-def send_sms(subscribers: list[dict]) -> None:
+def send_sms_for_bodies(subscribers: list[dict]) -> None:
     '''Uses boto3 to send messages to subscribers by sms'''
     sms = get_client('sns')
     logging.info('Client established for SNS')
@@ -27,7 +27,7 @@ def send_sms(subscribers: list[dict]) -> None:
             logging.warning('Invalid data in: %s', sub)
 
 
-def send_email(subscribers: list[dict]) -> None:
+def send_email_for_bodies(subscribers: list[dict]) -> None:
     '''Uses boto3 to send messages to subscribers by ses'''
     ses = get_client('ses')
     logging.info('Client established for SES')
@@ -56,6 +56,52 @@ def send_email(subscribers: list[dict]) -> None:
             logging.warning('Invalid data in: %s',sub)
 
 
+def send_aurora_sms(client, number, message):
+    '''Sends an sms using boto3'''
+    response = client.publish(PhoneNumber=number,
+            Message=message)
+    logging.info('SNS response received: %s', response)
+
+def send_aurora_email(client, address: str, sub: str, text: str) -> None:
+    '''Sends an email using boto3'''
+    response = client.send_email(Source=ENV['FROM'],
+                              Destination={'ToAddresses': [address]},
+                              Message={'Subject': {'Data': sub},
+                                       'Body': {'Text': {'Data': text}}})
+    logging.info('SES response received: %s', response)
+
+def assign_content(colour:str) -> str:
+    '''Returns the content of the email based on the alert status'''
+    if colour == 'Yellow':
+        return 'Starwatch Aurora Alert: Minor Geomagnetic Activity'
+    if colour == 'Amber':
+        return 'Starwatch Aurora Alert: Possible Aurora'
+    return 'Starwatch Aurora Alert: Aurora Likely'
+
+
+def construct_aurora_email(users: list[dict], alert: tuple[str]) -> None:
+    '''Constructs the message for the aurora email'''
+    ses = get_client('ses')
+    logging.info('Client established for SES')
+    subject = assign_content()
+    for sub in users:
+        message = f'STARWATCH AURORA ALERT\n\nHello {sub['user']}\n'
+        message += alert[1]
+        send_aurora_email(ses,sub['email'],subject,message)
+        logging.info('Email sent to: %s',sub['user'])
+
+def construct_aurora_sms(users:list[dict], alert: str) -> None:
+    '''Constructs the text for aurora SMS'''
+    ses = get_client('sns')
+    logging.info('Client established for SNS')
+    message = assign_content()
+    for sub in users:
+        message += f'\nHello {sub['user']},\n'
+        message += alert[1]
+        send_aurora_sms(ses, sub['phone'], message)
+        logging.info('SMS sent to: %s',sub['user'])
+
+
 def get_client(service: str) -> client:
     '''Returns a AWS client'''
     return client(service, aws_access_key_id=ENV["MY_AWS_ACCESS_KEY"],
@@ -66,5 +112,3 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
     load_dotenv()
-    send_sms({})
-    send_email({})
