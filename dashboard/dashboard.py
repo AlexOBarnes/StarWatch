@@ -1,11 +1,16 @@
+#pylint:disable=line-too-long, invalid-name, broad-exception-caught
+'''Streamlit dashboard for the StarWatch project.'''
+
 import re
 import os
+from datetime import datetime
+import urllib
 
 from dotenv import load_dotenv
 import streamlit as st
 import psycopg2
-from datetime import datetime
-import urllib
+import pandas as pd
+import altair as alt
 
 
 load_dotenv()
@@ -13,6 +18,8 @@ load_dotenv()
 # Database connection setup (for the subscriber page
 
 def connect_to_db():
+    '''Returns a psycopg2 connection object'''
+
     return psycopg2.connect(
         host=os.getenv('DB_HOST'),
         database=os.getenv('DB_NAME'),
@@ -43,7 +50,6 @@ def validate_email(email):
         (?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]
         |\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])  
     '''
-    
     return re.match(email_regex, email, re.VERBOSE)
 
 
@@ -85,6 +91,11 @@ if page == 'Home':
 
 
     def generate_stellarium_url(lat, lon, dt):
+        '''
+        Returns a stellarium URL to be used in an iFrame
+        in the Streamlit dashboard.
+        '''
+
         base_url = 'https://stellarium-web.org/'
         params = {
             'lat': lat,
@@ -97,26 +108,102 @@ if page == 'Home':
         return full_url
 
     def get_current_datetime():
+        '''Returns the current time as a datetime object.'''
         return datetime.now()
 
     # The Stellarium iFrame is stored in a Streamlit container.
     with st.container():
-        
+
         st.markdown('## Interactive Night Sky View')
-        
+
         current_datetime = get_current_datetime()
-        
+
         stellarium_url = generate_stellarium_url(
-            DEFAULT_LATITUDE, 
-            DEFAULT_LONGITUDE, 
+            DEFAULT_LATITUDE,
+            DEFAULT_LONGITUDE,
             current_datetime
         )
-        
+
         st.components.v1.html(f'''
         <iframe src='{stellarium_url}' style='width: 100%; height: 600px; border: none;'></iframe>
         ''', height=600)
 
         st.markdown(f'**Current Date & Time:** {current_datetime.strftime('%Y-%m-%d %H:%M:%S')}')
+
+
+
+
+
+    conn = connect_to_db()
+
+    with conn:
+        with conn.cursor() as cur:
+            query = """
+            SELECT *
+            FROM forecast
+            WHERE at >= '2024-10-11 00:00:00' 
+            AND at < '2024-10-12 00:00:00';
+            """
+            cur.execute(query)
+            data = cur.fetchall()
+
+            columns = [desc[0] for desc in cur.description]
+
+    df = pd.DataFrame(data, columns=columns)  # Specify column names
+    print(df.head())
+    # Create two columns: one for controls, one for the chart
+    controls_col, chart_col = st.columns([1, 4], gap="small")  # Adjust the ratio as needed
+
+    with controls_col:
+        st.subheader("Select Weather Indicators")
+        # Define the available weather indicators and their display names
+        weather_indicators = {
+            'Temperature (°C)': 'temperature_c',
+            'Precipitation Probability (%)': 'precipitation_probability_percent',
+            'Precipitation (mm)': 'precipitation_mm',
+            'Cloud Coverage (%)': 'cloud_coverage_percent',
+            'Visibility (m)': 'visibility_m'
+        }
+
+        # Initialize an empty list to hold selected indicators
+        selected_indicators = []
+
+        # Create checkboxes for each indicator
+        for label, column in weather_indicators.items():
+            if st.checkbox(label, value=True):
+                selected_indicators.append(column)
+
+    with chart_col:
+        if not selected_indicators:
+            st.warning("Please select at least one weather indicator to display the chart.")
+        else:
+            # Melt the dataframe to long format for Altair
+            df_melted = df.melt(id_vars=['at'], value_vars=selected_indicators,
+                                var_name='Indicator', value_name='Value')
+
+            # Define a color scheme
+            color_scheme = alt.Scale(scheme='category10')  # 'category10' is a good default
+
+            # Create the Altair chart
+            chart = alt.Chart(df_melted).mark_line(point=True).encode(
+                x=alt.X('at:T', title='Timestamp'),
+                y=alt.Y('Value:Q', title='Value'),
+                color=alt.Color('Indicator:N', title='Weather Indicator', scale=color_scheme),
+                tooltip=[
+                    alt.Tooltip('at:T', title='Time'),
+                    alt.Tooltip('Indicator:N', title='Indicator'),
+                    alt.Tooltip('Value:Q', title='Value')
+                ]
+            ).properties(
+                width=700,  # Adjust width as needed
+                height=400,
+                title="Weather Indicators Over Time"
+            ).interactive()  # Enables zooming and panning
+
+            st.altair_chart(chart, use_container_width=True)
+
+
+
 
 
 elif page == 'Subscriber Signup':
@@ -125,24 +212,24 @@ elif page == 'Subscriber Signup':
 
     # A basic Streamlit input form, for a username and at least an email or phone number.
     username = st.text_input('Desired Username', '')
-    email = st.text_input('Email Address', '')
-    phone = st.text_input('Phone Number (UK)', '')
+    user_email = st.text_input('Email Address', '')
+    user_phone = st.text_input('Phone Number (UK)', '')
 
     if st.button('Submit'):
         # Ensure username, either email or phone is provided
         if not username:
             st.error('Please provide a username.')
 
-        elif not email and not phone:
+        elif not user_email and not user_phone:
             st.error('Please provide either an email or a phone number.')
 
-        elif email and not validate_email(email):
+        elif user_email and not validate_email(user_email):
 
             st.error('Invalid email format. Please enter a valid email.')
-        elif phone and not validate_phone(phone):
+        elif user_phone and not validate_phone(user_phone):
 
             st.error('Invalid UK phone number format. It must start with +44 or 0 followed by 10 digits.')
-        
+
         else:
             try:
                 with connect_to_db() as conn:
@@ -150,7 +237,7 @@ elif page == 'Subscriber Signup':
                         cursor.execute('''
                             INSERT INTO subscriber (subscriber_username, subscriber_phone, subscriber_email) 
                             VALUES (%s, %s, %s);
-                        ''', (username, phone if phone else None, email if email else None)) # Using tertiary statements to account for None(s).
+                        ''', (username, user_phone if user_phone else None, user_email if user_email else None)) # Using tertiary statements to account for None(s).
                     conn.commit()  # Commiting the valid user information to the 'subscriber' table in the RDS.
                 st.success('Subscriber added successfully!')
             except Exception as e:

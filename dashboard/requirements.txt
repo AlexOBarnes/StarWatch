@@ -3,3 +3,6 @@ pylint
 altair
 streamlit
 streamlit_autorefresh
+seaborn 
+altair
+ipython
