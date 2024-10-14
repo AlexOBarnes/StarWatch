@@ -1,4 +1,5 @@
 '''Contains tests for checker script'''
+#pylint: disable=W0613
 from unittest import mock
 import pytest
 from checker import get_subscribers_bodies,get_subscribers_aurora,\
@@ -53,7 +54,8 @@ class TestGetSubscribers:
 
     @mock.patch('checker.get_aurora_regions')
     @mock.patch('checker.get_connection')
-    def test_get_subscribers_aurora_yellow_alert(self, mock_get_connection, mock_get_aurora_regions, valid_queried_data, valid_clean_aurora_data):
+    def test_get_subscribers_aurora_yellow_alert(self, mock_get_connection, mock_get_aurora_regions,
+                                                 valid_queried_data, valid_clean_aurora_data):
         '''Test that yellow aurora alert returns the expected subscriber list'''
         mock_get_aurora_regions.return_value = ['Yellow', 'Moderate alert']
         mock_conn = mock.MagicMock()

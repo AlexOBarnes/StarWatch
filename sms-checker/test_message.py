@@ -1,11 +1,10 @@
 '''Contains tests for message.py'''
+#pylint: disable=W0613,R0903
 from os import environ as ENV
 from unittest import mock
 from message import send_sms_for_bodies, send_email_for_bodies,\
-                send_aurora_sms,assign_content,send_aurora_email,\
+                send_aurora_sms,assign_content,\
                 construct_aurora_email,construct_aurora_sms
-    
-
 
 class TestSendSMS:
     '''Tests for the send SMS function'''
@@ -67,26 +66,33 @@ class TestSendEmail:
 
 
 class TestAssignContent:
+    '''Contains tests for assign content function'''
     def test_yellow_alert(self):
+        '''Tests that yellow alerts return the correct thing'''
         result = assign_content('Yellow')
         assert result == 'Starwatch Aurora Alert: Minor Geomagnetic Activity'
 
     def test_amber_alert(self):
+        '''Tests that amber alerts return the correct thing'''
         result = assign_content('Amber')
         assert result == 'Starwatch Aurora Alert: Possible Aurora'
 
     def test_default_alert(self):
+        '''Tests that green alerts return the correct thing'''
         result = assign_content('Green')
         assert result == 'Starwatch Aurora Alert: Aurora Likely'
 
     def test_unknown_alert(self):
+        '''Tests that red alerts return the correct thing'''
         result = assign_content('Red')
         assert result == 'Starwatch Aurora Alert: Aurora Likely'
 
 
 class TestSendAuroraSMS:
+    '''Contains tests for send aurora sms function'''
     @mock.patch('message.client')
     def test_send_aurora_sms(self, mock_boto_client):
+        '''Tests that valid inputs results in a publish'''
         mock_client = mock_boto_client.return_value
         number = '+12345678901'
         message = 'Test alert message'
@@ -107,7 +113,8 @@ class TestAuroraNotifications:
         users = [{'user': 'davidjohnson', 'email': 'davidjohnson@example.com'},
             {'user': 'johndoe', 'email': 'johndoe@example.com'}]
         alert = ('Yellow', 'Minor Geomagnetic Activity')
-        with mock.patch('message.assign_content', return_value='Starwatch Aurora Alert: Minor Geomagnetic Activity'):
+        with mock.patch('message.assign_content',
+                        return_value='Starwatch Aurora Alert: Minor Geomagnetic Activity'):
             construct_aurora_email(users, alert)
         mock_get_client.assert_called_once_with('ses')
 
@@ -121,6 +128,7 @@ class TestAuroraNotifications:
         users = [{'user': 'davidjohnson', 'phone': '+12345678901'},
                 {'user': 'johndoe', 'phone': '+19876543210'}]
         alert = 'Minor Geomagnetic Activity'
-        with mock.patch('message.assign_content', return_value='Starwatch Aurora Alert: Minor Geomagnetic Activity'):
+        with mock.patch('message.assign_content',
+                        return_value='Starwatch Aurora Alert: Minor Geomagnetic Activity'):
             construct_aurora_sms(users, alert)
         mock_get_client.assert_called_once_with('sns')

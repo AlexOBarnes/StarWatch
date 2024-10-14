@@ -1,4 +1,5 @@
 '''This script contains the lambda handler for this pipeline'''
+#pylint: disable=W0613,W0612
 import logging
 import asyncio
 from checker import get_subscribers_bodies, get_subscribers_aurora
@@ -7,11 +8,13 @@ from message import send_email_for_bodies,send_sms_for_bodies,\
 
 
 def process_users(contacts: list) -> tuple[list]:
+    '''Processes the user lists into email and phone lists'''
     return ([entry for entry in contacts if entry['email']],
             [entry for entry in contacts if entry['phone']])
 
 
 async def alerts_for_bodies() -> None:
+    '''Asynchronous function that alerts users about celestial bodies'''
     subscribers = get_subscribers_bodies()
     if subscribers:
         logging.info('Subscribers found: %s', len(subscribers))
@@ -30,6 +33,7 @@ async def alerts_for_bodies() -> None:
 
 
 async def alerts_for_auroras() -> None:
+    '''Asynchronous function that alerts users about auroras'''
     users,colour = get_subscribers_aurora()
     if users:
         logging.info('Subscribers found: %s', len(users))
@@ -48,6 +52,7 @@ async def alerts_for_auroras() -> None:
 
 
 async def run_notifications():
+    '''Runs asynchronous functions'''
     await asyncio.gather(alerts_for_bodies(),
                          alerts_for_auroras())
 
@@ -61,4 +66,3 @@ def lambda_handler(event,context) -> None:
 
 if __name__ == '__main__':
     lambda_handler({},{})
-    

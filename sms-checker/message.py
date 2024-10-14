@@ -56,15 +56,15 @@ def send_email_for_bodies(subscribers: list[dict]) -> None:
             logging.warning('Invalid data in: %s',sub)
 
 
-def send_aurora_sms(client, number, message):
+def send_aurora_sms(sms, number, message):
     '''Sends an sms using boto3'''
-    response = client.publish(PhoneNumber=number,
+    response = sms.publish(PhoneNumber=number,
             Message=message)
     logging.info('SNS response received: %s', response)
 
-def send_aurora_email(client, address: str, sub: str, text: str) -> None:
+def send_aurora_email(ses, address: str, sub: str, text: str) -> None:
     '''Sends an email using boto3'''
-    response = client.send_email(Source=ENV['FROM'],
+    response = ses.send_email(Source=ENV['FROM'],
                               Destination={'ToAddresses': [address]},
                               Message={'Subject': {'Data': sub},
                                        'Body': {'Text': {'Data': text}}})
@@ -83,7 +83,7 @@ def construct_aurora_email(users: list[dict], alert: tuple[str]) -> None:
     '''Constructs the message for the aurora email'''
     ses = get_client('ses')
     logging.info('Client established for SES')
-    subject = assign_content()
+    subject = assign_content(alert[0])
     for sub in users:
         message = f'STARWATCH AURORA ALERT\n\nHello {sub['user']}\n'
         message += alert[1]
@@ -94,7 +94,7 @@ def construct_aurora_sms(users:list[dict], alert: str) -> None:
     '''Constructs the text for aurora SMS'''
     ses = get_client('sns')
     logging.info('Client established for SNS')
-    message = assign_content()
+    message = assign_content(alert[0])
     for sub in users:
         message += f'\nHello {sub['user']},\n'
         message += alert[1]
