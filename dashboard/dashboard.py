@@ -132,8 +132,6 @@ if page == 'Home':
 
 
 
-
-
     conn = connect_to_db()
 
     with conn:
