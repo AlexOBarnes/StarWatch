@@ -76,7 +76,7 @@ For these commands ensure you are in the terraform initialised folder when runni
     - Lambda:
         - The lambda function - created by recursion through the use of a `local` block.
         - AWS cloudwatch rules - allows for logging.
-        - IAM role - an administration role that allows the lambdas to execute and to pull images from ECR.
+        - IAM role - an administration role that allows the lambdas to execute and to pull images from ECR. These are assigned by recursion and a `if` statement so that only the minimum required permisions are granted.
     - State machine: 
         - Step function - creates two step functions that target the lambdas to run either hourly or quadhorally.
         - IAM role - an administration role that allows the state machine to execute.
@@ -84,7 +84,10 @@ For these commands ensure you are in the terraform initialised folder when runni
         - IAM role - an administration role that allows the ECS task to execute.
         - AWS cloudwatch rules - allows for logging by ecs.
         - ECS task definition - this defines which ECR image will be loaded and on what machine.
-        - ECS service - a system that restarts the ECS task upon failure
+        - ECS service - a system that restarts the ECS task upon failure.
+    - Eventbridge:
+        - Cloudwatch roles - allows for logging by eventbridge
+        - Eventbridge bus - A quadhoral, hourly and weekly eventbridge triggers are provisioned
 
 #### variables.tf
 - Defines the secret variables used in `main.tf`.
