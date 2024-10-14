@@ -15,7 +15,6 @@ from psycopg2 import connect, extensions, extras
 
 from api_error import APIError
 
-
 load_dotenv()
 
 ASTRO_URL = "https://api.astronomyapi.com/api/v2"
@@ -211,7 +210,9 @@ def save_to_file(filename: str, data: list[dict]) -> None:
 def extract_weekly_astronomy_data():
     """Main function for extracting astronomical for a week"""
 
-    start_date = date.today()  # + timedelta(days=7)
+    logging.info("Data extraction started.")
+
+    start_date = date.today() + timedelta(days=7)
 
     end_date = start_date + timedelta(days=6)
 
@@ -223,10 +224,12 @@ def extract_weekly_astronomy_data():
 
     position_data = get_position_data(
         output_dict, times, regions, start_date, end_date)
+    logging.info("Body position data extracted and refined.")
 
     final_dict = {}
     final_dict["body_positions"] = position_data
     final_dict["moon_phase_urls"] = get_moon_urls(start_date)
+    logging.info("Moon phase data extracted.")
 
     return final_dict
 

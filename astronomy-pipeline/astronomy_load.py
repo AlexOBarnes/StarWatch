@@ -1,5 +1,7 @@
 """Load functions to upload nested list data to relevant tables."""
 
+import logging
+
 from psycopg2.extras import execute_values
 
 from astronomy_extract import get_db_connection
@@ -12,6 +14,7 @@ def upload_body_position_data(body_data: list[list]) -> None:
     #                       constellation_id]
 
     with get_db_connection() as conn:
+        logging.info("Connection established.")
 
         cur = conn.cursor()
 
@@ -22,6 +25,7 @@ def upload_body_position_data(body_data: list[list]) -> None:
                 %s"""
 
         execute_values(cur, q_str, body_data)
+        logging.info("Body position data uploaded.")
 
 
 def upload_moon_phase_data(moon_phase_data: list[list]) -> None:
@@ -34,6 +38,7 @@ def upload_moon_phase_data(moon_phase_data: list[list]) -> None:
     # Moon phase list order: [date, url, none, none, image_name]
 
     with get_db_connection() as conn:
+        logging.info("Connection established.")
 
         cur = conn.cursor()
 
@@ -44,10 +49,14 @@ def upload_moon_phase_data(moon_phase_data: list[list]) -> None:
                 %s"""
 
         execute_values(cur, q_str, moon_phase_data)
+        logging.info("Moon phase data uploaded.")
 
 
 def upload_astronomy_data(data_dict: dict) -> None:
     '''Uploads both the position and  moon phase data from the given dict.'''
+
+    logging.info("Data upload to RDS started.")
+
     position_data = data_dict["positions_list"]
     moon_data = data_dict["moon_phase_list"]
 
