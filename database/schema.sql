@@ -106,7 +106,7 @@ CREATE TABLE subscriber_county_assignment (
 
 CREATE TABLE image (
     image_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    image_name VARCHAR(10) NOT NULL,
+    image_name VARCHAR(100) NOT NULL,
     image_url VARCHAR(255) NOT NULL,
     image_date DATE NOT NULL,
     region_id SMALLINT,

@@ -5,3 +5,7 @@ streamlit
 streamlit_autorefresh
 matplotlib
 numpy
+requests
+python-dotenv
+psycopg2-binary
+
