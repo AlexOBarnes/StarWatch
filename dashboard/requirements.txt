@@ -11,3 +11,4 @@ python-dotenv
 matplotlib
 numpy
 requests
+tqdm

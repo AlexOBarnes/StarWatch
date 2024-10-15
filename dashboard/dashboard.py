@@ -15,7 +15,7 @@ import phonenumbers
 from phonenumbers import NumberParseException
 import numpy as np
 
-from load_dashboard_data import connect_to_db, load_from_starwatch_rds, load_forecasts_by_county_name
+from load_dashboard_data import connect_to_db, load_from_starwatch_rds, load_forecasts_by_county_name, load_celestial_body_information
 
 
 load_dotenv()
@@ -125,6 +125,8 @@ elif page == 'Weather':
             filtered_df['cloud_coverage_rolling'] = filtered_df['cloud_coverage_percent'].rolling(window=24).mean()
             filtered_df['visibility_rolling'] = filtered_df['visibility_m'].rolling(window=24).mean()
             filtered_df['temperature_rolling'] = filtered_df['temperature_c'].rolling(window=24).mean()
+            filtered_df['precipitation_prob_rolling'] = filtered_df['precipitation_probability_percent'].rolling(window=24).mean()
+            filtered_df['precipitation_mm_rolling'] = filtered_df['precipitation_mm'].rolling(window=24).mean()
 
         # Check if a single day is selected
         is_single_day = start_date == end_date
@@ -212,19 +214,54 @@ elif page == 'Weather':
             temperature_chart += rolling_avg_line
 
 
-        # col1, col2, col3 = st.columns(3)
-        # # Display all charts in a single column
-        # with col1:
-        st.altair_chart(cloud_chart, use_container_width=True)
-        st.altair_chart(visibility_chart, use_container_width=True)
-        st.altair_chart(temperature_chart, use_container_width=True)
+
+
+        # Precipitation probability (%) and precipitation level (mm) visualisation.
+
+        # Precipitation probability on the left y-axis
+        precipitation_prob_chart = alt.Chart(filtered_df).mark_line(color='blue').encode(
+            x=alt.X('at:T', title='Time'),
+            y=alt.Y('precipitation_probability_percent:Q', title='Precipitation Probability (%)'),
+            tooltip=['at:T', 'precipitation_probability_percent']
+        ).properties(
+            width=1000,
+            height=500
+        )
+
+        # Precipitation amount (mm) on the right y-axis.
+        precipitation_mm_chart = alt.Chart(filtered_df).mark_line(color='green').encode(
+            x=alt.X('at:T', title='Time'),
+            y=alt.Y('precipitation_mm:Q', title='Precipitation (mm)'),
+            tooltip=['at:T', 'precipitation_mm']
+        )
+
+        precipitation_chart = alt.layer(
+            precipitation_prob_chart,
+            precipitation_mm_chart
+        ).resolve_scale(
+            y='independent' 
+        ).properties(
+            title="Precipitation Probability (%) and Precipitation (mm) Over Time"
+        )
+
+
+
+        col1, col2 = st.columns(2)
+        # Display all charts in a single column
+        with col1:
+            st.altair_chart(cloud_chart, use_container_width=True)
+            st.altair_chart(visibility_chart, use_container_width=True)
+
+        with col2:
+            st.altair_chart(temperature_chart, use_container_width=True)
+            st.altair_chart(precipitation_chart, use_container_width=True)
 
 
 elif page == 'Stellarium Integration':
 
     st.markdown('''
     This dashboard provides an interactive view of the night sky as seen from **London**. The view updates automatically to reflect the current date and time.
-    ''')
+    ''')    
 
     # General coordinates for London, Liverpool street.
     DEFAULT_LATITUDE = 51.5074
@@ -369,64 +406,69 @@ elif page == 'Subscriber Signup':
 
             # If there's an error from the database itself, it will be due to a UNIQUE schema violation.
             except psycopg2.errors.UniqueViolation:
-                st.error('Username already exists. Please choose a different username.')
+                st.error('🛑 Username already exists. Please choose a different username.')
             # In the event of any other generalised error, this serves as some basic error handling that is formatted in a pretty way.
             except Exception as e:
                 st.error(f'Error adding subscriber: {e}')
 
 elif page == 'Test':
+    conn = connect_to_db()
+
+    bodies_df = load_celestial_body_information(conn)
+
+    print(bodies_df.head(10))
 
 
-    def calculate_visibility(test_max_visibility, test_cloud_coverage, test_time_step, test_orbital_frequency):
-        orbital_effect = np.sin(2 * np.pi * test_orbital_frequency * test_time_step)
-        visibility = test_max_visibility * (1 - test_cloud_coverage / 100) * (0.5 + 0.5 * orbital_effect)
-        return visibility
+    # def calculate_visibility(test_max_visibility, test_cloud_coverage, test_time_step, test_orbital_frequency):
+    #     orbital_effect = np.sin(2 * np.pi * test_orbital_frequency * test_time_step)
+    #     visibility = test_max_visibility * (1 - test_cloud_coverage / 100) * (0.5 + 0.5 * orbital_effect)
+    #     return visibility
 
-    bodies = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Moon', 'Pluto']
-    max_visibilities = [12000, 25000, 30000, 20000, 18000, 15000, 13000, 30000, 10000]
-    orbital_frequencies = [0.2, 0.1, 0.05, 0.07, 0.03, 0.02, 0.01, 0.5, 0.005]
+    # bodies = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Moon', 'Pluto']
+    # max_visibilities = [12000, 25000, 30000, 20000, 18000, 15000, 13000, 30000, 10000]
+    # orbital_frequencies = [0.2, 0.1, 0.05, 0.07, 0.03, 0.02, 0.01, 0.5, 0.005]
 
-    start_date = pd.Timestamp('2024-11-01')
-    end_date = pd.Timestamp('2024-11-30')
-    days = pd.date_range(start=start_date, end=end_date, freq='D')
+    # start_date = pd.Timestamp('2024-11-01')
+    # end_date = pd.Timestamp('2024-11-30')
+    # days = pd.date_range(start=start_date, end=end_date, freq='D')
 
-    data = []
-    for body, max_visibility, frequency in zip(bodies, max_visibilities, orbital_frequencies):
-        for i, day in enumerate(days):
-            cloud_coverage = np.random.randint(0, 100)
-            visibility = calculate_visibility(max_visibility, cloud_coverage, i, frequency)
-            data.append({
-                'body_name': body,
-                'date': day,
-                'max_visibility_m': max_visibility,
-                'cloud_coverage_percent': cloud_coverage,
-                'visibility_m': visibility
-            })
-
-
-    visibility_df = pd.DataFrame(data)
-
-    source = pd.DataFrame({
-        'x': visibility_df['date'].dt.date,  
-        'y': visibility_df['body_name'],     
-        'z': visibility_df['visibility_m']    
-    })
+    # data = []
+    # for body, max_visibility, frequency in zip(bodies, max_visibilities, orbital_frequencies):
+    #     for i, day in enumerate(days):
+    #         cloud_coverage = np.random.randint(0, 100)
+    #         visibility = calculate_visibility(max_visibility, cloud_coverage, i, frequency)
+    #         data.append({
+    #             'body_name': body,
+    #             'date': day,
+    #             'max_visibility_m': max_visibility,
+    #             'cloud_coverage_percent': cloud_coverage,
+    #             'visibility_m': visibility
+    #         })
 
 
-    heatmap = alt.Chart(source).mark_rect().encode(
-        x=alt.X('x:O', title='Date', axis=alt.Axis(labels=False, ticks=False)),
-        y=alt.Y('y:O', title='Celestial Body'),
-        color=alt.Color('z:Q',
-                        scale=alt.Scale(domain=[0, 30000],
-                                        range=['#fff5eb', '#ff0000', '#800080']),
-                        title='Visibility (m)'),
-        tooltip=['y', 'x:T', 'z']
-    ).properties(
-        width=2000,
-        height=500,
-        title='Daily Visibility of Celestial Bodies'
-    )
+    # visibility_df = pd.DataFrame(data)
 
-    col1, col2, col3 = st.columns(3)
-    with col2:
-        st.altair_chart(heatmap, use_container_width=True)
+    # source = pd.DataFrame({
+    #     'x': visibility_df['date'].dt.date,  
+    #     'y': visibility_df['body_name'],     
+    #     'z': visibility_df['visibility_m']    
+    # })
+
+
+    # heatmap = alt.Chart(source).mark_rect().encode(
+    #     x=alt.X('x:O', title='Date', axis=alt.Axis(labels=False, ticks=False)),
+    #     y=alt.Y('y:O', title='Celestial Body'),
+    #     color=alt.Color('z:Q',
+    #                     scale=alt.Scale(domain=[0, 30000],
+    #                                     range=['#fff5eb', '#ff0000', '#800080']),
+    #                     title='Visibility (m)'),
+    #     tooltip=['y', 'x:T', 'z']
+    # ).properties(
+    #     width=2000,
+    #     height=500,
+    #     title='Daily Visibility of Celestial Bodies'
+    # )
+
+    # col1, col2, col3 = st.columns(3)
+    # with col2:
+    #     st.altair_chart(heatmap, use_container_width=True)
