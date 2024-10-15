@@ -5,6 +5,7 @@ from psycopg2.extensions import connection as Psycopg2Connection
 
 import pandas as pd
 from dotenv import load_dotenv
+import streamlit as st
 
 
 def connect_to_db():
@@ -39,6 +40,33 @@ def load_from_starwatch_rds(conn:Psycopg2Connection, table_name:str) -> pd.DataF
     df = pd.DataFrame(data, columns=columns)
 
     return df
+
+
+
+def load_forecasts_by_county_name(conn:Psycopg2Connection) -> pd.DataFrame:
+    '''
+    
+    '''
+    with conn:
+        with conn.cursor() as cur:
+            query = f"""
+            SELECT *
+            FROM forecast AS f
+            JOIN county AS c
+            ON f.county_id = c.county_id;
+            """
+
+            cur.execute(query)
+            data = cur.fetchall()
+
+            columns = [desc[0] for desc in cur.description]
+
+    df = pd.DataFrame(data, columns=columns)
+
+    return df
+
+
+
 
 
 
