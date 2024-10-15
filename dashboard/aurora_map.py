@@ -34,8 +34,7 @@ if __name__ == "__main__":
                         'North East (England)', 'North West (England)',
                         'Yorkshire and The Humber', 'Northern Ireland']
 
-    # colour = get_aurora_data()
-    colour = 'Amber'
+    colour = get_aurora_data()
 
     # Load the shapefile
     gdf = gpd.read_file("shapefile/NUTS1_Jan_2018_UGCB_in_the_UK.shp")
@@ -63,7 +62,8 @@ if __name__ == "__main__":
 
     # Plot the map with specific region colors
     ax = gdf.plot(color=gdf['color'], edgecolor='black',
-                  linewidth=0.5)
+                  linewidth=1)
     ax.set_axis_off()
+    plt.gcf().set_facecolor('black')
     plt.title('Possible Aurora Sightings')
     plt.show()
