@@ -377,9 +377,9 @@ elif page == 'Subscriber Signup':
 elif page == 'Test':
 
 
-    def calculate_visibility(max_visibility, cloud_coverage, time_step, orbital_frequency):
-        orbital_effect = np.sin(2 * np.pi * orbital_frequency * time_step)
-        visibility = max_visibility * (1 - cloud_coverage / 100) * (0.5 + 0.5 * orbital_effect)
+    def calculate_visibility(test_max_visibility, test_cloud_coverage, test_time_step, test_orbital_frequency):
+        orbital_effect = np.sin(2 * np.pi * test_orbital_frequency * test_time_step)
+        visibility = test_max_visibility * (1 - test_cloud_coverage / 100) * (0.5 + 0.5 * orbital_effect)
         return visibility
 
     bodies = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Moon', 'Pluto']
