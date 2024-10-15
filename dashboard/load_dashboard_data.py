@@ -45,8 +45,10 @@ def load_from_starwatch_rds(conn:Psycopg2Connection, table_name:str) -> pd.DataF
 
 def load_forecasts_by_county_name(conn:Psycopg2Connection) -> pd.DataFrame:
     '''
-    
+    Returns a DataFrame of forecasted weather data joined with county
+    information from the the StarWatch RDS.
     '''
+    
     with conn:
         with conn.cursor() as cur:
             query = f"""
