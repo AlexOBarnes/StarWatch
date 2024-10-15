@@ -4,6 +4,8 @@ altair
 streamlit
 streamlit_autorefresh
 seaborn 
-ipython
 email_validator
 phonenumbers
+requests
+python-dotenv
+psycopg2-binary
