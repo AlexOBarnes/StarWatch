@@ -259,15 +259,10 @@ async def get_star_chart(input_date: str, constellation: str) -> str:
                     data = await response.json()
                     return data["data"]["imageUrl"]
 
-                logging.info('Star chart post request unsuccessful.')
                 return None
 
     except asyncio.TimeoutError:
         logging.info("Star chart API request failed due to timeout.")
-        return None
-
-    except Exception as e:
-        logging.error(f"Error occurred: {str(e)}")
         return None
 
 
@@ -380,8 +375,8 @@ async def extract_weekly_astronomy_data():
     final_dict = {}
     final_dict["body_positions"] = position_data
     final_dict["moon_phase_urls"] = get_moon_urls(start_date)
+    logging.info("Moon phase data extracted.")
 
-    # Await the asynchronous get_star_chart_urls function
     final_dict["star_chart_urls"] = await get_star_chart_urls(start_date)
     logging.info("Star chart data extracted.")
 

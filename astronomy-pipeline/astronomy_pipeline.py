@@ -4,6 +4,7 @@
 
 import time
 import logging
+import asyncio
 
 from astronomy_extract import extract_weekly_astronomy_data
 from astronomy_transform import transform_astronomy_data
@@ -19,7 +20,7 @@ def lambda_handler(event=None, context=None) -> None:
 
     start_time = time.time()
 
-    extract_data = extract_weekly_astronomy_data()
+    extract_data = asyncio.run(extract_weekly_astronomy_data())
     logging.info("Astronomy API data extraction complete.")
 
     # transform_astronomy_data returns dictionary as follows:
