@@ -138,6 +138,12 @@ def get_star_chart_df(star_chart_data: list["dict"]) -> pd.DataFrame:
     return pd.DataFrame(star_chart_data)
 
 
+def clean_star_chart_data(star_chart_df: pd.DataFrame) -> list:
+    """Returns clean star chart data as a list."""
+
+    cleaned_df = star_chart_df[star]
+
+
 def convert_star_chart_datetime(chart_list: list) -> list:
     """Converts moon phase time string to a datetime object."""
 

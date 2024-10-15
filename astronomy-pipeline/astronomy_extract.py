@@ -391,11 +391,7 @@ async def extract_weekly_astronomy_data():
 if __name__ == "__main__":
 
     time1 = datetime.now()
-    # result_data = extract_weekly_astronomy_data()
-    # save_to_file("test_extract_data.json", result_data)
 
     res = asyncio.run(extract_weekly_astronomy_data())
-
-    save_to_file("data_with_st_charts.json", res)
 
     print(f"Time: {(datetime.now() - time1).seconds}")
