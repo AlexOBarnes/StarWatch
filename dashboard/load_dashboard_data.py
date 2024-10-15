@@ -14,6 +14,7 @@ def connect_to_db():
     return psycopg2.connect(
         host=os.getenv('DB_HOST'),
         database=os.getenv('DB_NAME'),
+        port = os.getenv('PORT'),
         user=os.getenv('DB_USER'),
         password=os.getenv('DB_PASSWORD')
     )
@@ -48,7 +49,7 @@ def load_forecasts_by_county_name(conn:Psycopg2Connection) -> pd.DataFrame:
     Returns a DataFrame of forecasted weather data joined with county
     information from the the StarWatch RDS.
     '''
-    
+
     with conn:
         with conn.cursor() as cur:
             query = f"""
