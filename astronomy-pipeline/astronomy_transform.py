@@ -151,12 +151,16 @@ def convert_star_chart_data(chart_list: list) -> list:
 
     c_mapping = get_constellation_mapping()
 
+    output_list = []
     for entry in chart_list:
 
         entry['day'] = datetime.strptime(entry['day'], "%Y-%m-%d")
         entry['constellation_id'] = c_mapping[entry["constellation"]]
 
-    return chart_list
+        output_list.append(
+            [entry["date"], entry["url"], entry["constellation_id"]])
+
+    return output_list
 
 
 def transform_astronomy_data(raw_data: dict) -> list:
@@ -178,6 +182,8 @@ def transform_astronomy_data(raw_data: dict) -> list:
     star_chart_list = convert_star_chart_data(star_chart_data)
     print(star_chart_list)
     logging.info("Star chart data converted to 2D list.")
+
+    print(star_chart_list)
 
     return {
         "positions_list": position_list,

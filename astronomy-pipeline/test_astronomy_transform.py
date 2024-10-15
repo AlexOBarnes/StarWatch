@@ -9,7 +9,7 @@ import pytest
 from astronomy_transform import (transform_astronomy_data, load_from_file,
                                  get_data_into_dataframe, get_body_mapping,
                                  get_constellation_mapping, clean_position_data,
-                                 get_moon_df, convert_positions_datetime,
+                                 convert_positions_datetime, get_moon_list,
                                  convert_moon_datetime)
 
 
@@ -186,13 +186,13 @@ class TestCleanPositionData():
 class TestGetMoonDf():
     '''Tests for the get moon df function.'''
 
-    def test_get_moon_df_returns_list(self):
+    def test_get_moon_list_returns_list(self):
         '''Tests that a list object is returned from the function.'''
-        result = get_moon_df([{'test': 'test'}])
+        result = get_moon_list([{'test': 'test'}])
 
         assert isinstance(result, list)
 
-    def test_get_moon_df_valid_data(self):
+    def test_get_moon_list_valid_data(self):
         '''Test that the function output matches the expected, 
         with valid phase data.'''
         moon_data = [{'date': '2024-10-10', 'image_url': 'https://example.com/image1.jpg'},
@@ -201,7 +201,7 @@ class TestGetMoonDf():
         expected_output = [['2024-10-10', 'https://example.com/image1.jpg'],
                            ['2024-11-10', 'https://example.com/image2.jpg']]
 
-        result = get_moon_df(moon_data)
+        result = get_moon_list(moon_data)
 
         assert result == expected_output
 
@@ -258,61 +258,64 @@ class TestTransformAstronomyData():
     @patch('astronomy_transform.get_data_into_dataframe')
     @patch('astronomy_transform.clean_position_data')
     @patch('astronomy_transform.convert_positions_datetime')
-    @patch('astronomy_transform.get_moon_df')
+    @patch('astronomy_transform.get_moon_list')
     @patch('astronomy_transform.convert_moon_datetime')
     def test_transform_astronomy_data_correct_functions(self, mock_convert_moon_datetime,
-                                                        mock_get_moon_df,
+                                                        mock_get_moon_list,
                                                         mock_convert_positions_datetime,
                                                         mock_clean_position_data,
                                                         mock_get_data_into_dataframe):
         '''Tests that the correct functions are called within the function.'''
-        transform_astronomy_data({'moon_phase_urls': 'test'})
+        transform_astronomy_data(
+            {'moon_phase_urls': 'test', 'star_chart_urls': []})
 
         assert mock_clean_position_data.called
         assert mock_convert_moon_datetime.called
-        assert mock_get_moon_df.called
+        assert mock_get_moon_list.called
         assert mock_convert_positions_datetime.called
         assert mock_get_data_into_dataframe.called
 
     @patch('astronomy_transform.get_data_into_dataframe')
     @patch('astronomy_transform.clean_position_data')
     @patch('astronomy_transform.convert_positions_datetime')
-    @patch('astronomy_transform.get_moon_df')
+    @patch('astronomy_transform.get_moon_list')
     @patch('astronomy_transform.convert_moon_datetime')
     def test_transform_astronomy_data_returns_dict(self, mock_convert_moon_datetime,
-                                                   mock_get_moon_df,
+                                                   mock_get_moon_list,
                                                    mock_convert_positions_datetime,
                                                    mock_clean_position_data,
                                                    mock_get_data_into_dataframe):
         '''Tests that a dict object is returned from the function.'''
         mock_clean_position_data.return_value = MagicMock()
         mock_convert_moon_datetime.return_value = MagicMock()
-        mock_get_moon_df.return_value = MagicMock()
+        mock_get_moon_list.return_value = MagicMock()
         mock_convert_positions_datetime.return_value = MagicMock()
         mock_get_data_into_dataframe.return_value = MagicMock()
 
-        result = transform_astronomy_data({'moon_phase_urls': 'test'})
+        result = transform_astronomy_data(
+            {'moon_phase_urls': 'test', 'star_chart_urls': []})
 
         assert isinstance(result, dict)
 
     @patch('astronomy_transform.get_data_into_dataframe')
     @patch('astronomy_transform.clean_position_data')
     @patch('astronomy_transform.convert_positions_datetime')
-    @patch('astronomy_transform.get_moon_df')
+    @patch('astronomy_transform.get_moon_list')
     @patch('astronomy_transform.convert_moon_datetime')
     def test_transform_astronomy_data_correct_keys(self, mock_convert_moon_datetime,
-                                                   mock_get_moon_df,
+                                                   mock_get_moon_list,
                                                    mock_convert_positions_datetime,
                                                    mock_clean_position_data,
                                                    mock_get_data_into_dataframe):
         '''Tests that the correct keys are returned from the function.'''
         mock_clean_position_data.return_value = MagicMock()
         mock_convert_moon_datetime.return_value = MagicMock()
-        mock_get_moon_df.return_value = MagicMock()
+        mock_get_moon_list.return_value = MagicMock()
         mock_convert_positions_datetime.return_value = MagicMock()
         mock_get_data_into_dataframe.return_value = MagicMock()
 
-        result = transform_astronomy_data({'moon_phase_urls': 'test'})
+        result = transform_astronomy_data(
+            {'moon_phase_urls': 'test', 'star_chart_urls': []})
 
         assert 'positions_list' in result
         assert 'moon_phase_list' in result
