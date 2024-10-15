@@ -1,14 +1,15 @@
 '''Checks for todays NASA image of day and the current ISS coordinates'''
+#pylint: disable=E0401,C0413
+from os import environ as ENV
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..', 'weekly-openmeteo')))
-from os import environ as ENV
 import logging
 from datetime import datetime as dt
 from dotenv import load_dotenv
 from requests import get
-from psycopg2 import connect
+
+sys.path.append(os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '..', 'weekly-openmeteo')))
 from api_error import APIError
 from extract import get_connection
 
@@ -44,8 +45,9 @@ def get_nasa_image():
         if all(clean_data):
             logging.info('Data cleaned successfully.')
             return clean_data
-        else:
-            raise ValueError(f'Could not obtain {KEYS[clean_data.index(None)]}')
+
+        raise ValueError(f'Could not obtain {KEYS[clean_data.index(None)]}')
+
     raise APIError('Unsuccessful request.', response.status_code)
 
 
@@ -68,25 +70,26 @@ def nasa_pipeline() -> None:
         logging.info('Nasa image uploaded')
     logging.info('Nasa image found in database.')
 
+def extract_unix_time(timestamp:int) -> dt:
+    '''Converts a unix timestamp to a datetime object'''
+    return dt.fromtimestamp(timestamp)
+
 def get_iss_location() -> dict:
     '''Requests the current ISS location'''
-    ...
+    url = 'http://api.open-notify.org/iss-now.json'
+    response = get(url, timeout=10)
 
-def transform_iss_data() -> list:
-    '''Formats the ISS data ready for insertion'''
-    ...
+    if response.status_code == 200:
+        data = response.json()
 
-def load_iss_data() -> None:
-    '''Uploads the data into the database'''
-    ...
+        if data['message'] == 'success':
+            return {'timestamp':extract_unix_time(data['timestamp']),
+                    'latitude': data['iss_position']['latitude'],
+                    'longitude':data['iss_position']['longitude']}
 
-
-def iss_pipeline() -> None:
-    '''Runs the ISS pipeline to obtain the current ISS location'''
-    ...
+    raise APIError('Unsuccessful request.', response.status_code)
 
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
     load_dotenv()
-    nasa_pipeline()

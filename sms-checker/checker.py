@@ -41,4 +41,4 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
     load_dotenv()
-    get_subscribers()
+    print(get_subscribers())
