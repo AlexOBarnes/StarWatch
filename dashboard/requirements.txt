@@ -6,3 +6,5 @@ streamlit_autorefresh
 requests
 python-dotenv
 psycopg2-binary
+geopandas
+matplotlib
