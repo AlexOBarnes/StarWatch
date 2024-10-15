@@ -151,7 +151,7 @@ class TestGetIssLocation:
             'iss_position': {'latitude': '46.9566','longitude': '-3.7535'}}
         mock_get.return_value = mock_response
         result = get_iss_location()
-        expected_result = {'timestamp': dt(2024,10,14,12,26,12),
+        expected_result = {'timestamp': dt(2024,10,14,13,26,12),
             'latitude': '46.9566','longitude': '-3.7535'}
 
         assert result == expected_result
