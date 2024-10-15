@@ -180,10 +180,7 @@ def transform_astronomy_data(raw_data: dict) -> list:
 
     star_chart_data = raw_data["star_chart_urls"]
     star_chart_list = convert_star_chart_data(star_chart_data)
-    print(star_chart_list)
     logging.info("Star chart data converted to 2D list.")
-
-    print(star_chart_list)
 
     return {
         "positions_list": position_list,
