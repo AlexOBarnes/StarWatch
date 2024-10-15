@@ -8,10 +8,12 @@ from datetime import date, timedelta, datetime
 import base64
 import json
 import logging
+import asyncio
 
 import requests
 from dotenv import load_dotenv
 from psycopg2 import connect, extensions, extras
+from requests import exceptions as ex
 
 from api_error import APIError
 
@@ -135,18 +137,25 @@ def get_moon_phase(input_date: str) -> str:
 
     headers = {"Authorization": f"Basic {auth_string}"}
 
-    response = requests.post(url, headers=headers, json=request_body,
-                             timeout=10)
+    try:
+        response = requests.post(url, headers=headers, json=request_body,
+                                 timeout=10)
 
-    if response.status_code == 200:
-        return response.json()["data"]["imageUrl"]
+        if response.status_code == 200:
+            return response.json()["data"]["imageUrl"]
 
-    logging.info('Moon phase post request unsuccessful.')
-    return APIError("Unsuccessful request.", response.status_code)
+        logging.info('Moon phase post request unsuccessful.')
+        return APIError("Unsuccessful request.", response.status_code)
+
+    except ex.ReadTimeout:
+        logging.info("Star chart API request failed.")
+        return None
 
 
 def get_star_chart(input_date: str, constellation: str) -> str:
     """Returns a url for an image of the moon phase for a given date."""
+
+    print("Request started.")
 
     request_body = {
         "style": "default",
@@ -169,15 +178,46 @@ def get_star_chart(input_date: str, constellation: str) -> str:
 
     headers = {"Authorization": f"Basic {auth_string}"}
 
-    response = requests.post(url, headers=headers, json=request_body,
-                             timeout=10)
+    try:
+        response = requests.post(url, headers=headers, json=request_body,
+                                 timeout=7)
+        if response.status_code == 200:
+            return response.json()["data"]["imageUrl"]
 
-    if response.status_code == 200:
-        return response.json()["data"]["imageUrl"]
+        logging.info('Moon phase post request unsuccessful.')
+        return APIError("Unsuccessful request.", response.status_code)
 
-    logging.info('Moon phase post request unsuccessful.')
-    return APIError("Unsuccessful request.", response.status_code)
+    except ex.ReadTimeout:
+        logging.info("Star chart API request failed.")
+        return None
 
+
+# def get_star_chart():
+
+#     example_body = {
+#         "style": "default",
+#         "observer": {
+#             "latitude": lat,
+#             "longitude": long,
+#             "date": f"{date.today()}"
+#         },
+#         "view": {
+#             "type": "constellation",
+#             "parameters": {
+#                 "constellation": "vir"  # 3 letter constellation ID
+#             }
+#         }
+#     }
+
+#     url = f"{ASTRO_URL}/studio/star-chart"
+
+#     user_pass = f"{ENV["ASTRONOMY_ID"]}:{ENV["ASTRONOMY_SECRET"]}"
+
+#     auth_string = base64.b64encode(user_pass.encode()).decode()
+
+#     headers = {"Authorization": f"Basic {auth_string}"}
+
+#     return requests.post(url, headers=headers, json=example_body).json().get("data")["imageUrl"]
 
 def get_const_list():
 
@@ -200,7 +240,7 @@ def get_star_chart_urls(start: date) -> list[dict]:
     constellations = get_const_list()
 
     for n in range(7):
-        for const in constellations:
+        for const in constellations[:2]:
             star_chart_dict = {}
             day = start + timedelta(days=n)
             chart_url = get_star_chart(day, const)
@@ -311,6 +351,6 @@ if __name__ == "__main__":
     # result_data = extract_weekly_astronomy_data()
     # save_to_file("test_extract_data.json", result_data)
 
-    print(get_star_chart(date.today(), "ori"))
+    print(get_star_chart_urls(date.today()))
 
     print(f"Time: {(datetime.now() - time1).seconds}")
