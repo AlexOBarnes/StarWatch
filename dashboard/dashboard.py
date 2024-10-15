@@ -176,14 +176,9 @@ elif page == 'Subscriber Signup':
             st.error('🛑 Please provide either an email or a phone number.')
 
         elif user_email and not validate_email(user_email):
-            st.error('⚠️ Invalid email format. Please enter a valid email.')
-        elif user_phone and not validate_phone_number(user_phone):
-            st.error('⚠️ Invalid UK phone number format. It must start with +44 or 0 followed by 10 digits.')
-
-        elif user_email and not validate_email(user_email):
             st.error('🛑 Invalid email format. Please enter a valid email.')
         elif user_phone and not validate_phone_number(user_phone):
-            st.error('🛑 Invalid UK phone number format. It must start with +44 or 07 followed by 9 digits.')
+            st.error('🛑 Invalid UK phone number format. It must start with +44 followed by 10 digits or 07 followed by 9 digits.')
 
         # Subscribers need to be mapped to a specific county(ies), otherwise the service is meaningless.
         elif not selected_counties:
