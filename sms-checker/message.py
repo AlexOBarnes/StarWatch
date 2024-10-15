@@ -56,7 +56,7 @@ def send_email_for_bodies(subscribers: list[dict]) -> None:
             logging.warning('Invalid data in: %s',sub)
 
 
-def send_aurora_sms(sms, number, message):
+def send_aurora_sms(sms, number: str, message: str) -> None:
     '''Sends an sms using boto3'''
     response = sms.publish(PhoneNumber=number,
             Message=message)
