@@ -153,47 +153,6 @@ def get_moon_phase(input_date: str) -> str:
         return None
 
 
-# def get_star_chart(input_date: str, constellation: str) -> str:
-#     """Returns a url for an image of the moon phase for a given date."""
-
-#     print("Request started.")
-
-#     request_body = {
-#         "style": "default",
-#         "observer": {
-#             "latitude": 53.812207,
-#             "longitude": -2.917976,
-#             "date": f"{input_date}"
-#         },
-#         "view": {
-#             "type": "constellation",
-#             "parameters": {
-#                 "constellation": constellation
-#             }
-#         }
-#     }
-
-#     url = f"{ASTRO_URL}/studio/star-chart"
-
-#     auth_string = get_auth_string()
-
-#     headers = {"Authorization": f"Basic {auth_string}"}
-
-#     try:
-#         response = requests.post(url, headers=headers, json=request_body,
-#                                  timeout=7)
-#         if response.status_code == 200:
-#             return response.json()["data"]["imageUrl"]
-
-#         logging.info('Moon phase post request unsuccessful.')
-#         return APIError("Unsuccessful request.", response.status_code)
-
-#     except ex.ReadTimeout:
-
-#         logging.info("Star chart API request failed.")
-#         return None
-
-
 def get_const_list():
 
     with get_db_connection() as conn:
@@ -206,26 +165,6 @@ def get_const_list():
     constellations = [c["constellation_short_name"].lower() for c in res]
 
     return constellations
-
-
-# def get_star_chart_urls(start: date) -> list[dict]:
-#     """Returns list of moon phase URLs from the Astronomy API"""
-#     output_list = []
-
-#     constellations = get_const_list()
-
-#     for n in range(7):
-#         for const in constellations:
-#             star_chart_dict = {}
-#             day = start + timedelta(days=n)
-#             chart_url = get_star_chart(day, const)
-
-#             star_chart_dict["day"] = str(day)
-#             star_chart_dict["url"] = chart_url
-
-#             output_list.append(star_chart_dict)
-
-#     return output_list
 
 
 async def get_star_chart(input_date: str, constellation: str) -> str:
