@@ -252,12 +252,16 @@ async def get_star_chart(input_date: str, constellation: str) -> str:
     headers = {"Authorization": f"Basic {auth_string}"}
 
     try:
-        # Make the asynchronous request
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers, json=request_body, timeout=50) as response:
                 if response.status == 200:
                     data = await response.json()
-                    return data["data"]["imageUrl"]
+                    image_url = data["data"]["imageUrl"]
+                    return {
+                        "day": input_date,
+                        "url": image_url,
+                        "constellation": constellation
+                    }
 
                 return None
 
@@ -266,9 +270,8 @@ async def get_star_chart(input_date: str, constellation: str) -> str:
         return None
 
 
-async def get_star_chart_urls(start: date) -> list[dict]:
+async def get_star_chart_urls(start: date) -> list:
     """Returns list of star chart URLs from the Astronomy API asynchronously."""
-    output_list = []
     constellations = get_const_list()
 
     tasks = []
@@ -279,14 +282,9 @@ async def get_star_chart_urls(start: date) -> list[dict]:
             task = get_star_chart(str(day), const)
             tasks.append(task)
 
-    chart_urls = await asyncio.gather(*tasks)
+    chart_list = await asyncio.gather(*tasks)
 
-    for i, url in enumerate(chart_urls):
-        day = start + timedelta(days=i // len(constellations))
-        output_list.append({
-            "day": str(day),
-            "url": url
-        })
+    output_list = [item for item in chart_list if item]
 
     return output_list
 
@@ -387,6 +385,6 @@ if __name__ == "__main__":
 
     time1 = datetime.now()
 
-    res = asyncio.run(extract_weekly_astronomy_data())
+    res = asyncio.run(get_star_chart_urls(date.today()))
 
     print(f"Time: {(datetime.now() - time1).seconds}")

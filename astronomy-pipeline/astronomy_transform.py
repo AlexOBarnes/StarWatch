@@ -138,12 +138,12 @@ def get_star_chart_df(star_chart_data: list["dict"]) -> pd.DataFrame:
     return pd.DataFrame(star_chart_data)
 
 
-def clean_star_chart_data(star_chart_df: pd.DataFrame) -> list:
-    """Returns clean star chart data as a list."""
+# def clean_star_chart_data(star_chart_df: pd.DataFrame) -> list:
+#     """Returns clean star chart data as a list."""
 
-    cleaned_df = star_chart_df.dropna(subset=['url'])
+#     cleaned_df = star_chart_df.dropna(subset=['url'])
 
-    return cleaned_df.values.tolist()
+#     return cleaned_df.values.tolist()
 
 
 def convert_star_chart_datetime(chart_list: list) -> list:
@@ -151,7 +151,7 @@ def convert_star_chart_datetime(chart_list: list) -> list:
 
     for entry in chart_list:
 
-        entry[0] = datetime.strptime(entry[0], "%Y-%m-%d")
+        entry['day'] = datetime.strptime(entry['day'], "%Y-%m-%d")
 
     return chart_list
 
@@ -172,9 +172,7 @@ def transform_astronomy_data(raw_data: dict) -> list:
     logging.info("Moon phase data converted to 2D list.")
 
     star_chart_data = raw_data["star_chart_urls"]
-    star_chart_df = get_star_chart_df(star_chart_data)
-    star_chart_list = clean_star_chart_data(star_chart_df)
-    star_chart_list = convert_star_chart_datetime(star_chart_list)
+    star_chart_list = convert_star_chart_datetime(star_chart_data)
     logging.info("Star chart data converted to 2D list.")
 
     return {
