@@ -15,6 +15,16 @@ from extract import get_connection
 
 KEYS = ['data','title','url']
 
+def get_image_of_the_day() -> str:
+    query = """SELECT image_name,image_url FROM image
+    WHERE image_name ILIKE '%nasa_%' AND
+     image_date = CURRENT_DATE """
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            data = cur.fetchone()
+            print(data)
+    return data
 
 
 def has_nasa_image() -> bool:
@@ -93,3 +103,4 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
     load_dotenv()
+    get_image_of_the_day()
