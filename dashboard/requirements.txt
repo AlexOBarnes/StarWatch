@@ -4,5 +4,6 @@ altair
 streamlit
 streamlit_autorefresh
 seaborn 
-altair
 ipython
+email_validator
+phonenumbers
