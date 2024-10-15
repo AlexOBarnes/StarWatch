@@ -158,7 +158,7 @@ def convert_star_chart_data(chart_list: list) -> list:
         entry['constellation_id'] = c_mapping[entry["constellation"]]
 
         output_list.append(
-            [entry["date"], entry["url"], entry["constellation_id"]])
+            [entry["day"], entry["url"], entry["constellation_id"]])
 
     return output_list
 

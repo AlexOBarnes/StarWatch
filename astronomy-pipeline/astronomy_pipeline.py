@@ -31,7 +31,7 @@ def lambda_handler(event=None, context=None) -> None:
     transformed_data = transform_astronomy_data(extract_data)
     logging.info("Astronomy data transformation complete.")
 
-    # upload_astronomy_data(transformed_data)
+    upload_astronomy_data(transformed_data)
     logging.info("Astronomy data upload complete.")
     logging.info("Astronomy execution time: %s seconds" %
                  round((time.time() - start_time), 2))
