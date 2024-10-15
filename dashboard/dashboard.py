@@ -15,7 +15,7 @@ from email_validator import validate_email as ve, EmailNotValidError
 import phonenumbers
 from phonenumbers import NumberParseException
 
-from load_dashboard_data import return_connection, load_from_starwatch_rds
+from load_dashboard_data import connect_to_db, load_from_starwatch_rds
 
 
 load_dotenv()
@@ -146,7 +146,7 @@ elif page == 'Subscriber Signup':
 
 
     # Establishing a connection instance for a given refresh.
-    conn = return_connection()
+    conn = connect_to_db()
 
     # Reading from the StarWatch database to retrieve all static country names and IDs.
     counties = load_from_starwatch_rds(conn, 'county')

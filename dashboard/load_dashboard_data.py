@@ -7,7 +7,7 @@ import pandas as pd
 from dotenv import load_dotenv
 
 
-def return_connection():
+def connect_to_db():
     '''Returns a psycopg2 connection object'''
 
     return psycopg2.connect(
@@ -46,5 +46,5 @@ if __name__ == '__main__':
     # Main block, primarily for testing.
     load_dotenv()
 
-    conn_instance = return_connection()
+    conn_instance = connect_to_db()
     print(load_from_starwatch_rds(conn_instance, 'forecast'))
