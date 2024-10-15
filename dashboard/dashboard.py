@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 import streamlit as st
 import psycopg2
 from psycopg2.extras import execute_values
-from psycopg2.errors import UniqueViolation
 import pandas as pd
 import altair as alt
 from email_validator import validate_email as ve, EmailNotValidError
@@ -66,51 +65,48 @@ if page == 'Home':
     st.title('⭐ Starwatch Data Dashboard ⭐')
 
 
-
+# The part of the dashboard visualising weather and its effect on stargazing.
 elif page == 'Weather':
     st.title('⛅ Weather Data Dashboard 🌨️')
 
     conn = connect_to_db()
+    # Loading all weather forecasts, joined by county ID to county names.
     data = load_forecasts_by_county_name(conn)
 
-    df = pd.DataFrame(data)  # Specify column names
-    df.to_csv('test')
-
-
+    df = pd.DataFrame(data)
 
     forecast_df = pd.DataFrame(data)
 
+    # Ensuring there are no duplicate columns that can cause problems, as we joined on 'county_id'.
     forecast_df.columns = forecast_df.columns.str.replace(r'.1', '', regex=True)
     if forecast_df.columns.duplicated().any():
         forecast_df = forecast_df.loc[:, ~forecast_df.columns.duplicated()]
 
-    # Convert 'at' column to datetime if not already done
     forecast_df['at'] = pd.to_datetime(forecast_df['at'])
 
-    # Extract just the date part for filtering purposes
+    # Extract just the date from the datetime for filtering purposes.
     forecast_df['date'] = forecast_df['at'].dt.date
 
-
+    # Title of the weather page.
     st.title("Forecast Data Visualisation")
 
-    # Add a filter for selecting the county name
     county_names = forecast_df['county_name'].unique()
     selected_county = st.selectbox("Select County", county_names)
 
-    # Let users select a date or date range for the forecast data
+    # Let users select a date or date range for the forecast data.
     selected_dates = st.date_input(
         "Select Date or Date Range",
         [forecast_df['date'].min(), forecast_df['date'].max()]
     )
 
-    # Initialise start_date and end_date as None
+    # Initialise start_date and end_date, so the below if-clause holds.
     start_date = end_date = None
 
     # Check if the user selected only one date (i.e. they haven't picked an end date)
     if isinstance(selected_dates, tuple) and len(selected_dates) == 2:
-        start_date, end_date = selected_dates  # Range of dates
+        start_date, end_date = selected_dates
     elif isinstance(selected_dates, tuple) and len(selected_dates) == 1:
-        # User only selected one date, show a clearer warnin
+        # User only selected one date, show a clearer warning.
         st.warning("Please select a valid start and end date for the visualisation date range.")
     else:
         start_date = end_date = selected_dates  # Single day selection
@@ -123,7 +119,7 @@ elif page == 'Weather':
             (forecast_df['county_name'] == selected_county)
         ]
 
-        # Check if the filtered DataFrame is empty
+        # A rolling average can only be applied if there's filtered data to apply it to.
         if not filtered_df.empty:
             # Apply rolling mean for smoother lines (adjust window size)
             filtered_df['cloud_coverage_rolling'] = filtered_df['cloud_coverage_percent'].rolling(window=24).mean()
@@ -133,7 +129,7 @@ elif page == 'Weather':
         # Check if a single day is selected
         is_single_day = start_date == end_date
 
-        # Create cloud coverage chart
+        # The cloud coverage visualisation.
         cloud_chart = alt.Chart(filtered_df).mark_line().encode(
             x=alt.X('at:T', title='Time'),
             y=alt.Y('cloud_coverage_percent:Q', title='Cloud Coverage (%)'),
@@ -144,7 +140,7 @@ elif page == 'Weather':
             title='Cloud Coverage Over Time (Real vs. Rolling Average)'
         )
 
-        # If it's a single day, add small points on the chart for clarity
+        # If it's a single day, add small points to the visualisation for clarity.
         if is_single_day:
             points = alt.Chart(filtered_df).mark_point(size=30, color="lightblue").encode(
                 x='at:T',
@@ -153,7 +149,6 @@ elif page == 'Weather':
             )
             cloud_chart += points
         else:
-            # For a range of dates, add the rolling average line
             rolling_avg_line = alt.Chart(filtered_df).mark_line(color="white", opacity=0.28).encode(
                 x='at:T',
                 y=alt.Y('cloud_coverage_rolling:Q', title='Cloud Coverage (%) (Rolling Average)'),
@@ -163,7 +158,7 @@ elif page == 'Weather':
 
 
 
-        # Create visibility chart
+        # The visibility visualisation.
         visibility_chart = alt.Chart(filtered_df).mark_line(color="blue").encode(
             x=alt.X('at:T', title='Time'),
             y=alt.Y('visibility_m:Q', title='Visibility (m)', scale=alt.Scale(type='log')),
@@ -174,7 +169,6 @@ elif page == 'Weather':
             title='Visibility Over Time (Real vs. Rolling Average)'
         )
 
-        # If it's a single day, add small points on the chart for clarity
         if is_single_day:
             points = alt.Chart(filtered_df).mark_point(size=30, color="blue").encode(
                 x='at:T',
@@ -183,7 +177,6 @@ elif page == 'Weather':
             )
             visibility_chart += points
         else:
-            # For a range of dates, add the rolling average line
             rolling_avg_line = alt.Chart(filtered_df).mark_line(color="white", opacity=0.28).encode(
                 x='at:T',
                 y=alt.Y('visibility_rolling:Q', title='Visibility (m) (Rolling Average)'),
@@ -191,7 +184,8 @@ elif page == 'Weather':
             )
             visibility_chart += rolling_avg_line
 
-        # Create temperature chart
+
+        # The temperature visualisation.
         temperature_chart = alt.Chart(filtered_df).mark_line(color="#D9372A").encode(
             x=alt.X('at:T', title='Time'),
             y=alt.Y('temperature_c:Q', title='Temperature (°C)'),
@@ -202,7 +196,6 @@ elif page == 'Weather':
             title='Temperature Over Time (Real vs. Rolling Average)'
         )
 
-        # If it's a single day, add small points on the chart for clarity
         if is_single_day:
             points = alt.Chart(filtered_df).mark_point(size=30, color="#D9372A").encode(
                 x='at:T',
@@ -211,7 +204,6 @@ elif page == 'Weather':
             )
             temperature_chart += points
         else:
-            # For a range of dates, add the rolling average line
             rolling_avg_line = alt.Chart(filtered_df).mark_line(color="white", opacity=0.28).encode(
                 x='at:T',
                 y=alt.Y('temperature_rolling:Q', title='Temperature (°C) (Rolling Average)'),
@@ -219,12 +211,13 @@ elif page == 'Weather':
             )
             temperature_chart += rolling_avg_line
 
-        col1, col2, col3 = st.columns(3)
-        # Display all charts in a single column
-        with col1:
-            st.altair_chart(cloud_chart, use_container_width=True)
-            st.altair_chart(visibility_chart, use_container_width=True)
-            st.altair_chart(temperature_chart, use_container_width=True)
+
+        # col1, col2, col3 = st.columns(3)
+        # # Display all charts in a single column
+        # with col1:
+        st.altair_chart(cloud_chart, use_container_width=True)
+        st.altair_chart(visibility_chart, use_container_width=True)
+        st.altair_chart(temperature_chart, use_container_width=True)
 
 
 elif page == 'Stellarium Integration':
@@ -233,7 +226,7 @@ elif page == 'Stellarium Integration':
     This dashboard provides an interactive view of the night sky as seen from **London**. The view updates automatically to reflect the current date and time.
     ''')
 
-    # General coordinates for London
+    # General coordinates for London, Liverpool street.
     DEFAULT_LATITUDE = 51.5074
     DEFAULT_LONGITUDE = -0.1278
 
@@ -261,9 +254,11 @@ elif page == 'Stellarium Integration':
         full_url = f'{base_url}?{query_string}'
         return full_url
 
+
     def get_current_datetime() -> datetime:
         '''Returns the current time as a datetime object.'''
         return datetime.now()
+
 
     # The Stellarium iFrame is stored in a Streamlit container.
     with st.container():
@@ -283,7 +278,6 @@ elif page == 'Stellarium Integration':
         ''', height=600)
 
         st.markdown(f'**Current Date & Time:** {current_datetime.strftime('%Y-%m-%d %H:%M:%S')}')
-
 
 
 
@@ -382,30 +376,25 @@ elif page == 'Subscriber Signup':
 
 elif page == 'Test':
 
-# Function to simulate visibility based on cloud coverage and orbital position
+
     def calculate_visibility(max_visibility, cloud_coverage, time_step, orbital_frequency):
-        # Simulate the body's orbital position (sinusoidal variation) over the period
         orbital_effect = np.sin(2 * np.pi * orbital_frequency * time_step)
-        # Visibility calculation
-        visibility = max_visibility * (1 - cloud_coverage / 100) * (0.5 + 0.5 * orbital_effect)  # Normalize orbital effect
+        visibility = max_visibility * (1 - cloud_coverage / 100) * (0.5 + 0.5 * orbital_effect)
         return visibility
 
-    # List of celestial bodies
     bodies = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Moon', 'Pluto']
-    max_visibilities = [12000, 25000, 30000, 20000, 18000, 15000, 13000, 30000, 10000]  # Max visibility in meters
-    orbital_frequencies = [0.2, 0.1, 0.05, 0.07, 0.03, 0.02, 0.01, 0.5, 0.005]  # Orbital frequencies
+    max_visibilities = [12000, 25000, 30000, 20000, 18000, 15000, 13000, 30000, 10000]
+    orbital_frequencies = [0.2, 0.1, 0.05, 0.07, 0.03, 0.02, 0.01, 0.5, 0.005]
 
-    # Generate daily data for 30 days
     start_date = pd.Timestamp('2024-11-01')
     end_date = pd.Timestamp('2024-11-30')
-    days = pd.date_range(start=start_date, end=end_date, freq='D')  # Daily data for the month
+    days = pd.date_range(start=start_date, end=end_date, freq='D')
 
-    # Create dataset with daily intervals for all celestial bodies
     data = []
     for body, max_visibility, frequency in zip(bodies, max_visibilities, orbital_frequencies):
         for i, day in enumerate(days):
-            cloud_coverage = np.random.randint(0, 100)  # Random cloud coverage for each day
-            visibility = calculate_visibility(max_visibility, cloud_coverage, i, frequency)  # Calculate visibility
+            cloud_coverage = np.random.randint(0, 100)
+            visibility = calculate_visibility(max_visibility, cloud_coverage, i, frequency)
             data.append({
                 'body_name': body,
                 'date': day,
@@ -414,25 +403,24 @@ elif page == 'Test':
                 'visibility_m': visibility
             })
 
-    # Convert to DataFrame
+
     visibility_df = pd.DataFrame(data)
 
-    # Prepare data for Altair heatmap
     source = pd.DataFrame({
-        'x': visibility_df['date'].dt.date,  # Using only the date for x-axis
-        'y': visibility_df['body_name'],       # Celestial bodies on the y-axis
-        'z': visibility_df['visibility_m']     # Visibility for color encoding
+        'x': visibility_df['date'].dt.date,  
+        'y': visibility_df['body_name'],     
+        'z': visibility_df['visibility_m']    
     })
 
-    # Create the heatmap with a custom colour scale
+
     heatmap = alt.Chart(source).mark_rect().encode(
-        x=alt.X('x:O', title='Date', axis=alt.Axis(labels=False, ticks=False)),    
-        y=alt.Y('y:O', title='Celestial Body'),          # Celestial bodies on the y-axis
-        color=alt.Color('z:Q', 
-                        scale=alt.Scale(domain=[0, 30000], 
-                                        range=['#fff5eb', '#ff0000', '#800080']),  # Cream to red to purple
+        x=alt.X('x:O', title='Date', axis=alt.Axis(labels=False, ticks=False)),
+        y=alt.Y('y:O', title='Celestial Body'),
+        color=alt.Color('z:Q',
+                        scale=alt.Scale(domain=[0, 30000],
+                                        range=['#fff5eb', '#ff0000', '#800080']),
                         title='Visibility (m)'),
-        tooltip=['y', 'x:T', 'z']                        # Tooltip with relevant info
+        tooltip=['y', 'x:T', 'z']
     ).properties(
         width=2000,
         height=500,
@@ -441,7 +429,5 @@ elif page == 'Test':
 
 
     col1, col2, col3 = st.columns(3)
-        # Display all charts in a single column
     with col2:
-        # Render the chart using Streamlit
         st.altair_chart(heatmap, use_container_width=True)
