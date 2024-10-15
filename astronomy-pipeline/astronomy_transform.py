@@ -146,12 +146,15 @@ def get_star_chart_df(star_chart_data: list["dict"]) -> pd.DataFrame:
 #     return cleaned_df.values.tolist()
 
 
-def convert_star_chart_datetime(chart_list: list) -> list:
-    """Converts moon phase time string to a datetime object."""
+def convert_star_chart_data(chart_list: list) -> list:
+    """Converts star chart data for upload."""
+
+    c_mapping = get_constellation_mapping()
 
     for entry in chart_list:
 
         entry['day'] = datetime.strptime(entry['day'], "%Y-%m-%d")
+        entry['constellation_id'] = c_mapping[entry["constellation"]]
 
     return chart_list
 
@@ -172,7 +175,8 @@ def transform_astronomy_data(raw_data: dict) -> list:
     logging.info("Moon phase data converted to 2D list.")
 
     star_chart_data = raw_data["star_chart_urls"]
-    star_chart_list = convert_star_chart_datetime(star_chart_data)
+    star_chart_list = convert_star_chart_data(star_chart_data)
+    print(star_chart_list)
     logging.info("Star chart data converted to 2D list.")
 
     return {

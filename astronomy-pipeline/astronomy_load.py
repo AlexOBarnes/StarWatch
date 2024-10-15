@@ -54,6 +54,7 @@ def upload_moon_phase_data(moon_phase_data: list[list]) -> None:
 
 def upload_star_chart_data(star_chart_data: list[list]) -> None:
     '''Uploads the star chart image data to the database.'''
+
     pass
 
 
