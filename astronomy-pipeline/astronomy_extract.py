@@ -192,33 +192,6 @@ def get_star_chart(input_date: str, constellation: str) -> str:
         return None
 
 
-# def get_star_chart():
-
-#     example_body = {
-#         "style": "default",
-#         "observer": {
-#             "latitude": lat,
-#             "longitude": long,
-#             "date": f"{date.today()}"
-#         },
-#         "view": {
-#             "type": "constellation",
-#             "parameters": {
-#                 "constellation": "vir"  # 3 letter constellation ID
-#             }
-#         }
-#     }
-
-#     url = f"{ASTRO_URL}/studio/star-chart"
-
-#     user_pass = f"{ENV["ASTRONOMY_ID"]}:{ENV["ASTRONOMY_SECRET"]}"
-
-#     auth_string = base64.b64encode(user_pass.encode()).decode()
-
-#     headers = {"Authorization": f"Basic {auth_string}"}
-
-#     return requests.post(url, headers=headers, json=example_body).json().get("data")["imageUrl"]
-
 def get_const_list():
 
     with get_db_connection() as conn:
@@ -240,7 +213,7 @@ def get_star_chart_urls(start: date) -> list[dict]:
     constellations = get_const_list()
 
     for n in range(7):
-        for const in constellations[:2]:
+        for const in constellations:
             star_chart_dict = {}
             day = start + timedelta(days=n)
             chart_url = get_star_chart(day, const)
@@ -351,6 +324,6 @@ if __name__ == "__main__":
     # result_data = extract_weekly_astronomy_data()
     # save_to_file("test_extract_data.json", result_data)
 
-    print(get_star_chart_urls(date.today()))
+    get_star_chart_urls(date.today())
 
     print(f"Time: {(datetime.now() - time1).seconds}")
