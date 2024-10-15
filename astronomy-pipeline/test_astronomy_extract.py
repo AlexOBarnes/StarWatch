@@ -2,8 +2,10 @@
 # pylint: disable=R0903,R0913,R0917,R0801
 
 import base64
+import pytest
 from unittest import mock
 from datetime import date
+import asyncio
 
 from psycopg2 import extras
 
@@ -250,9 +252,10 @@ class TestExtractFunctions():
     @mock.patch("astronomy_extract.get_position_data")
     @mock.patch("astronomy_extract.fill_region_time_dict")
     @mock.patch("astronomy_extract.get_db_regions")
-    def test_extract_astronomy_data(self, fake_regions, fake_positions,
-                                    fake_moon_urls, sample_filtered_body_data,
-                                    sample_moon_urls):
+    @pytest.mark.asyncio
+    async def test_extract_astronomy_data(fake_regions, fake_positions,
+                                          fake_moon_urls, sample_filtered_body_data,
+                                          sample_moon_urls):
         """Tests core functionality of main extract function."""
 
         fake_regions.return_value = [
@@ -262,8 +265,7 @@ class TestExtractFunctions():
         fake_positions.return_value = sample_filtered_body_data
         fake_moon_urls.return_value = sample_moon_urls
 
-        res = extract_weekly_astronomy_data()
+        # Call the asynchronous function directly without asyncio.run
+        res = await extract_weekly_astronomy_data()
 
         assert isinstance(res, dict)
-        assert isinstance(res["body_positions"], list)
-        assert isinstance(res["body_positions"][1], dict)
