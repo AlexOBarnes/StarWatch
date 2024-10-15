@@ -39,7 +39,6 @@ def validate_email(email:str) -> bool:
         return False
 
 
-
 def validate_phone_number(phone_number:str, region='GB') -> bool:
     '''
     Validates a UK phone number format, with and without country code:
@@ -56,7 +55,6 @@ def validate_phone_number(phone_number:str, region='GB') -> bool:
         return phonenumbers.is_valid_number(parsed_number)
     except NumberParseException:
         return False
-
 
 
 # This defines a navigation sidebar for the pages on the Streamlit dashboard.
