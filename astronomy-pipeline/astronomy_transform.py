@@ -138,14 +138,6 @@ def get_star_chart_df(star_chart_data: list["dict"]) -> pd.DataFrame:
     return pd.DataFrame(star_chart_data)
 
 
-# def clean_star_chart_data(star_chart_df: pd.DataFrame) -> list:
-#     """Returns clean star chart data as a list."""
-
-#     cleaned_df = star_chart_df.dropna(subset=['url'])
-
-#     return cleaned_df.values.tolist()
-
-
 def convert_star_chart_data(chart_list: list) -> list:
     """Converts star chart data for upload."""
 
