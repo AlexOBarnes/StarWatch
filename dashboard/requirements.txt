@@ -4,8 +4,12 @@ psycopg2-binary
 altair
 streamlit
 streamlit_autorefresh
-seaborn 
 email_validator
 phonenumbers
 requests
 python-dotenv
+matplotlib
+numpy
+requests
+python-dotenv
+psycopg2-binary
