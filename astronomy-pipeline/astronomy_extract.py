@@ -10,6 +10,7 @@ import json
 import logging
 import asyncio
 
+import aiohttp
 import requests
 from dotenv import load_dotenv
 from psycopg2 import connect, extensions, extras
@@ -152,44 +153,45 @@ def get_moon_phase(input_date: str) -> str:
         return None
 
 
-def get_star_chart(input_date: str, constellation: str) -> str:
-    """Returns a url for an image of the moon phase for a given date."""
+# def get_star_chart(input_date: str, constellation: str) -> str:
+#     """Returns a url for an image of the moon phase for a given date."""
 
-    print("Request started.")
+#     print("Request started.")
 
-    request_body = {
-        "style": "default",
-        "observer": {
-            "latitude": 53.812207,
-            "longitude": -2.917976,
-            "date": f"{input_date}"
-        },
-        "view": {
-            "type": "constellation",
-            "parameters": {
-                "constellation": constellation
-            }
-        }
-    }
+#     request_body = {
+#         "style": "default",
+#         "observer": {
+#             "latitude": 53.812207,
+#             "longitude": -2.917976,
+#             "date": f"{input_date}"
+#         },
+#         "view": {
+#             "type": "constellation",
+#             "parameters": {
+#                 "constellation": constellation
+#             }
+#         }
+#     }
 
-    url = f"{ASTRO_URL}/studio/star-chart"
+#     url = f"{ASTRO_URL}/studio/star-chart"
 
-    auth_string = get_auth_string()
+#     auth_string = get_auth_string()
 
-    headers = {"Authorization": f"Basic {auth_string}"}
+#     headers = {"Authorization": f"Basic {auth_string}"}
 
-    try:
-        response = requests.post(url, headers=headers, json=request_body,
-                                 timeout=7)
-        if response.status_code == 200:
-            return response.json()["data"]["imageUrl"]
+#     try:
+#         response = requests.post(url, headers=headers, json=request_body,
+#                                  timeout=7)
+#         if response.status_code == 200:
+#             return response.json()["data"]["imageUrl"]
 
-        logging.info('Moon phase post request unsuccessful.')
-        return APIError("Unsuccessful request.", response.status_code)
+#         logging.info('Moon phase post request unsuccessful.')
+#         return APIError("Unsuccessful request.", response.status_code)
 
-    except ex.ReadTimeout:
-        logging.info("Star chart API request failed.")
-        return None
+#     except ex.ReadTimeout:
+
+#         logging.info("Star chart API request failed.")
+#         return None
 
 
 def get_const_list():
@@ -206,22 +208,90 @@ def get_const_list():
     return constellations
 
 
-def get_star_chart_urls(start: date) -> list[dict]:
-    """Returns list of moon phase URLs from the Astronomy API"""
-    output_list = []
+# def get_star_chart_urls(start: date) -> list[dict]:
+#     """Returns list of moon phase URLs from the Astronomy API"""
+#     output_list = []
 
+#     constellations = get_const_list()
+
+#     for n in range(7):
+#         for const in constellations:
+#             star_chart_dict = {}
+#             day = start + timedelta(days=n)
+#             chart_url = get_star_chart(day, const)
+
+#             star_chart_dict["day"] = str(day)
+#             star_chart_dict["url"] = chart_url
+
+#             output_list.append(star_chart_dict)
+
+#     return output_list
+
+
+async def get_star_chart(input_date: str, constellation: str) -> str:
+    """Returns a URL for an image of the star chart for a given date asynchronously."""
+
+    request_body = {
+        "style": "default",
+        "observer": {
+            "latitude": 53.812207,
+            "longitude": -2.917976,
+            "date": input_date
+        },
+        "view": {
+            "type": "constellation",
+            "parameters": {
+                "constellation": constellation
+            }
+        }
+    }
+
+    url = f"{ASTRO_URL}/studio/star-chart"
+
+    auth_string = get_auth_string()
+    headers = {"Authorization": f"Basic {auth_string}"}
+
+    try:
+        # Make the asynchronous request
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers, json=request_body, timeout=50) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return data["data"]["imageUrl"]
+
+                logging.info('Star chart post request unsuccessful.')
+                return None
+
+    except asyncio.TimeoutError:
+        logging.info("Star chart API request failed due to timeout.")
+        return None
+
+    except Exception as e:
+        logging.error(f"Error occurred: {str(e)}")
+        return None
+
+
+async def get_star_chart_urls(start: date) -> list[dict]:
+    """Returns list of star chart URLs from the Astronomy API asynchronously."""
+    output_list = []
     constellations = get_const_list()
+
+    tasks = []
 
     for n in range(7):
         for const in constellations:
-            star_chart_dict = {}
             day = start + timedelta(days=n)
-            chart_url = get_star_chart(day, const)
+            task = get_star_chart(str(day), const)
+            tasks.append(task)
 
-            star_chart_dict["day"] = str(day)
-            star_chart_dict["url"] = chart_url
+    chart_urls = await asyncio.gather(*tasks)
 
-            output_list.append(star_chart_dict)
+    for i, url in enumerate(chart_urls):
+        day = start + timedelta(days=i // len(constellations))
+        output_list.append({
+            "day": str(day),
+            "url": url
+        })
 
     return output_list
 
@@ -290,19 +360,17 @@ def save_to_file(filename: str, data: list[dict]) -> None:
         json.dump(data, f_obj, indent=4)
 
 
-def extract_weekly_astronomy_data():
-    """Main function for extracting astronomical for a week"""
+async def extract_weekly_astronomy_data():
+    """Main function for extracting astronomical data for a week"""
 
     logging.info("Data extraction started.")
 
     start_date = date.today() + timedelta(days=7)
-
     end_date = start_date + timedelta(days=6)
 
     times = ["18:00:00", "21:00:00", "00:00:00", "03:00:00", "06:00:00"]
 
     regions = get_db_regions()
-
     output_dict = fill_region_time_dict(times, regions)
 
     position_data = get_position_data(
@@ -312,8 +380,10 @@ def extract_weekly_astronomy_data():
     final_dict = {}
     final_dict["body_positions"] = position_data
     final_dict["moon_phase_urls"] = get_moon_urls(start_date)
-    final_dict["star_charts"] = get_star_chart_urls(start_date)
-    logging.info("Moon phase data extracted.")
+
+    # Await the asynchronous get_star_chart_urls function
+    final_dict["star_chart_urls"] = await get_star_chart_urls(start_date)
+    logging.info("Star chart data extracted.")
 
     return final_dict
 
@@ -324,6 +394,8 @@ if __name__ == "__main__":
     # result_data = extract_weekly_astronomy_data()
     # save_to_file("test_extract_data.json", result_data)
 
-    get_star_chart_urls(date.today())
+    res = asyncio.run(extract_weekly_astronomy_data())
+
+    save_to_file("data_with_st_charts.json", res)
 
     print(f"Time: {(datetime.now() - time1).seconds}")
