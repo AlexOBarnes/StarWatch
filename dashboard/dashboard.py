@@ -427,7 +427,6 @@ elif page == 'Test':
         title='Daily Visibility of Celestial Bodies'
     )
 
-
     col1, col2, col3 = st.columns(3)
     with col2:
         st.altair_chart(heatmap, use_container_width=True)
