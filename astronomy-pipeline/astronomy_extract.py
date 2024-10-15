@@ -99,8 +99,10 @@ def refine_bodies_data(bodies: dict) -> list:
     output_list = []
     for obj in rows:
         for entry in obj["cells"]:
-            clean_dict = make_clean_body_dict(entry)
-            output_list.append(clean_dict)
+            altitude = entry["position"]["horizontal"]["altitude"]["degrees"]
+            if float(altitude) > 5.0:
+                clean_dict = make_clean_body_dict(entry)
+                output_list.append(clean_dict)
 
     return output_list
 

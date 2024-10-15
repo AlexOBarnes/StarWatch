@@ -9,3 +9,7 @@ email_validator
 phonenumbers
 requests
 python-dotenv
+matplotlib
+numpy
+requests
+
