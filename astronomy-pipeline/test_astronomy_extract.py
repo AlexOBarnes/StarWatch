@@ -248,14 +248,16 @@ class TestExtractFunctions():
         assert isinstance(res[1]["00"], dict)
         assert not res[1]["00"]
 
+    @mock.patch.dict("astronomy_extract.ENV", ENV)
+    @mock.patch("astronomy_extract.connect")
     @mock.patch("astronomy_extract.get_moon_urls")
     @mock.patch("astronomy_extract.get_position_data")
     @mock.patch("astronomy_extract.fill_region_time_dict")
     @mock.patch("astronomy_extract.get_db_regions")
     @pytest.mark.asyncio
-    async def test_extract_astronomy_data(fake_regions, fake_positions,
-                                          fake_moon_urls, sample_filtered_body_data,
-                                          sample_moon_urls):
+    async def test_extract_astronomy_data(fake_regions, fake_fill_dict, fake_positions,
+                                          fake_moon_urls, fake_urls,
+                                          sample_filtered_body_data, sample_moon_urls):
         """Tests core functionality of main extract function."""
 
         fake_regions.return_value = [
