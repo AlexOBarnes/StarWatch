@@ -255,6 +255,18 @@ class TestConvertMoonDatetime():
 class TestTransformAstronomyData():
     '''Tests for the transform astronomy data function.'''
 
+    ENV = {
+        "DB_NAME": "test_db",
+        "DB_HOST": "localhost",
+        "DB_PASSWORD": "test_password",
+        "DB_USER": "test_user",
+        "DB_PORT": "5432",
+        "ASTRONOMY_ID": "test_id",
+        "ASTRONOMY_SECRET": "test_secret"
+    }
+
+    @patch.dict("astronomy_extract.ENV", ENV)
+    @patch("astronomy_extract.connect")
     @patch('astronomy_transform.get_data_into_dataframe')
     @patch('astronomy_transform.clean_position_data')
     @patch('astronomy_transform.convert_positions_datetime')
@@ -264,7 +276,8 @@ class TestTransformAstronomyData():
                                                         mock_get_moon_list,
                                                         mock_convert_positions_datetime,
                                                         mock_clean_position_data,
-                                                        mock_get_data_into_dataframe):
+                                                        mock_get_data_into_dataframe,
+                                                        mock_connect):
         '''Tests that the correct functions are called within the function.'''
         transform_astronomy_data(
             {'moon_phase_urls': 'test', 'star_chart_urls': []})
@@ -275,6 +288,8 @@ class TestTransformAstronomyData():
         assert mock_convert_positions_datetime.called
         assert mock_get_data_into_dataframe.called
 
+    @patch.dict("astronomy_extract.ENV", ENV)
+    @patch("astronomy_extract.connect")
     @patch('astronomy_transform.get_data_into_dataframe')
     @patch('astronomy_transform.clean_position_data')
     @patch('astronomy_transform.convert_positions_datetime')
@@ -284,7 +299,8 @@ class TestTransformAstronomyData():
                                                    mock_get_moon_list,
                                                    mock_convert_positions_datetime,
                                                    mock_clean_position_data,
-                                                   mock_get_data_into_dataframe):
+                                                   mock_get_data_into_dataframe,
+                                                   mock_connect):
         '''Tests that a dict object is returned from the function.'''
         mock_clean_position_data.return_value = MagicMock()
         mock_convert_moon_datetime.return_value = MagicMock()
@@ -297,6 +313,8 @@ class TestTransformAstronomyData():
 
         assert isinstance(result, dict)
 
+    @patch.dict("astronomy_extract.ENV", ENV)
+    @patch("astronomy_extract.connect")
     @patch('astronomy_transform.get_data_into_dataframe')
     @patch('astronomy_transform.clean_position_data')
     @patch('astronomy_transform.convert_positions_datetime')
@@ -306,7 +324,8 @@ class TestTransformAstronomyData():
                                                    mock_get_moon_list,
                                                    mock_convert_positions_datetime,
                                                    mock_clean_position_data,
-                                                   mock_get_data_into_dataframe):
+                                                   mock_get_data_into_dataframe,
+                                                   mock_connect):
         '''Tests that the correct keys are returned from the function.'''
         mock_clean_position_data.return_value = MagicMock()
         mock_convert_moon_datetime.return_value = MagicMock()
