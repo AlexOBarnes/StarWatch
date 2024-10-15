@@ -14,6 +14,15 @@ def valid_clean_data():
 
 
 @pytest.fixture
+def valid_clean_aurora_data():
+    '''Returns the expected data shape after cleaning'''
+    return [{'user': 'davidjohnson', 'phone': None,
+             'email': 'davidjohnson@example.com'},
+            {'user': 'johndoe', 'phone': '+12345678901',
+             'email': 'johndoe@example.com'}]
+
+
+@pytest.fixture
 def valid_queried_data():
     '''Returns the data stored in the database'''
     return [('davidjohnson', None, 'davidjohnson@example.com',
