@@ -160,11 +160,9 @@ class TestExtractFunctions():
     def test_refine_bodies_data_creates_list_of_dicts(self, fake_clean, sample_raw_positions):
         """Asserts that the function returns a list of dicts."""
 
-        input_data = sample_raw_positions
-
         fake_clean.return_value = {"key": "val"}
 
-        res = refine_bodies_data(input_data)
+        res = refine_bodies_data(sample_raw_positions)
 
         assert isinstance(res, list)
 
