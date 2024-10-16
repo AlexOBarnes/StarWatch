@@ -99,8 +99,26 @@ def get_iss_location() -> dict:
 
     raise APIError('Unsuccessful request.', response.status_code)
 
+def get_sunset_times(region: str) -> tuple:
+    '''Returns the sunset and sunrise time for a given region'''
+    query = '''SELECT sunrise_timestamp, sunset_timestamp
+    FROM solar_feature
+    JOIN county USING (county_id)
+    WHERE county_name ILIKE %s
+    AND (DATE(sunrise_timestamp) = CURRENT_DATE
+    OR DATE(sunrise_timestamp) = CURRENT_DATE + INTERVAL '1 day')
+    ORDER BY sunrise_timestamp DESC
+    LIMIT 2'''
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query,(region,))
+            data = cur.fetchall()
+
+    return (data[0][1],data[1][0])
+    
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
     load_dotenv()
-    get_image_of_the_day()
+    print(get_sunset_times('Staffordshire'))
