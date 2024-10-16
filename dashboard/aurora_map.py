@@ -177,26 +177,26 @@ def map_region_colours(map_dict: dict) -> dict:
     colour = get_aurora_data()
 
     if colour == 'Green':
-        colours = {key: 'green' for key in map_dict}
+        colours = {key: 'red' for key in map_dict}
     elif colour == 'Yellow':
         colours = {
-            key: 'green' for key in map_dict if key not in NORTHERN_REGIONS}
+            key: 'red' for key in map_dict if key not in NORTHERN_REGIONS}
         for region in NORTHERN_REGIONS:
-            colours[region] = 'yellow'
+            colours[region] = 'blue'
     elif colour == 'Amber':
         colours = {
-            key: 'yellow' for key in map_dict if key not in NORTHERN_REGIONS}
+            key: 'blue' for key in map_dict if key not in NORTHERN_REGIONS}
         for region in NORTHERN_REGIONS:
-            colours[region] = 'orange'
+            colours[region] = 'green'
     else:
-        colours = {key: 'orange' for key in map_dict}
+        colours = {key: 'green' for key in map_dict}
 
     return colours
 
 
 def create_aurora_map() -> plt.figure:
     '''Returns a map figure.'''
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(5, 5))
 
     gdf1 = gpd.read_file("shapefile/NUTS1_Jan_2018_UGCB_in_the_UK.shp")
     region_colours = map_region_colours(gdf1.nuts118nm)
@@ -207,6 +207,15 @@ def create_aurora_map() -> plt.figure:
     mapped_values = map_cloud_coverage()
     gdf2['alpha'] = gdf2['CTYUA23NM'].map(mapped_values)
     gdf2.plot(ax=ax, color='white', alpha=gdf2['alpha'],  edgecolor='none')
+
+    legend_text = '''Green: Likely to see aurora
+    Orange: Possible to see aurora
+    Red: Unlikely to see aurora
+    White: Opacity dictates cloud coverage'''
+
+    props = dict(boxstyle='round', facecolor='white', alpha=0.5)
+    ax.text(1.45, 0.8, legend_text, fontsize=6, bbox=props,
+            transform=ax.transAxes, verticalalignment='top', horizontalalignment='right')
 
     ax.set_axis_off()
     plt.gcf().set_facecolor('black')
