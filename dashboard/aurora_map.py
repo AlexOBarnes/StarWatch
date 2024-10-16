@@ -1,8 +1,12 @@
+'''File to generate maps for the dashboard.'''
+
+from os import environ as ENV
+
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from psycopg2 import connect, extensions, extras
 from dotenv import load_dotenv
-from os import environ as ENV
+
 
 COUNTY_MAPPING = {
     "Hartlepool": "County Durham", "Middlesbrough": "North Yorkshire",
@@ -10,7 +14,8 @@ COUNTY_MAPPING = {
     "Darlington": "County Durham", "Halton": "Cheshire",
     "Warrington": "Cheshire", "Blackburn with Darwen": "Lancashire",
     "Blackpool": "Lancashire", "Kingston upon Hull, City of": "East Riding of Yorkshire",
-    "East Riding of Yorkshire": "East Riding of Yorkshire", "North East Lincolnshire": "Lincolnshire",
+    "East Riding of Yorkshire": "East Riding of Yorkshire",
+    "North East Lincolnshire": "Lincolnshire",
     "North Lincolnshire": "Lincolnshire", "York": "North Yorkshire",
     "Derby": "Derbyshire", "Leicester": "Leicestershire",
     "Rutland": "Rutland", "Nottingham": "Nottinghamshire",
@@ -98,7 +103,7 @@ COUNTY_MAPPING = {
     "Stirling": "Stirling", "Aberdeen City": "Aberdeen City",
     "Aberdeenshire": "Aberdeenshire", "Argyll and Bute": "Argyll and Bute",
     "City of Edinburgh": "Edinburgh", "Renfrewshire": "Renfrewshire",
-    "West Dunbartonshire": "West Dunbartonshire", "West Dunbartonshire": "West Dunbartonshire",
+    "West Dunbartonshire": "West Dunbartonshire",
     "West Lothian": "West Lothian", "Angus": "Angus",
     "Dundee City": "Dundee City", "East Dunbartonshire": "East Dunbartonshire",
     "Fife": "Fife", "Perth and Kinross": "Perth and Kinross",
@@ -213,7 +218,7 @@ def create_aurora_map() -> plt.figure:
     Red: Unlikely to see aurora
     White: Opacity dictates cloud coverage'''
 
-    props = dict(boxstyle='round', facecolor='white', alpha=0.5)
+    props = {'boxstyle': 'round', 'facecolor': 'white', 'alpha': 0.5}
     ax.text(1.45, 0.8, legend_text, fontsize=6, bbox=props,
             transform=ax.transAxes, verticalalignment='top', horizontalalignment='right')
 
