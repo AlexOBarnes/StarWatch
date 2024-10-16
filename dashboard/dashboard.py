@@ -57,8 +57,7 @@ def validate_phone_number(phone_number: str, region='GB') -> bool:
 
 
 # This defines a navigation sidebar for the pages on the Streamlit dashboard.
-page = st.sidebar.selectbox('Navigate', [
-                            'Home', 'Weather', 'Stellarium Integration', 'Subscriber Signup', 'Test'])
+page = st.sidebar.selectbox('Navigate', ['Home', 'Weather', 'Stellarium', 'Subscriber Signup', 'Astronomy'])
 
 
 # Home page, where the user first interacts with the dashboard by default.
@@ -308,7 +307,7 @@ elif page == 'Weather':
            st.altair_chart(precipitation_chart, use_container_width=True)
 
 
-elif page == 'Stellarium Integration':
+elif page == 'Stellarium':
 
    st.markdown('''
    This dashboard provides an interactive view of the night sky as seen from **London**. The view updates automatically to reflect the current date and time.
@@ -461,7 +460,7 @@ elif page == 'Subscriber Signup':
                st.error(f'Error adding subscriber: {e}')
 
 
-elif page == 'Test':
+elif page == 'Astronomy':
    conn = connect_to_db()
 
    bodies_df = load_celestial_body_information(conn)
