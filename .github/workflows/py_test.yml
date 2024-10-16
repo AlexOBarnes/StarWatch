@@ -26,5 +26,14 @@ jobs:
       run: |
         find . -name 'requirements.txt' -exec pip install -r {} \;
 
-    - name: "Run pytest"
-      run: pytest
+    - name: "Install pytest-cov for coverage reporting"
+      run: pip install pytest-cov
+
+    - name: "Run pytest with coverage and generate JSON report"
+      run: pytest --cov=. --cov-report=json
+
+    - name: "Upload coverage JSON report"
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-json-report
+        path: coverage.json
