@@ -26,5 +26,14 @@ jobs:
       run: |
         find . -name 'requirements.txt' -exec pip install -r {} \;
 
-    - name: "Run pytest"
-      run: pytest
+    - name: "Install pytest-cov for coverage reporting"
+      run: pip install pytest-cov
+
+    - name: "Run pytest with coverage and save report to text file"
+      run: pytest --cov=. > coverage_report.txt
+
+    - name: "Upload coverage text report"
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-txt-report
+        path: coverage_report.txt
