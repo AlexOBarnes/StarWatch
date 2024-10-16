@@ -177,24 +177,24 @@ def map_cloud_coverage() -> dict:
     return mapped_values
 
 
-def map_region_colours(map_dict: dict) -> dict:
+def map_region_colours(map_regions: list[str]) -> dict:
     '''Returns a dict of the regions mapped to a colour for aurora possibility.'''
     colour = get_aurora_data()
 
     if colour == 'Green':
-        colours = {key: 'red' for key in map_dict}
+        colours = {region: 'red' for region in map_regions}
     elif colour == 'Yellow':
         colours = {
-            key: 'red' for key in map_dict if key not in NORTHERN_REGIONS}
+            region: 'red' for region in map_regions if region not in NORTHERN_REGIONS}
         for region in NORTHERN_REGIONS:
             colours[region] = 'blue'
     elif colour == 'Amber':
         colours = {
-            key: 'blue' for key in map_dict if key not in NORTHERN_REGIONS}
+            region: 'blue' for region in map_regions if region not in NORTHERN_REGIONS}
         for region in NORTHERN_REGIONS:
             colours[region] = 'green'
     else:
-        colours = {key: 'green' for key in map_dict}
+        colours = {region: 'green' for region in map_regions}
 
     return colours
 
@@ -204,7 +204,7 @@ def create_aurora_map() -> plt.figure:
     fig, ax = plt.subplots(figsize=(5, 5))
 
     gdf1 = gpd.read_file("shapefile/NUTS1_Jan_2018_UGCB_in_the_UK.shp")
-    region_colours = map_region_colours(gdf1.nuts118nm)
+    region_colours = map_region_colours(gdf1.nuts118nm.tolist())
     gdf1['color'] = gdf1['nuts118nm'].map(region_colours)
     gdf1.plot(color=gdf1['color'], edgecolor='black', linewidth=1, ax=ax)
 
@@ -213,10 +213,10 @@ def create_aurora_map() -> plt.figure:
     gdf2['alpha'] = gdf2['CTYUA23NM'].map(mapped_values)
     gdf2.plot(ax=ax, color='white', alpha=gdf2['alpha'],  edgecolor='none')
 
-    legend_text = '''Green: Likely to see aurora
-    Orange: Possible to see aurora
-    Red: Unlikely to see aurora
-    White: Opacity dictates cloud coverage'''
+    legend_text = '''- Green: Likely to see aurora
+    - Orange: Possible to see aurora
+    - Red: Unlikely to see aurora
+    - White: Opacity dictates cloud coverage'''
 
     props = {'boxstyle': 'round', 'facecolor': 'white', 'alpha': 0.5}
     ax.text(1.45, 0.8, legend_text, fontsize=6, bbox=props,
@@ -228,13 +228,115 @@ def create_aurora_map() -> plt.figure:
     return fig
 
 
-def create_visibilty_map() -> plt.figure:
+def get_average_cloud_data() -> dict:
+    '''Returns a dict of all counties average cloud coverage for the night 1700-0500.'''
+    query = """SELECT c.county_name,
+    AVG(f.cloud_coverage_percent) AS avg_cloud_cov
+    FROM county AS c
+    JOIN forecast AS f USING (county_id)
+    WHERE ((DATE(f.at) = DATE(CURRENT_TIMESTAMP)
+    AND EXTRACT(HOUR FROM f.at) >= 17)
+    OR (DATE(f.at) = DATE(CURRENT_TIMESTAMP + INTERVAL '1 day')
+    AND EXTRACT(HOUR FROM f.at) <= 05))
+    GROUP BY c.county_name;"""
+
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=extras.RealDictCursor) as cur:
+            cur.execute(query)
+            result = cur.fetchall()
+
+    return {row['county_name']: row['avg_cloud_cov'] for row in result}
+
+
+def get_body_visible_regions(body: str) -> list[str]:
+    '''Returns a list of regions that will have a given body appear at some
+    point over the night period 1700-0500'''
+    query = """SELECT DISTINCT r.region_name
+    FROM region AS r
+    JOIN body_assignment AS ba USING(region_id)
+    JOIN body AS b USING(body_id)
+    WHERE b.body_name = %s
+    AND ((DATE(ba.at) = DATE(CURRENT_TIMESTAMP)
+    AND EXTRACT(HOUR FROM ba.at) >= 17)
+    OR (DATE(ba.at) = DATE(CURRENT_TIMESTAMP + INTERVAL '1 day')
+    AND EXTRACT(HOUR FROM ba.at) <= 05))
+    AND ba.altitude > 5.0;"""
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query, (body.title(), ))
+            results = [region[0] for region in cur.fetchall()]
+
+    return results
+
+
+def map_body_visibility_regions_colours(body: str, map_regions: list) -> dict:
+    ''''''
+    visible_regions = get_body_visible_regions(body)
+
+    region_colours = {}
+
+    for region in map_regions:
+        if region in visible_regions:
+            region_colours[region] = 'green'
+        else:
+            region_colours[region] = 'red'
+
+    return region_colours
+
+
+def map_average_cloud_coverage() -> dict:
+    '''Return a dict that has all the counties in the shape file mapped to the
+    counties from the shape file.'''
+    avg_cloud_cov = get_average_cloud_data()
+
+    mapped_values = {}
+    for area, county in COUNTY_MAPPING.items():
+        if county in avg_cloud_cov:
+            mapped_values[area] = avg_cloud_cov[county] / 100
+
+    return mapped_values
+
+
+def create_body_visibility_map(body: str) -> plt.Figure:
+    '''Returns a map figure.'''
+    fig, ax = plt.subplots(figsize=(5, 5))
+
+    gdf1 = gpd.read_file("shapefile/NUTS1_Jan_2018_UGCB_in_the_UK.shp")
+    region_colours = map_body_visibility_regions_colours(
+        body, gdf1.nuts118nm.tolist())
+    gdf1['color'] = gdf1['nuts118nm'].map(region_colours)
+    gdf1.plot(color=gdf1['color'], edgecolor='black', linewidth=1, ax=ax)
+
+    gdf2 = gpd.read_file("shapefile/CTYUA_DEC_2023_UK_BGC.shp")
+    mapped_values = map_average_cloud_coverage()
+    print(mapped_values)
+    gdf2['alpha'] = gdf2['CTYUA23NM'].map(mapped_values)
+    gdf2.plot(ax=ax, color='white', alpha=gdf2['alpha'],  edgecolor='none')
+
+    legend_text = f'''- Green: {body} visible tonight
+    - Red: {body} not visible tonight
+    - White: Opacity dictates average
+    cloud coverage tonight'''
+
+    props = {'boxstyle': 'round', 'facecolor': 'white', 'alpha': 0.5}
+    ax.text(1.45, 0.8, legend_text, fontsize=6, bbox=props,
+            transform=ax.transAxes, verticalalignment='top', horizontalalignment='right')
+
+    ax.set_axis_off()
+    plt.gcf().set_facecolor('black')
+
+    return fig
+
+
+def create_visibility_map() -> plt.Figure:
     '''Returns a map figure.'''
     pass
 
 
 if __name__ == "__main__":
     aurora_map = create_aurora_map()
+    plt.show()
 
-    plt.title('Possible Aurora Sightings')
+    body_visibility_map = create_body_visibility_map('Jupiter')
     plt.show()
