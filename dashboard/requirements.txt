@@ -8,6 +8,7 @@ email_validator
 phonenumbers
 requests
 python-dotenv
+geopandas
 matplotlib
 numpy
 requests
