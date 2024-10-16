@@ -200,7 +200,9 @@ def map_region_colours(map_regions: list[str]) -> dict:
 
 
 def create_aurora_map() -> plt.figure:
-    '''Returns a map figure.'''
+    '''Returns a map figure showing the possibility of an aurora sighting per region
+    for the current time, over-layed with a map of each counties current cloud
+    coverage as a white alpha value.'''
     fig, ax = plt.subplots(figsize=(5, 5))
 
     gdf1 = gpd.read_file("shapefile/NUTS1_Jan_2018_UGCB_in_the_UK.shp")
@@ -271,7 +273,8 @@ def get_body_visible_regions(body: str) -> list[str]:
 
 
 def map_body_visibility_regions_colours(body: str, map_regions: list) -> dict:
-    ''''''
+    '''Returns a dict with each region as keys and values either green if the body
+    is able to be seen in the night, and red if not.'''
     visible_regions = get_body_visible_regions(body)
 
     region_colours = {}
@@ -299,7 +302,9 @@ def map_average_cloud_coverage() -> dict:
 
 
 def create_body_visibility_map(body: str) -> plt.Figure:
-    '''Returns a map figure.'''
+    '''Returns a map figure showing whether a given body will be
+    visible for that night, over-layed with the average cloud coverage
+    for the night for each county.'''
     fig, ax = plt.subplots(figsize=(5, 5))
 
     gdf1 = gpd.read_file("shapefile/NUTS1_Jan_2018_UGCB_in_the_UK.shp")
@@ -330,7 +335,8 @@ def create_body_visibility_map(body: str) -> plt.Figure:
 
 
 def create_visibility_map() -> plt.Figure:
-    '''Returns a map figure.'''
+    '''Returns a map figure showing the general visibility and cloud coverage
+    for the current night.'''
     pass
 
 
