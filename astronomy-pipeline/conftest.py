@@ -146,7 +146,8 @@ def upload_moon_data_query():
 def astronomy_data_dict():
     '''Test dictionary for testing the upload astronomy data.'''
     astronomy_data = {'positions_list': [
-        'positions'], 'moon_phase_list': ['moon']}
+        'positions'], 'moon_phase_list': ['moon'],
+        'star_chart_list': ['24-03-03']}
 
     return astronomy_data
 

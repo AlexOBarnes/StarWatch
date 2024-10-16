@@ -77,10 +77,12 @@ class TestUploadMoonPhaseData():
 class TestUploadAstronomyData():
     '''Tests for the upload astronomy data function.'''
 
+    @patch('astronomy_load.upload_star_chart_data')
     @patch('astronomy_load.upload_moon_phase_data')
     @patch('astronomy_load.upload_body_position_data')
     def test_upload_astronomy_data_success_functions(self, mock_upload_body_position_data,
                                                      mock_upload_moon_phase_data,
+                                                     mock_upload_star_data,
                                                      astronomy_data_dict):
         '''Tests that the correct functions are called.'''
         upload_astronomy_data(astronomy_data_dict)
@@ -88,20 +90,24 @@ class TestUploadAstronomyData():
         assert mock_upload_body_position_data.called
         assert mock_upload_moon_phase_data.called
 
+    @patch('astronomy_load.upload_star_chart_data')
     @patch('astronomy_load.upload_moon_phase_data')
     @patch('astronomy_load.upload_body_position_data')
     def test_upload_astronomy_data_success_calls_moon(self, mock_upload_body_position_data,
                                                       mock_upload_moon_phase_data,
+                                                      mock_upload_star_data,
                                                       astronomy_data_dict):
         '''Tests that upload moon phase data is called with the correct values.'''
         upload_astronomy_data(astronomy_data_dict)
 
         mock_upload_moon_phase_data.assert_called_once_with(['moon'])
 
+    @patch('astronomy_load.upload_star_chart_data')
     @patch('astronomy_load.upload_moon_phase_data')
     @patch('astronomy_load.upload_body_position_data')
     def test_upload_astronomy_data_success_calls_body(self, mock_upload_body_position_data,
                                                       mock_upload_moon_phase_data,
+                                                      mock_upload_star_data,
                                                       astronomy_data_dict):
         '''Tests that upload body position data is called with the correct values.'''
         upload_astronomy_data(astronomy_data_dict)

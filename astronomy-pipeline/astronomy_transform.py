@@ -104,7 +104,7 @@ def clean_position_data(df: pd.DataFrame) -> list:
     return df.values.tolist()
 
 
-def get_moon_df(phase_data: list["dict"]) -> list:
+def get_moon_list(phase_data: list["dict"]) -> list:
     """Returns a dataframe of moon phase dates and image URLs."""
 
     df = pd.DataFrame(phase_data)
@@ -132,24 +132,50 @@ def convert_moon_datetime(moon_list: list) -> list:
     return moon_list
 
 
+def get_star_chart_df(star_chart_data: list["dict"]) -> pd.DataFrame:
+    """Creates dataframe from star chart data."""
+
+    return pd.DataFrame(star_chart_data)
+
+
+def convert_star_chart_data(chart_list: list) -> list:
+    """Converts star chart data for upload."""
+
+    c_mapping = get_constellation_mapping()
+
+    output_list = []
+    for entry in chart_list:
+
+        entry['day'] = datetime.strptime(entry['day'], "%Y-%m-%d")
+        entry['constellation_id'] = c_mapping[entry["constellation"]]
+
+        output_list.append(
+            [entry["day"], entry["url"], entry["constellation_id"]])
+
+    return output_list
+
+
 def transform_astronomy_data(raw_data: dict) -> list:
     """Main function for converting the extracted astronomy data into flat dataframes."""
 
     logging.info("Data cleaning started.")
 
     merged_df = get_data_into_dataframe(raw_data)
-
     position_list = clean_position_data(merged_df)
     position_list = convert_positions_datetime(position_list)
     logging.info("Body position data converted to 2D list.")
 
     moon_phase_data = raw_data["moon_phase_urls"]
-
-    moon_phase_list = get_moon_df(moon_phase_data)
+    moon_phase_list = get_moon_list(moon_phase_data)
     moon_phase_list = convert_moon_datetime(moon_phase_list)
     logging.info("Moon phase data converted to 2D list.")
 
+    star_chart_data = raw_data["star_chart_urls"]
+    star_chart_list = convert_star_chart_data(star_chart_data)
+    logging.info("Star chart data converted to 2D list.")
+
     return {
         "positions_list": position_list,
-        "moon_phase_list": moon_phase_list
+        "moon_phase_list": moon_phase_list,
+        "star_chart_list": star_chart_list
     }
