@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     # This defines a navigation sidebar for the pages on the Streamlit dashboard.
     page = st.sidebar.selectbox('Navigate', [
-                                'Home', 'Weather', 'Stellarium Integration', 'Subscriber Signup', 'Test'])
+                                'Home', 'Weather', 'Stellarium', 'Subscriber Signup', 'Celestial Bodies'])
 
     # Home page, where the user first interacts with the dashboard by default.
     if page == 'Home':
@@ -539,7 +539,7 @@ if __name__ == "__main__":
                 st.altair_chart(temperature_chart, use_container_width=True)
                 st.altair_chart(precipitation_chart, use_container_width=True)
 
-    elif page == 'Stellarium Integration':
+    elif page == 'Stellarium':
 
         st.markdown('''
         This dashboard provides an interactive view of the night sky as seen from **London**. The view updates automatically to reflect the current date and time.
@@ -708,7 +708,7 @@ if __name__ == "__main__":
                 except Exception as e:
                     st.error(f'Error adding subscriber: {e}')
 
-    elif page == 'Test':
+    elif page == 'Celestial Bodies':
         conn = connect_to_db()
 
         bodies_df = load_celestial_body_information(conn)
