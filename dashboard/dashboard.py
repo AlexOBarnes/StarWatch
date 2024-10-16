@@ -90,7 +90,6 @@ if page == 'Home':
         zoom_level = 1.5
         st.map(iss_df, zoom=zoom_level)
 
-
 # The part of the dashboard visualising weather and its effect on stargazing.
 elif page == 'Weather':
     st.title('⛅ Weather Data Dashboard 🌨️')
