@@ -368,17 +368,16 @@ def map_average_visibility_colour() -> dict:
             if avg_visibility[county] < 5000:
                 mapped_values[area] = 'gray'
                 continue
-            elif avg_visibility[county] < 10000:
+            if avg_visibility[county] < 10000:
                 mapped_values[area] = 'green'
                 continue
-            elif avg_visibility[county] < 20000:
+            if avg_visibility[county] < 20000:
                 mapped_values[area] = 'blue'
                 continue
-            elif avg_visibility[county] < 40000:
+            if avg_visibility[county] < 40000:
                 mapped_values[area] = 'purple'
                 continue
-            else:
-                mapped_values[area] = 'gold'
+            mapped_values[area] = 'gold'
 
     return mapped_values
 
