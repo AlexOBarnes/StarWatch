@@ -31,4 +31,10 @@ jobs:
           find . -name 'requirements.txt' -exec pip install -r {} \;
 
       - name: Run pylint
-        run: pylint **/*.py --fail-under=8
+        run: pylint **/*.py --fail-under=8 > pylint_report.txt
+
+      - name: Upload pylint report as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pylint-report
+          path: pylint_report.txt
