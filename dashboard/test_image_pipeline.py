@@ -3,7 +3,7 @@
 from unittest.mock import patch, MagicMock
 from datetime import datetime as dt
 import pytest
-from image_pipeline import (has_nasa_image,extract_time,get_nasa_image,
+from dashboard.nasa_pipeline import (has_nasa_image,extract_time,get_nasa_image,
     load_image,nasa_pipeline,APIError, get_iss_location)
 
 NASA_API_URL = 'https://api.nasa.gov/planetary/apod?api_key=YOUR_API_KEY'
