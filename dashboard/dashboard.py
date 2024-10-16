@@ -1,7 +1,8 @@
 # pylint:disable=line-too-long, invalid-name, broad-exception-caught,possibly-used-before-assignment,no-member
 '''Streamlit dashboard for the StarWatch project.'''
-from datetime import datetime
+from datetime import datetime,date
 import urllib
+from io import BytesIO
 from dotenv import load_dotenv
 import streamlit as st
 import psycopg2
@@ -14,6 +15,7 @@ from phonenumbers import NumberParseException
 from load_dashboard_data import connect_to_db, load_from_starwatch_rds, load_forecasts_by_county_name, load_celestial_body_information
 from nasa_pipeline import nasa_pipeline, get_image_of_the_day, get_iss_location, get_moon_phase
 from aurora_map import create_aurora_map, create_visibility_map
+from azimuth_plot import make_sky_plot, get_bodies, get_star_chart, get_regions
 
 load_dotenv()
 st. set_page_config(layout="wide")
@@ -57,7 +59,7 @@ def validate_phone_number(phone_number: str, region='GB') -> bool:
 
 
 # This defines a navigation sidebar for the pages on the Streamlit dashboard.
-page = st.sidebar.selectbox('Navigate', ['Home', 'Weather', 'Stellarium', 'Subscriber Signup', 'Astronomy'])
+page = st.sidebar.selectbox('Navigate', ['Home', 'Weather', 'Astronomy', 'Stellarium', 'Subscriber Signup'])
 
 
 # Home page, where the user first interacts with the dashboard by default.
@@ -461,8 +463,38 @@ elif page == 'Subscriber Signup':
 
 
 elif page == 'Astronomy':
-   conn = connect_to_db()
-
-   bodies_df = load_celestial_body_information(conn)
-
-   print(bodies_df.head(10))
+    conn = connect_to_db()
+    bodies = [body[0] for body in get_bodies()]
+    selected_body = st.selectbox("Select body", bodies)
+    col1, col2 = st.columns(2)
+    with col1:
+       ...
+    with col2:
+        st.header(f'{selected_body} star chart')
+        starchart,constellation = get_star_chart(selected_body)
+        if starchart:
+            st.write(f'Tonight {selected_body} will be visible in the {constellation} constellation.')
+            st.image(starchart)
+        else:
+            st.write('No star chart is available for this celestial body tonight')
+    
+    regions = [region[0] for region in get_regions()]
+    region = st.selectbox("Select region", regions)
+    col1,col2 = st.columns(2)
+    with col1:
+        ...
+    with col2:
+        selected_date = st.date_input(
+            "Select a date:",
+            value=date.today(),
+            min_value=date(2024, 10, 7),
+            max_value=date(2100, 12, 31)
+        )
+        animation_data = make_sky_plot(
+            region, datetime.combine(selected_date, datetime.min.time()))
+        st.header(f'Skyplot for {region} on {datetime.combine(
+            selected_date, datetime.min.time()).strftime('%d/%m/%y')} ')
+        if animation_data:
+            st.video(animation_data, format='.mp4')
+        else:
+            st.write('No skyplot is available for this region on this date')
