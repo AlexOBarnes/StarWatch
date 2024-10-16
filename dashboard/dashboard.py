@@ -13,9 +13,7 @@ import altair as alt
 from email_validator import validate_email as ve, EmailNotValidError
 import phonenumbers
 from phonenumbers import NumberParseException
-
 from load_dashboard_data import connect_to_db, load_from_starwatch_rds, load_forecasts_by_county_name, load_celestial_body_information
-
 
 load_dotenv()
 st. set_page_config(layout="wide")
@@ -62,6 +60,34 @@ page = st.sidebar.selectbox('Navigate', ['Home', 'Weather', 'Stellarium Integrat
 # Home page, where the user first interacts with the dashboard by default.
 if page == 'Home':
     st.title('⭐ Starwatch Data Dashboard ⭐')
+    st.write("""At StarWatch, we are dedicated to inspiring curiosity about the universe. 
+             Our mission is to provide accessible tools and resources for amateur astronomers and hobbyists 
+             stargazers so that anyone can enjoy the wonders of space.""")
+    nasa_pipeline()
+    image_title, image = get_image_of_the_day()
+    iss = get_iss_location()
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.header('Image of the day')
+        st.write(f'{image_title} - {datetime.now().strftime("%d/%m/%Y")}')
+        if 'youtube' in image:
+            st.video(image)
+        else:
+            st.image(image)
+
+    with col2:
+        st.header('Current ISS Location')
+        st.write(f'Last updated: {iss["timestamp"].strftime("%H:%M:%S %d/%m/%Y")}')
+        iss_df = pd.DataFrame({
+            'latitude': [float(iss['latitude'])],
+            'longitude': [float(iss['longitude'])]
+        })
+        zoom_level = 1.5
+        st.map(iss_df, zoom=zoom_level)
+
+
+    
 
 
 # The part of the dashboard visualising weather and its effect on stargazing.
