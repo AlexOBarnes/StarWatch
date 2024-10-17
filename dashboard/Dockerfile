@@ -1,17 +1,25 @@
-# Use official Python image as base
-FROM python:3.12-slim
+FROM python:3.12
 
-# Set the working directory in the container
+RUN apt-get update && apt-get install -y ffmpeg && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
-
-# Install any needed packages specified in requirements.txt
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the default port that Streamlit uses
+COPY aurora_map.py .
+COPY azimuth_plot.py .
+COPY hold.py .
+COPY load_dashboard_data.py .
+COPY nasa_pipeline.py .
+COPY Homepage.py .
+COPY pages ./pages/
+COPY images ./images/
+COPY shapefile ./shapefile/
+COPY extract.py .
+COPY api_error.py .
+
 EXPOSE 8501
 
-# Command to run your app
-CMD ["streamlit", "run", "dashboard.py", "--server.port=8501", "--server.enableCORS=false", "--server.enableXsrfProtection=false"]
+CMD ["streamlit", "run", "Homepage.py", "--server.port=8501", "--server.enableCORS=false", "--server.enableXsrfProtection=false"]
