@@ -30,7 +30,7 @@ jobs:
       run: pip install pytest-cov
 
     - name: "Run pytest with coverage and save report to text file"
-      run: pytest --cov=. > coverage_report.txt
+      run: pytest --cov=. --asyncio-default-fixture-loop-scope=function > coverage_report.txt
 
     - name: "Upload coverage text report"
       uses: actions/upload-artifact@v3
