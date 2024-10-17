@@ -76,7 +76,7 @@ if page == 'Home':
         if aurora:
             st.pyplot(aurora)
     with col2:
-        st.header('Current Visibility')
+        st.header("Tonight's Visibility")
         visibility = create_visibility_map()
         if visibility:
             st.pyplot(visibility)
