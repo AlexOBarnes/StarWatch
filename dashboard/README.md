@@ -79,11 +79,11 @@ For clarity, the StarWatch dashboard has been subdivided into pages, each with a
 ### - Page 1: Home Page
 `'Current Aurora Status'`
 
-Shows aurora activity around the UK overlaid with the current cloud cover by county. Combining these two factors give a holistic representation of the likelihood that inhabitants of each country will be able to see aurora activity in their area.
+Shows aurora activity around the UK overlaid with the current cloud cover by county. Combining these two factors give a holistic representation of the likelihood that inhabitants of each county will currently be able to see aurora activity in their.
 
 `'Tonight's visibility'`
 
-Combines data on both cloud coverage and local visibility data to give a comprehensive evaluation of how good the conditions are in each county for stargazing.
+Combines data on cloud coverage and local visibility to give a comprehensive evaluation of how good the conditions are in each county for stargazing.
 
 `'Image of the day'`
 
@@ -99,7 +99,7 @@ Shows the current location of the International Space Station (ISS) relative to 
 
 `'Data Sources'`
 
-Logo images of the API data sources with adjacent link to the API webpages.
+Logo images and URL links of the API data sources used.
 
 ### - Page 2: Astronomy
 
@@ -109,11 +109,11 @@ Select box that allows you to filter the astronomy visualisations by celestial b
 
 `'<BODY> Visibility Across the UK'`
 
-Shows if the specified celestial body is visible in each county overlaid with the cloud coverage of each county to give a holistic representation of the likelihood that inhabitants of each country will be able to see the specified celestial body in their area.
+Shows if the specified celestial body is visible in each county overlaid with the cloud coverage of each county to give a holistic representation of the likelihood that inhabitants of each county will currently be able to see the specified celestial body.
 
 `'<BODY> Star Chart'`
 
-Shows a star chart of the constellation that the specified celestial body can be found in.
+Shows a star chart of the constellation that the specified celestial body can be located in.
 
 <span style="color:magenta;">Region Select Box</span>:
 
@@ -129,19 +129,19 @@ Heatmap showing the historical visibility of the specified body from the specifi
 
 `'Skyplot for <COUNTY> on <DATE>'`
 
-Plot showing the azimuth and altitude angles of the visible boduies from the specified region on the specified date from the hours of 18:00 to 05:00.
+Plot showing the azimuth and altitude angles of the visible bodies from the specified region on the specified date from the hours of 18:00 to 05:00 in three hour intervals.
 
 ### - Page 3: Stellarium
 
 `'Interactive Night Sky View'`
 
-Shows an interactive sky map of the night sky that can be customised by location using a build in drag-and-drop pin map. This feature also contains several different visual filters that can be toggled using the icons at the bottom of the window. Current date and time are displayed below.
+Shows an interactive map of the night sky that can be customised by location using a build in drag-and-drop pin map. This feature also contains several different visual filters that can be toggled using the icons at the bottom of the window. Current date and time are displayed below.
 
 ### - Page 4: Subscribe
 
 <span style="color:magenta;">Desired Username Input Box</span>:
 
-Input box to insert desired username.
+Input box to insert desired user username.
 
 <span style="color:magenta;">Email Address Input Box</span>:
 
@@ -149,7 +149,7 @@ Input box to insert user email address.
 
 <span style="color:magenta;">Phone Number Input Box</span>:
 
-Input box to add user phone number.
+Input box to insert user phone number.
 
 <span style="color:magenta;">County Multi-Select Box</span>:
 
