@@ -3,6 +3,8 @@
 import sys
 import os
 from datetime import datetime as dt
+from io import BytesIO
+import tempfile
 import matplotlib.pyplot as plt
 from matplotlib import animation
 import pandas as pd
@@ -12,6 +14,24 @@ sys.path.append(os.path.abspath(os.path.join(
     os.path.dirname(__file__), '..', 'weekly-openmeteo')))
 from extract import get_connection
 
+
+def get_regions() -> list:
+    '''Returns a list of all regions'''
+    query = '''SELECT region_name FROM region'''
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            data = list(cur.fetchall())
+    return data
+
+def get_bodies() -> list:
+    '''Returns a list of all bodies'''
+    query = '''SELECT body_name FROM body'''
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            data = list(cur.fetchall())
+    return data
 
 def get_azimuth_data(region: str, time_point: dt):
     '''Uses psycopg2 to query the database for azimuth data for a given night'''
@@ -135,15 +155,35 @@ def animate_skyplot(celestial_df: pd.DataFrame, region: str):
                                   fargs=(celestial_df, scatter, body_properties_map,
                                          text_elements, ax, region),
                                   interval=1000, repeat=True)
-    plt.show()
+
+    with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmpfile:
+        ani.save(tmpfile.name, writer='ffmpeg', fps=2)
+        tmpfile.seek(0)
+        video_path = tmpfile.name
+
+    return video_path
 
 def make_sky_plot(region: str, time: dt) -> plt.subplot:
     '''Orchestrates the pipeline to create the skyplot'''
     data = get_azimuth_data(region, time)
     clean_data = transform_azimuth_data(data)
-    animate_skyplot(clean_data, region)
+    return animate_skyplot(clean_data, region)
 
+def get_star_chart(body: str) -> str:
+    '''Returns a string for a given body'''
+    query = '''SELECT image_url, constellation_name FROM image
+    JOIN constellation USING (constellation_id)
+    JOIN body_assignment USING (constellation_id)
+    JOIN body USING (body_id)
+    WHERE body_name = %s AND
+    image_date = CURRENT_DATE'''
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query,(body,))
+            data = cur.fetchone()
+    return data
 
 if __name__ == '__main__':
     load_dotenv()
-    make_sky_plot('Scotland', dt(2024, 10, 25, 0, 0, 0))
+    make_sky_plot('Scotland', dt(2024, 10, 17, 0, 0, 0))
+    print(get_star_chart('Venus'))

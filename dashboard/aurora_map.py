@@ -214,7 +214,7 @@ def create_aurora_map() -> plt.figure:
     return fig
 
 
-def create_visibilty_map() -> plt.figure:
+def create_visibility_map() -> plt.figure:
     '''Returns a map figure.'''
     pass
 
