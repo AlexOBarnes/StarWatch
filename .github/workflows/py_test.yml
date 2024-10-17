@@ -29,11 +29,22 @@ jobs:
     - name: "Install pytest-cov for coverage reporting"
       run: pip install pytest-cov
 
+    - name: "Install pytest-asyncio"
+      run: pip install pytest-asyncio
+
+    - name: "Configure pytest.ini for asyncio fixture loop scope"
+      run: |
+        if [ ! -f pytest.ini ]; then
+          echo "[pytest]" > pytest.ini
+        fi
+        echo "asyncio_default_fixture_loop_scope = function" >> pytest.ini
+
     - name: "Run pytest with coverage and save report to text file"
-      run: pytest --cov=. --asyncio-default-fixture-loop-scope=function > coverage_report.txt
+      run: pytest --cov=. > coverage_report.txt
 
     - name: "Upload coverage text report"
       uses: actions/upload-artifact@v3
       with:
         name: coverage-txt-report
         path: coverage_report.txt
+
