@@ -20,7 +20,7 @@ jobs:
     - name: "Install Python"
       uses: actions/setup-python@v5.1.1
       with:
-        python-version: '3.12'
+        python-version: '3.13'
 
     - name: "Find and install all requirements.txt files"
       run: |
