@@ -97,21 +97,21 @@ Shows a daily image and description of the current moon phase.
 
 Shows the current location of the International Space Station (ISS) relative to a world map.
 
-<span style="color:cyan;">Data Sources</span>:
+`'Data Sources'`
 
 Logo images of the API data sources with adjacent link to the API webpages.
 
 ### Page 2 - Astronomy
 
-<span style="color:magenta;">**Celestial Body Select Box**</span>:
+<span style="color:magenta;">Celestial Body Select Box</span>:
 
 Select box that allows you to filter visualisations on the astronomy page by celestial body. Includes all non-earth solar system planets, the sun, and the moon.
 
-`'Mercury Visibility Across the UK'`
+`'<BODY> Visibility Across the UK'`
 
-Shows the visibility of Mercury per county overlaid with the cloud coverage of each county to give a holistic representation of the likelihood that inhabitants of each country will be able to see the specified celestial body in their area.
+Shows if the specified celestial body is visible in each county overlaid with the cloud coverage of each county to give a holistic representation of the likelihood that inhabitants of each country will be able to see the specified celestial body in their area.
 
-`'Mercury Star Chart'`
+`'<BODY> Star Chart'`
 
 Shows a star chart of the constellation that the specified celestial body can be found in.
 
@@ -123,17 +123,29 @@ Shows an interactive sky map of the night sky that can be customised by location
 
 ### Page 4 - Subscribe
 
-<span style="color:magenta;">**Desired Username Select Box**</span>:
+<span style="color:magenta;">Desired Username Input Box</span>:
 
+Input box to insert desired username.
 
+<span style="color:magenta;">Email Address Input Box</span>:
+
+Input box to insert user email address.
+
+<span style="color:magenta;">Phone Number Input Box</span>:
+
+Input box to add user phone number.
+
+<span style="color:magenta;">County Multi-Select Box</span>:
+
+Multi-select box for UK counties. A user can use this box to select all of the counties that they would like to receive relevant alerts for.
 
 ### Page 5 - Weather
 
-<span style="color:magenta;">**County Select Box**</span>:
+<span style="color:magenta;">County Select Box</span>:
 
 Select box that allows you to filter the visualisations on the weather page by UK county.
 
-<span style="color:magenta;">**Date Select Box**</span>:
+<span style="color:magenta;">Date Select Box</span>:
 
 Select box that allows you to filter the visualisations on the weather page by date. This selection can be a single date or a date range.
 
