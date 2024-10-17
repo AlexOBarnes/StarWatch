@@ -33,6 +33,7 @@ jobs:
       run: pytest --cov=. > coverage_report.txt
 
     - name: "Upload coverage text report"
+      if: always()
       uses: actions/upload-artifact@v3
       with:
         name: coverage-txt-report
