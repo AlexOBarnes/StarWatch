@@ -502,16 +502,17 @@ elif page == 'Astronomy':
     
     regions = [region[0] for region in get_regions()]
     region = st.selectbox("Select region", regions)
+    selected_date = st.date_input(
+        "Select a date:",
+        value=date.today(),
+        min_value=date(2024, 10, 7),
+        max_value=date(2100, 12, 31)
+    )
     col1,col2 = st.columns(2)
     with col1:
-        ...
+        st.header('What has been visible in your region?')
+        st.write('Historical data heat map to be implemented. Sorry for the inconvenience.')
     with col2:
-        selected_date = st.date_input(
-            "Select a date:",
-            value=date.today(),
-            min_value=date(2024, 10, 7),
-            max_value=date(2100, 12, 31)
-        )
         animation_data = make_sky_plot(
             region, datetime.combine(selected_date, datetime.min.time()))
         st.header(f'Skyplot for {region} on {datetime.combine(
