@@ -52,6 +52,28 @@ def upload_moon_phase_data(moon_phase_data: list[list]) -> None:
         logging.info("Moon phase data uploaded.")
 
 
+def upload_star_chart_data(star_chart_data: list[list]) -> None:
+    '''Uploads the star chart image data to the database.'''
+
+    for entry in star_chart_data:
+        entry.append(None)
+        entry.append("star_chart")
+
+    with get_db_connection() as conn:
+        logging.info("Connection established.")
+
+        cur = conn.cursor()
+
+        q_str = """
+                INSERT INTO image
+                (image_date, image_url, constellation_id, region_id, image_name)
+                VALUES
+                %s"""
+
+        execute_values(cur, q_str, star_chart_data)
+        logging.info("Star chart data uploaded.")
+
+
 def upload_astronomy_data(data_dict: dict) -> None:
     '''Uploads both the position and  moon phase data from the given dict.'''
 
@@ -59,6 +81,8 @@ def upload_astronomy_data(data_dict: dict) -> None:
 
     position_data = data_dict["positions_list"]
     moon_data = data_dict["moon_phase_list"]
+    star_chart_data = data_dict["star_chart_list"]
 
     upload_body_position_data(position_data)
     upload_moon_phase_data(moon_data)
+    upload_star_chart_data(star_chart_data)

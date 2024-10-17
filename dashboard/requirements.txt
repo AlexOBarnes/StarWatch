@@ -1,10 +1,15 @@
 pytest
 pylint
+psycopg2-binary
 altair
 streamlit
 streamlit_autorefresh
+email_validator
+phonenumbers
 requests
 python-dotenv
-psycopg2-binary
 geopandas
 matplotlib
+numpy
+requests
+tqdm

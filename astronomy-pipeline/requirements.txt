@@ -4,3 +4,5 @@ python-dotenv
 requests
 psycopg2-binary
 pandas
+aiohttp
+pytest-asyncio
