@@ -74,7 +74,7 @@ pytest --cov
 ```
 
 ## How it works
-For clarity, the StarWatch dashboard has been subdivided into pages, each with a specific content focus. After running the dashboard, and navigating to the dashboard URL, these pages can be accessed using the sidebar feature, which can be opened using the arrow in the top-left corner.
+For clarity, the StarWatch dashboard has been subdivided into pages, each with a specific content focus. After running the dashboard, and navigating to the dashboard URL, these pages can be accessed using the sidebar feature, which, if not visible, can be opened using the arrow in the top-left corner.
 
 ### Page 1 - Home Page
 `'Current Aurora Status'`
@@ -95,11 +95,58 @@ Shows a daily image and description of the current moon phase.
 
 `'Current ISS Location'`
 
+Shows the current location of the International Space Station (ISS) relative to a world map.
+
+<span style="color:cyan;">Data Sources</span>:
+
+Logo images of the API data sources with adjacent link to the API webpages.
+
 ### Page 2 - Weather
 
+<span style="color:magenta;">**County Select Box**</span>:
+
+Select box that allows you to filter the visualisations on the weather page by UK county.
+
+<span style="color:magenta;">**Date Select Box**</span>:
+
+Select box that allows you to filter the visualisations on the weather page by date. This selection can be a single date or a date range.
+
+`'Cloud Coverage Over Time (Real vs. Rolling Average)'`
+
+Shows cloud coverage by date up to 100% and a rolling average of cloud coverage (shown by the grey line).
+
+`'Temperature Over Time (Real vs. Rolling Average)'`
+
+Shows temperature by date in degrees Celcius and a rolling average of temperature (shown by the grey line).
+
+`'Visibility Over Time (Real vs. Rolling Average)'`
+
+Shows visibility by date up to 50,000 metres and a rolling average of visibility (shown by the grey line).
+
+`'Precipitation Probability (%) and Precipitation (mm) Over Time'`
+
+Shows both precipitation probability and precipitation over time.
 
 ### Page 3 - Astronomy
 
+<span style="color:magenta;">**Celestial Body Select Box**</span>:
+
+Select box that allows you to filter visualisations on the astronomy page by celestial body. Includes all non-earth solar system planets, the sun, and the moon.
+
+`'Mercury Visibility Across the UK'`
+
+Shows the visibility of Mercury per county overlaid with the cloud coverage of each county to give a holistic representation of the likelihood that inhabitants of each country will be able to see the specified celestial body in their area.
+
+`'Mercury Star Chart'`
+
+Shows a star chart of the constellation that the specified celestial body can be found in.
+
 ### Page 4 - Stellarium
 
+`'Interactive Night Sky View'`
+
+Shows an interactive sky map of the night sky that can be customised by location using a build in drag-and-drop pin map. This feature also contains several different visual filters that can be toggled using the icons at the bottom of the window. Current date and time are displayed below.
+
 ### Page 5 - User Sign-Up
+
+
