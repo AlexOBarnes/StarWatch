@@ -76,7 +76,7 @@ if page == 'Home':
         if aurora:
             st.pyplot(aurora)
     with col2:
-        st.header('Current Visibility')
+        st.header("Tonight's Visibility")
         visibility = create_visibility_map()
         if visibility:
             st.pyplot(visibility)
@@ -112,7 +112,24 @@ if page == 'Home':
     })
     zoom_level = 1.5
     st.map(iss_df, zoom=zoom_level)
-
+    st.write('Data sources:')
+    col1,col2,col3,col4,col5 = st.columns(5)
+    with col1:
+        st.image('images/astronomy.png')
+        st.write('[Astronomy API](%s)' % 'https://docs.astronomyapi.com/')
+    with col2:
+        st.image('images/aurorawatch.png')
+        st.write('[Aurorawatch UK](%s)' % 'https://aurorawatch.lancs.ac.uk/')
+    with col3:
+        st.image('images/iss.png')
+        st.write('[ISS](%s)' %
+                 'http://open-notify.org/Open-Notify-API/ISS-Location-Now/')
+    with col4:
+        st.image('images/nasa.png')
+        st.write('[NASA](%s)' % 'https://api.nasa.gov/')
+    with col5:
+        st.image('images/openmeteo.png')
+        st.write('[Openmeteo API](%s)' % 'https://open-meteo.com/en/docs')
 
 # The part of the dashboard visualising weather and its effect on stargazing.
 elif page == 'Weather':
