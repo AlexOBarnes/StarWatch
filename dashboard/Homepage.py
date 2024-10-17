@@ -21,7 +21,7 @@ load_dotenv()
 st.set_page_config(layout="wide")
 
 if __name__ == '__main__':
-    st.title('⭐ Starwatch Data Dashboard ⭐')
+    st.title('⭐ Starwatch Data Dashboard 🚀')
     st.write("""At StarWatch, we are dedicated to inspiring curiosity about the universe.
             Our mission is to provide accessible tools and resources for amateur astronomers and hobbyists
             stargazers so that anyone can enjoy the wonders of space.""")
