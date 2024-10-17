@@ -126,15 +126,15 @@ INSERT INTO region (region_name, latitude, longitude) VALUES
 ('Northern Ireland', 54.61, -6.62),
 ('Scotland', 56.49, -4.20),
 ('Wales', 52.13, -3.78),
-('North East', 54.97, -1.61),
-('North West', 53.78, -2.70),
-('Yorkshire and the Humber', 53.80, -1.54),
-('East Midlands', 52.90, -1.23),
-('West Midlands', 52.48, -1.89),
+('North East (England)', 54.97, -1.61),
+('North West (England)', 53.78, -2.70),
+('Yorkshire and The Humber', 53.80, -1.54),
+('East Midlands (England)', 52.90, -1.23),
+('West Midlands (England)', 52.48, -1.89),
 ('East of England', 52.24, 0.90),
 ('London', 51.51, -0.13),
-('South East', 51.28, -0.78),
-('South West', 50.78, -3.79);
+('South East (England)', 51.28, -0.78),
+('South West (England)', 50.78, -3.79);
 
 INSERT INTO county (county_name, latitude, longitude, region_id) VALUES
 ('Antrim', 54.71, -6.22, 1),
