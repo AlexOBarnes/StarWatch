@@ -2,8 +2,10 @@
 This folder contains the scripts to run and dockerise the dashboard for the StarWatch pipeline project. The pipeline was created using `streamlit` and queries data from a postgres database using `psycopg2`. Along with this, requests are also made to the [NASA APOD API](https://api.nasa.gov/) and [ISS API](http://open-notify.org/Open-Notify-API/ISS-Location-Now/).
 
 ## Design
+#### The StarWatch Architecture Design
 ![ERD](../assets/starwatch_architecture_diagram.png)
-![Wireframe](../assets/starwatch_dashboard_wireframe.png) Shows the design for the StarWatch dashboard.
+#### The StarWatch Dashboard Design Wireframe
+![Wireframe](../assets/starwatch_dashboard_wireframe.png) 
 
 # Setup
 1. Ensure that an SQL server RDS has been setup prior and is accessible.
@@ -25,7 +27,6 @@ pip install -r requirements.txt
     - NASA_API_KEY - A key to access the NASA API - this can be generated at the link at the top of this README.
 
 ### To Run on AWS:
-
 2. Create an ECR repository through terraform or the AWS UI.
 In order for your provisioned architecture one must dockerise their scripts and dependencies and push to an ECR repository.  
 For the next steps you will require AWS credentials and the ECR URI.
@@ -54,7 +55,7 @@ bash deploy.sh
 ## Usage
 - To use locally one can use the following command:
 ```bash
-streamlit run pipeline.py
+streamlit run homepage.py
 ```
 It is a good idea to ensure that the dashboard works with your credentials prior to provisioning the AWS architecture, it should be available via a local URL printed to terminal upon running the streamlit dashboard.
 
@@ -72,3 +73,16 @@ To get a coverage report execute the following;
 pytest --cov
 ```
 ## How it works
+For clarity, the StarWatch dashboard has been subdivided into pages, each with a specific content focus. After running the dashboard, and navigating to the dashboard URL, these pages can be accessed using the sidebar feature, which can be opened using the arrow in the top-left corner.
+
+### Page 1 - Front Page
+
+
+
+### Page 2 - Weather
+
+### Page 3 - Astronomy
+
+### Page 4 - Stellarium
+
+### Page 5 - User Sign-Up
