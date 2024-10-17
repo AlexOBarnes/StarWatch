@@ -3,7 +3,7 @@ This folder contains the scripts to run and dockerise the dashboard for the Star
 
 ## Design
 ![ERD](../assets/starwatch_architecture_diagram.png)
-__Figure 1__ - _Starwatch Dashboard Wireframe_: Shows the design for the StarWatch dashboard.
+![Wireframe](../assets/starwatch_dashboard_wireframe.png) Shows the design for the StarWatch dashboard.
 
 # Setup
 1. Ensure that an SQL server RDS has been setup prior and is accessible.

@@ -23,8 +23,18 @@ def get_image_of_the_day() -> str:
         with conn.cursor() as cur:
             cur.execute(query)
             data = cur.fetchone()
-            print(data)
     return data
+
+def get_moon_phase() -> str:
+    '''Returns todays moon phase'''
+    query = """SELECT image_url FROM image
+    WHERE image_name = 'moon_phase' AND
+    image_date = CURRENT_DATE"""
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            data = cur.fetchone()
+    return data[0]
 
 
 def has_nasa_image() -> bool:
@@ -121,4 +131,4 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)
     load_dotenv()
-    print(get_sunset_times('Staffordshire'))
+    print(get_moon_phase())
