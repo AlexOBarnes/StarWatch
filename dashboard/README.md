@@ -76,7 +76,7 @@ pytest --cov
 ## How it works
 For clarity, the StarWatch dashboard has been subdivided into pages, each with a specific content focus. After running the dashboard, and navigating to the dashboard URL, these pages can be accessed using the sidebar feature, which, if not visible, can be opened using the arrow in the top-left corner.
 
-### Page 1 - Home Page
+### - Page 1: Home Page
 `'Current Aurora Status'`
 
 Shows aurora activity around the UK overlaid with the current cloud cover by county. Combining these two factors give a holistic representation of the likelihood that inhabitants of each country will be able to see aurora activity in their area.
@@ -101,11 +101,11 @@ Shows the current location of the International Space Station (ISS) relative to 
 
 Logo images of the API data sources with adjacent link to the API webpages.
 
-### Page 2 - Astronomy
+### - Page 2: Astronomy
 
 <span style="color:magenta;">Celestial Body Select Box</span>:
 
-Select box that allows you to filter visualisations on the astronomy page by celestial body. Includes all non-earth solar system planets, the sun, and the moon.
+Select box that allows you to filter the astronomy visualisations by celestial body. Includes all non-earth solar system planets, the sun, and the moon.
 
 `'<BODY> Visibility Across the UK'`
 
@@ -115,13 +115,29 @@ Shows if the specified celestial body is visible in each county overlaid with th
 
 Shows a star chart of the constellation that the specified celestial body can be found in.
 
-### Page 3 - Stellarium
+<span style="color:magenta;">Region Select Box</span>:
+
+Select box that allows you to filter the following two visualisations by UK region.
+
+<span style="color:magenta;">Date Select Box</span>:
+
+Select box that allows you to choose a single date to filter the following two visualisations.
+
+`'What Has Been Visible In Your Region'`
+
+Heatmap showing the historical visibility of the specified body from the specified region.
+
+`'Skyplot for <COUNTY> on <DATE>'`
+
+Plot showing the azimuth and altitude angles of the visible boduies from the specified region on the specified date from the hours of 18:00 to 05:00.
+
+### - Page 3: Stellarium
 
 `'Interactive Night Sky View'`
 
 Shows an interactive sky map of the night sky that can be customised by location using a build in drag-and-drop pin map. This feature also contains several different visual filters that can be toggled using the icons at the bottom of the window. Current date and time are displayed below.
 
-### Page 4 - Subscribe
+### - Page 4: Subscribe
 
 <span style="color:magenta;">Desired Username Input Box</span>:
 
@@ -139,7 +155,7 @@ Input box to add user phone number.
 
 Multi-select box for UK counties. A user can use this box to select all of the counties that they would like to receive relevant alerts for.
 
-### Page 5 - Weather
+### - Page 5: Weather
 
 <span style="color:magenta;">County Select Box</span>:
 
