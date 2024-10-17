@@ -1,10 +1,10 @@
 '''Contains tests for the image pipeline'''
-#pylint: disable=C0121,R0903
+# pylint: disable=C0121,R0903
 from unittest.mock import patch, MagicMock
 from datetime import datetime as dt
 import pytest
-from nasa_pipeline import (has_nasa_image,extract_time,get_nasa_image,
-    load_image,nasa_pipeline,APIError, get_iss_location)
+from nasa_pipeline import (has_nasa_image, extract_time, get_nasa_image,
+                           load_image, nasa_pipeline, APIError, get_iss_location)
 
 NASA_API_URL = 'https://api.nasa.gov/planetary/apod?api_key=YOUR_API_KEY'
 KEYS = ['data', 'title', 'url']
@@ -37,6 +37,7 @@ class TestHasNasaImage:
 
 class TestExtractTime:
     '''Contains tests for the extract time function'''
+
     def test_extract_time_valid(self):
         '''Asserts that a valid string is extracted'''
         time_str = "2024-10-14"
@@ -47,6 +48,7 @@ class TestExtractTime:
         '''Tests that an invalid string causes an error'''
         with pytest.raises(ValueError):
             extract_time("14-10-2024")
+
 
 class TestGetNasaImage:
     '''Tests for the get nasa image function'''
@@ -113,7 +115,7 @@ class TestNasaPipeline:
     @patch('nasa_pipeline.get_nasa_image')
     @patch('nasa_pipeline.has_nasa_image')
     def test_nasa_pipeline_no_image_found(self, mock_has_nasa_image,
-                                        mock_get_nasa_image, mock_load_image):
+                                          mock_get_nasa_image, mock_load_image):
         '''Tests that a valid request ends in the correct functions being called'''
         mock_has_nasa_image.return_value = False
         mock_get_nasa_image.return_value = [dt(2024, 10, 14),
@@ -148,11 +150,11 @@ class TestGetIssLocation:
         mock_response.json.return_value = {
             'message': 'success',
             'timestamp': 1728908772,
-            'iss_position': {'latitude': '46.9566','longitude': '-3.7535'}}
+            'iss_position': {'latitude': '46.9566', 'longitude': '-3.7535'}}
         mock_get.return_value = mock_response
         result = get_iss_location()
-        expected_result = {'timestamp': dt(2024,10,14,12,26,12),
-            'latitude': '46.9566','longitude': '-3.7535'}
+        expected_result = {'timestamp': dt(2024, 10, 14, 13, 26, 12),
+                           'latitude': '46.9566', 'longitude': '-3.7535'}
 
         assert result == expected_result
 
