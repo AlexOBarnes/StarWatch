@@ -1,53 +1,84 @@
-   def calculate_visibility(test_max_visibility, test_cloud_coverage, test_time_step, test_orbital_frequency):
-        orbital_effect = np.sin(2 * np.pi * test_orbital_frequency * test_time_step)
-        visibility = test_max_visibility * (1 - test_cloud_coverage / 100) * (0.5 + 0.5 * orbital_effect)
-        return visibility
+import pandas as pd
+import altair as alt
+import streamlit as st
+import numpy as np
+from load_dashboard_data import load_average_cloud_coverage_by_region, connect_to_db
+from dotenv import load_dotenv
+import math
 
-    bodies = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Moon', 'Pluto']
-    max_visibilities = [12000, 25000, 30000, 20000, 18000, 15000, 13000, 30000, 10000]
-    orbital_frequencies = [0.2, 0.1, 0.05, 0.07, 0.03, 0.02, 0.01, 0.5, 0.005]
+def calculate_starwatch_coefficient(body_distance, avg_visibility, avg_cloud_coverage, min_body_distance, max_body_distance):
+    '''
+    
+    '''
 
-    start_date = pd.Timestamp('2024-11-01')
-    end_date = pd.Timestamp('2024-11-30')
-    days = pd.date_range(start=start_date, end=end_date, freq='D')
+    visibility_ratio = float(avg_visibility) / float(body_distance)
 
-    data = []
-    for body, max_visibility, frequency in zip(bodies, max_visibilities, orbital_frequencies):
-        for i, day in enumerate(days):
-            cloud_coverage = np.random.randint(0, 100)
-            visibility = calculate_visibility(max_visibility, cloud_coverage, i, frequency)
-            data.append({
-                'body_name': body,
-                'date': day,
-                'max_visibility_m': max_visibility,
-                'cloud_coverage_percent': cloud_coverage,
-                'visibility_m': visibility
-            })
+    log_visibility_ratio = math.log10(visibility_ratio)
 
+    min_log = math.log10(float(avg_visibility) / float(max_body_distance))
+    max_log = math.log10(float(avg_visibility) / float(min_body_distance))
 
-    visibility_df = pd.DataFrame(data)
+    normalized_log_visibility_ratio = (log_visibility_ratio - min_log) / (max_log - min_log)
 
-    source = pd.DataFrame({
-        'x': visibility_df['date'].dt.date,  
-        'y': visibility_df['body_name'],     
-        'z': visibility_df['visibility_m']    
-    })
+    starwatch_coefficient = 0.02 + normalized_log_visibility_ratio * (0.9 - 0.02)
 
+    starwatch_coefficient *= (1 - float(avg_cloud_coverage) / 100)
 
-    heatmap = alt.Chart(source).mark_rect().encode(
-        x=alt.X('x:O', title='Date', axis=alt.Axis(labels=False, ticks=False)),
-        y=alt.Y('y:O', title='Celestial Body'),
-        color=alt.Color('z:Q',
-                        scale=alt.Scale(domain=[0, 30000],
-                                        range=['#fff5eb', '#ff0000', '#800080']),
-                        title='Visibility (m)'),
-        tooltip=['y', 'x:T', 'z']
-    ).properties(
-        width=2000,
-        height=500,
-        title='Daily Visibility of Celestial Bodies'
-    )
+    return starwatch_coefficient
 
-    col1, col2, col3 = st.columns(3)
-    with col2:
+if __name__ == '__main__':
+    load_dotenv()
+    connection_instance = connect_to_db()
+
+    df = pd.DataFrame(load_average_cloud_coverage_by_region(connection_instance))
+
+    df['date'] = pd.to_datetime(df['date']).dt.date  
+
+    numeric_columns = ['distance_km', 'avg_vis', 'avg_cloud']
+    df[numeric_columns] = df[numeric_columns].astype(float)
+
+    st.write("Initial Data:")
+    st.write(df.head(1000))
+
+    unique_dates = df['date'].unique()
+    selected_date = st.selectbox('Select Date:', unique_dates)
+
+    available_regions = df[df['date'] == selected_date]['region_name'].unique()
+    selected_region = st.selectbox('Select Region:', available_regions)
+
+    filtered_df = df[(df['date'] == selected_date) & (df['region_name'] == selected_region)].copy()
+
+    if filtered_df.empty:
+        st.write("No data available for the selected date and region.")
+    else:
+        min_body_distance = filtered_df['distance_km'].min()
+        max_body_distance = filtered_df['distance_km'].max()
+
+        filtered_df['starwatch_coefficient'] = filtered_df.apply(
+            lambda row: calculate_starwatch_coefficient(
+                row['distance_km'],
+                row['avg_vis'],  
+                row['avg_cloud'],  
+                min_body_distance,
+                max_body_distance
+            ), axis=1
+        )
+
+        st.write("Filtered Data with Starwatch Coefficient:")
+        st.write(filtered_df.head(10))
+
+        source = pd.DataFrame({
+            'x': filtered_df['time'], 
+            'y': filtered_df['body_name'],  
+            'z': filtered_df['starwatch_coefficient']  
+        })
+
+        heatmap = alt.Chart(source).mark_rect().encode(
+            x='x:O',
+            y='y:O',
+            color=alt.Color('z:Q', scale=alt.Scale(scheme='viridis'), title='Starwatch Coefficient')
+        ).properties(
+            title=f"Starwatch Coefficient Heatmap for {selected_region} on {selected_date}"
+        )
+
         st.altair_chart(heatmap, use_container_width=True)
