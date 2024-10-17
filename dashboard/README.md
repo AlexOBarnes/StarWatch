@@ -72,14 +72,31 @@ To get a coverage report execute the following;
 ```bash
 pytest --cov
 ```
+
 ## How it works
 For clarity, the StarWatch dashboard has been subdivided into pages, each with a specific content focus. After running the dashboard, and navigating to the dashboard URL, these pages can be accessed using the sidebar feature, which can be opened using the arrow in the top-left corner.
 
-### Page 1 - Front Page
+### Page 1 - Home Page
+`'Current Aurora Status'`
 
+Shows aurora activity around the UK overlaid with the current cloud cover by county. Combining these two factors give a holistic representation of the likelihood that inhabitants of each country will be able to see aurora activity in their area.
 
+`'Tonight's visibility'`
+
+Combines data on both cloud coverage and local visibility data to give a comprehensive evaluation of how good the conditions are in each county for stargazing.
+
+`'Image of the day'`
+
+The "NASA Image of the Day" taken directly from the NASA API. This is updated daily and can have a focus of any space/astronomy related topics.
+
+`'Today's moon phase'`
+
+Shows a daily image and description of the current moon phase.
+
+`'Current ISS Location'`
 
 ### Page 2 - Weather
+
 
 ### Page 3 - Astronomy
 
