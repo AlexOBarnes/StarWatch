@@ -180,4 +180,3 @@ Shows visibility by date up to 50,000 metres and a rolling average (shown by the
 `'Precipitation Probability (%) and Precipitation (mm) Over Time'`
 
 Shows both precipitation probability and precipitation over time.
-
