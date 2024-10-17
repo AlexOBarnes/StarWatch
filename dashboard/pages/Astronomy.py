@@ -24,7 +24,7 @@ if __name__ == '__main__':
                         constellation} constellation.')
             st.image(starchart)
         else:
-            st.write('No star chart is available for this celestial body tonight')
+            st.write('No star chart is available for this celestial body tonight.')
 
     regions = [region[0] for region in get_regions()]
     region = st.selectbox("Select region", regions)
