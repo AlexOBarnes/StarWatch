@@ -167,15 +167,15 @@ Select box that allows you to filter the visualisations on the weather page by d
 
 `'Cloud Coverage Over Time (Real vs. Rolling Average)'`
 
-Shows cloud coverage by date up to 100% and a rolling average of cloud coverage (shown by the grey line).
+Shows cloud coverage by date up to 100% and a rolling average (shown by the grey line) of cloud coverage.
 
 `'Temperature Over Time (Real vs. Rolling Average)'`
 
-Shows temperature by date in degrees Celcius and a rolling average of temperature (shown by the grey line).
+Shows temperature by date in degrees Celcius and a rolling average (shown by the grey line) of temperature.
 
 `'Visibility Over Time (Real vs. Rolling Average)'`
 
-Shows visibility by date up to 50,000 metres and a rolling average of visibility (shown by the grey line).
+Shows visibility by date up to 50,000 metres and a rolling average (shown by the grey line) of visibility.
 
 `'Precipitation Probability (%) and Precipitation (mm) Over Time'`
 
