@@ -72,3 +72,4 @@ To get a coverage report execute the following;
 pytest --cov
 ```
 ## How it works
+
