@@ -20,7 +20,7 @@ if __name__ == '__main__':
         st.header(f'{selected_body} star chart')
         starchart, constellation = get_star_chart(selected_body)
         if starchart:
-            st.write(f'Tonight {selected_body} will be visible in the {
+            st.write(f'Tonight, {selected_body} will be visible in the {
                         constellation} constellation.')
             st.image(starchart)
         else:
