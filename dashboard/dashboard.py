@@ -14,7 +14,7 @@ import phonenumbers
 from phonenumbers import NumberParseException
 from load_dashboard_data import connect_to_db, load_from_starwatch_rds, load_forecasts_by_county_name, load_celestial_body_information
 from nasa_pipeline import nasa_pipeline, get_image_of_the_day, get_iss_location, get_moon_phase
-from aurora_map import create_aurora_map, create_visibility_map
+from aurora_map import create_aurora_map, create_visibility_map, create_body_visibility_map
 from azimuth_plot import make_sky_plot, get_bodies, get_star_chart, get_regions
 
 load_dotenv()
@@ -468,7 +468,12 @@ elif page == 'Astronomy':
     selected_body = st.selectbox("Select body", bodies)
     col1, col2 = st.columns(2)
     with col1:
-       ...
+        st.header(f'{selected_body} Visibility Across The UK')
+        body_visibility = create_body_visibility_map(selected_body)
+        if body_visibility:
+           st.pyplot(body_visibility)
+        else:
+           st.write('Body map not available right now. Sorry for the inconvenience')
     with col2:
         st.header(f'{selected_body} star chart')
         starchart,constellation = get_star_chart(selected_body)
