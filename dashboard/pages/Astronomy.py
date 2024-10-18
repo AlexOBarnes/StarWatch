@@ -34,17 +34,12 @@ if __name__ == '__main__':
         min_value=date(2024, 10, 7),
         max_value=date(2100, 12, 31)
     )
-    col1, col2 = st.columns(2)
-    with col1:
-        st.header('What has been visible in your region?')
-        st.write(
-            'Historical data heat map to be implemented. Sorry for the inconvenience.')
-    with col2:
-        animation_data = make_sky_plot(
-            region, datetime.combine(selected_date, datetime.min.time()))
-        st.header(f'Skyplot for {region} on {datetime.combine(
-            selected_date, datetime.min.time()).strftime('%d/%m/%y')} ')
-        if animation_data:
-            st.video(animation_data, format='.mp4')
-        else:
-            st.write('No skyplot is available for this region on this date')
+
+    animation_data = make_sky_plot(
+        region, datetime.combine(selected_date, datetime.min.time()))
+    st.header(f'Skyplot for {region} on {datetime.combine(
+        selected_date, datetime.min.time()).strftime('%d/%m/%y')} ')
+    if animation_data:
+        st.video(animation_data, format='.mp4')
+    else:
+        st.write('No skyplot is available for this region on this date')

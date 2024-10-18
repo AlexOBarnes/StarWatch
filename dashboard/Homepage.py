@@ -1,21 +1,11 @@
 # pylint:disable=line-too-long, invalid-name, broad-exception-caught,possibly-used-before-assignment,no-member
 '''Streamlit dashboard for the StarWatch project.'''
-from datetime import datetime,date
-import urllib
-from io import BytesIO
+from datetime import datetime
 from dotenv import load_dotenv
 import streamlit as st
-import psycopg2
-from psycopg2.extras import execute_values
 import pandas as pd
-import altair as alt
-from email_validator import validate_email as ve, EmailNotValidError
-import phonenumbers
-from phonenumbers import NumberParseException
-from load_dashboard_data import connect_to_db, load_from_starwatch_rds, load_forecasts_by_county_name, load_celestial_body_information
 from nasa_pipeline import nasa_pipeline, get_image_of_the_day, get_iss_location, get_moon_phase
-from aurora_map import create_aurora_map, create_visibility_map, create_body_visibility_map
-from azimuth_plot import make_sky_plot, get_bodies, get_star_chart, get_regions
+from aurora_map import create_aurora_map, create_visibility_map
 
 load_dotenv()
 st.set_page_config(layout="wide")
