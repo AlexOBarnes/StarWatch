@@ -74,6 +74,22 @@ pytest --cov
 ```
 
 ## How it works
+#### `aurora_map.py`
+#### `azimuth_plot.py`
+#### `hold.py`
+#### `Homepage.py`
+#### `load_dashboard.py`
+#### `nasa_pipeline.py`
+
+### `/images`
+### `/shapefile`
+### `/pages`
+#### `Astronomy.py`
+#### `Stellarium.py`
+#### `Subscribe.py`
+#### `Weather.py`
+
+## Dashboard Visualisations
 For clarity, the StarWatch dashboard has been subdivided into pages, each with a specific content focus. After running the dashboard, and navigating to the dashboard URL, these pages can be accessed using the sidebar feature, which, if not visible, can be opened using the arrow in the top-left corner.
 
 ### - Page 1: Home Page
