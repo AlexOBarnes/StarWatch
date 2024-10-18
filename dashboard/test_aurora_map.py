@@ -112,3 +112,25 @@ class TestCreateAuroraMap():
         fig = create_aurora_map()
 
         assert isinstance(fig, plt.Figure)
+
+
+class TestGetAverageCloudData():
+    '''Tests for the get_average_cloud_data function.'''
+
+    @patch('aurora_map.get_connection')
+    def test_get_average_cloud_data(self, mock_get_connection):
+        '''Tests that the function returns the expected result when successful.'''
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.fetchall.return_value = [{'county_name': 'County1',
+                                              'avg_cloud_cov': 60.5},
+                                             {'county_name': 'County2',
+                                              'avg_cloud_cov': 40.0}]
+        mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
+        mock_get_connection.return_value.__enter__.return_value = mock_conn
+
+        result = get_average_cloud_data()
+        expected_result = {'County1': 60.5,
+                           'County2': 40.0}
+
+        assert result == expected_result
