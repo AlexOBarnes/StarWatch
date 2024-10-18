@@ -209,6 +209,7 @@ class TestMapAverageCloudCoverage():
                            'Redcar and Cleveland': 0.5,
                            'Stockton-on-Tees': 0.75,
                            'York': 0.5}
+
         assert result == expected_result
 
 
@@ -220,18 +221,17 @@ class TestGetAverageVisibilityData():
         '''Tests that the function returns the expected result when successful.'''
         mock_conn = MagicMock()
         mock_cursor = MagicMock()
-        mock_cursor.fetchall.return_value = [
-            {'county_name': 'County1', 'avg_vis': 70.0},
-            {'county_name': 'County2', 'avg_vis': 55.0}
-        ]
+        mock_cursor.fetchall.return_value = [{'county_name': 'County1',
+                                              'avg_vis': 70.0},
+                                             {'county_name': 'County2',
+                                              'avg_vis': 55.0}]
         mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
         mock_get_connection.return_value.__enter__.return_value = mock_conn
 
         result = get_average_visibility_data()
-        expected_result = {
-            'County1': 70.0,
-            'County2': 55.0
-        }
+        expected_result = {'County1': 70.0,
+                           'County2': 55.0}
+
         assert result == expected_result
 
 
@@ -253,6 +253,7 @@ class TestMapAverageVisibilityColour():
                            'Redcar and Cleveland': 'gold',
                            'Stockton-on-Tees': 'gray',
                            'York': 'gold'}
+
         assert result == expected_result
 
 
@@ -268,10 +269,11 @@ class TestCreateVisibilityMap():
         mock_gdf1 = MagicMock()
         mock_gdf1.nuts118nm.tolist.return_value = ['Region1', 'Region2']
         mock_read_file.side_effect = [mock_gdf1, mock_gdf1]
-        mock_map_average_visibility_colour.return_value = {
-            'Region1': 'blue', 'Region2': 'red'}
-        mock_map_average_cloud_coverage.return_value = {
-            'Region1': 0.5, 'Region2': 0.75}
+        mock_map_average_visibility_colour.return_value = {'Region1': 'blue',
+                                                           'Region2': 'red'}
+        mock_map_average_cloud_coverage.return_value = {'Region1': 0.5,
+                                                        'Region2': 0.75}
 
         fig = create_visibility_map()
+
         assert isinstance(fig, plt.Figure)
