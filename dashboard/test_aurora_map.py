@@ -211,3 +211,25 @@ class TestMapAverageCloudCoverage():
                            'York': 0.5}
 
         assert result == expected_result
+
+
+class TestGetAverageVisibilityData():
+    '''Tests for the get_average_visibility_data function.'''
+
+    @patch('aurora_map.get_connection')
+    def test_get_average_visibility_data(self, mock_get_connection):
+        '''Tests that the function returns the expected result when successful.'''
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.fetchall.return_value = [{'county_name': 'County1',
+                                              'avg_vis': 70.0},
+                                             {'county_name': 'County2',
+                                              'avg_vis': 55.0}]
+        mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
+        mock_get_connection.return_value.__enter__.return_value = mock_conn
+
+        result = get_average_visibility_data()
+        expected_result = {'County1': 70.0,
+                           'County2': 55.0}
+
+        assert result == expected_result
