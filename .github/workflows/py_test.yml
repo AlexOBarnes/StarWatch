@@ -20,7 +20,7 @@ jobs:
     - name: "Install Python"
       uses: actions/setup-python@v5.1.1
       with:
-        python-version: '3.12'
+        python-version: '3.13'
 
     - name: "Find and install all requirements.txt files"
       run: |
@@ -29,11 +29,23 @@ jobs:
     - name: "Install pytest-cov for coverage reporting"
       run: pip install pytest-cov
 
+    - name: "Install pytest-asyncio"
+      run: pip install pytest-asyncio
+
+    - name: "Configure pytest.ini for asyncio fixture loop scope"
+      run: |
+        if [ ! -f pytest.ini ]; then
+          echo "[pytest]" > pytest.ini
+        fi
+        echo "asyncio_default_fixture_loop_scope = function" >> pytest.ini
+
     - name: "Run pytest with coverage and save report to text file"
       run: pytest --cov=. > coverage_report.txt
 
     - name: "Upload coverage text report"
+      if: always()
       uses: actions/upload-artifact@v3
       with:
         name: coverage-txt-report
         path: coverage_report.txt
+
