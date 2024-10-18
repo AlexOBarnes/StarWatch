@@ -75,19 +75,31 @@ pytest --cov
 
 ## How it works
 #### `aurora_map.py`
+- Uses the `geopandas`, `maltplotlib` and `psycopg` to generate different map visualisations that show:
+    - Aurora activity
+    - General visibility
+    - Celestial body visibilities
 #### `azimuth_plot.py`
-#### `hold.py`
+- Processes data using `pandas` and `numpy` to create positional plots using `matplotlib` for different celestial bodies.
 #### `Homepage.py`
+- The master file for running the StarWatch Streamlit Dashboard.
+- Pulls from separate page files contained within the [pages](pages/) directory to assemble the final dashboard.
+- Contains functionality for both reading from and writing to the central RDS database using the `psycopg2` module.
+- Handles user input and subscriber sign-up from the running dashboard page.
+- Uses pre-defined functions from: `load_dashboard_data.py`, `nasa_pipeline`, `aurora_map.py`, `azimuth_plot.py`.
 #### `load_dashboard.py`
+- Uses the `psycopg2` module to connect to the central RDS database and extract data.
 #### `nasa_pipeline.py`
+- Checks for todays NASA image of day and the current ISS coordinates.
+- This is done using both the [NASA API](https://api.nasa.gov/) and the [ISS API](http://open-notify.org/Open-Notify-API/ISS-Location-Now/).
 
 ### `/images`
+- Directory containing `.png` logos of the APIs used for the StarWatch project.
 ### `/shapefile`
+- Directory containing shapefiles that were used to create the visualisations in `auorora_map.py`.
 ### `/pages`
-#### `Astronomy.py`
-#### `Stellarium.py`
-#### `Subscribe.py`
-#### `Weather.py`
+- Contains the dashboard page files that constitute the StarWatch dashboard as described below.
+- The visualisations created by each of these files are described in more detail below.
 
 ## Dashboard Visualisations
 For clarity, the StarWatch dashboard has been subdivided into pages, each with a specific content focus. After running the dashboard, and navigating to the dashboard URL, these pages can be accessed using the sidebar feature, which, if not visible, can be opened using the arrow in the top-left corner.

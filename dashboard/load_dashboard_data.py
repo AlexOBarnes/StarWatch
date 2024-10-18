@@ -1,3 +1,5 @@
+'''Contains specialised queries to load data from the central RDS database'''
+
 import os
 
 import psycopg2
@@ -16,13 +18,13 @@ def connect_to_db():
     return psycopg2.connect(
         host=os.getenv('DB_HOST'),
         database=os.getenv('DB_NAME'),
-        port = os.getenv('PORT'),
+        port=os.getenv('PORT'),
         user=os.getenv('DB_USER'),
         password=os.getenv('DB_PASSWORD')
     )
 
 
-def load_from_starwatch_rds(conn:Psycopg2Connection, table_name:str) -> pd.DataFrame:
+def load_from_starwatch_rds(conn: Psycopg2Connection, table_name: str) -> pd.DataFrame:
     ''' 
     Retrieve all records from a passed in table name and returns that data
     as a pandas DataFrame, for a given psycogpg2 database connection.
@@ -45,8 +47,7 @@ def load_from_starwatch_rds(conn:Psycopg2Connection, table_name:str) -> pd.DataF
     return df
 
 
-
-def load_forecasts_by_county_name(conn:Psycopg2Connection) -> pd.DataFrame:
+def load_forecasts_by_county_name(conn: Psycopg2Connection) -> pd.DataFrame:
     '''
     Returns a DataFrame of forecasted weather data joined with county
     information from the the StarWatch RDS.
@@ -76,7 +77,7 @@ def load_celestial_body_information(conn: psycopg2.extensions.connection, chunk_
     Returns a DataFrame of forecasted weather data joined with county
     information from the StarWatch RDS, with progress tracking during fetching.
     '''
-    
+
     query = '''
     with af as(SELECT r.region_id, r.region_name,f.at, AVG(f.cloud_coverage_percent)
     AS avg_cloud, AVG(f.visibility_m) AS avg_vis 
@@ -97,7 +98,7 @@ def load_celestial_body_information(conn: psycopg2.extensions.connection, chunk_
     FROM af JOIN br ON af.region_id = br.region_id AND br.at 
     = af.at;
         '''
-    
+
     try:
         with conn:
             with conn.cursor() as cur:
@@ -108,7 +109,7 @@ def load_celestial_body_information(conn: psycopg2.extensions.connection, chunk_
                 print(f'Total rows to fetch: {total_rows}')
 
                 cur.execute(query)
-                
+
                 df = pd.DataFrame()
                 pbar = tqdm(total=total_rows, desc='Fetching data')
 
@@ -118,18 +119,19 @@ def load_celestial_body_information(conn: psycopg2.extensions.connection, chunk_
                     if not chunk:
                         break
 
-                    chunk_df = pd.DataFrame(chunk, columns=[desc[0] for desc in cur.description])
+                    chunk_df = pd.DataFrame(
+                        chunk, columns=[desc[0] for desc in cur.description])
                     df = pd.concat([df, chunk_df], ignore_index=True)
                     pbar.update(len(chunk))
-                
+
                 pbar.close()
-        
+
         print('Data fetching complete.')
         return df
-    
+
     except Exception as e:
         print(f'Error occurred: {e}')
-        return pd.DataFrame()  
+        return pd.DataFrame()
 
 
 if __name__ == '__main__':
@@ -153,9 +155,10 @@ if __name__ == '__main__':
     bodies_df = load_celestial_body_information(conn)
 
     if not bodies_df.empty:
-        tqdm.pandas()  
+        tqdm.pandas()
         bodies_df['visibility_coefficient'] = bodies_df.progress_apply(
-            lambda row: starwatch_coefficient(row['visibility_m'], row['distance_km'], row['cloud_coverage_percent'], k=0.01),
+            lambda row: starwatch_coefficient(
+                row['visibility_m'], row['distance_km'], row['cloud_coverage_percent'], k=0.01),
             axis=1
         )
 
