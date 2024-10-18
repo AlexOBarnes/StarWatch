@@ -71,3 +71,22 @@ class TestMapCloudCoverage():
                            'York': 0.5}
 
         assert result == expected_result
+
+
+class TestMapRegionColours():
+    '''Tests for the map_region_colours function.'''
+
+    @patch('aurora_map.get_aurora_data')
+    def test_map_region_colours(self, mock_get_aurora_data):
+        '''Tests that the function returns the expected result when successful.'''
+        mock_get_aurora_data.return_value = 'Yellow'
+
+        result = map_region_colours(['Test'])
+        expected_result = {'North East (England)': 'blue',
+                           'North West (England)': 'blue',
+                           'Northern Ireland': 'blue',
+                           'Scotland': 'blue',
+                           'Yorkshire and The Humber': 'blue',
+                           'Test': 'red'}
+
+        assert result == expected_result
