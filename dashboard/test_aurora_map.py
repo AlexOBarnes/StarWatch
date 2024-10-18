@@ -90,3 +90,25 @@ class TestMapRegionColours():
                            'Test': 'red'}
 
         assert result == expected_result
+
+
+class TestCreateAuroraMap():
+    '''Tests for the create_aurora_map function.'''
+
+    @patch('geopandas.read_file')
+    @patch('aurora_map.map_region_colours')
+    @patch('aurora_map.map_cloud_coverage')
+    def test_create_aurora_map(self, mock_map_cloud_coverage,
+                               mock_map_region_colours, mock_read_file):
+        '''Tests that the function returns the correct data type.'''
+        mock_gdf1 = MagicMock()
+        mock_gdf1.nuts118nm.tolist.return_value = ['Region1', 'Region2']
+        mock_read_file.side_effect = [mock_gdf1, mock_gdf1]
+        mock_map_region_colours.return_value = {'Region1': 'red',
+                                                'Region2': 'green'}
+        mock_map_cloud_coverage.return_value = {'Region1': 0.5,
+                                                'Region2': 0.75}
+
+        fig = create_aurora_map()
+
+        assert isinstance(fig, plt.Figure)
