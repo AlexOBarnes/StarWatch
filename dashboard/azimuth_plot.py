@@ -1,17 +1,12 @@
 '''Produces the skyplot for a given region at a given time'''
 #pylint: disable=E0401,C0413,W0612,E1101,R0913
-import sys
-import os
 from datetime import datetime as dt
-from io import BytesIO
 import tempfile
 import matplotlib.pyplot as plt
 from matplotlib import animation
 import pandas as pd
 import numpy as np
 from dotenv import load_dotenv
-sys.path.append(os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..', 'weekly-openmeteo')))
 from extract import get_connection
 
 
@@ -165,6 +160,7 @@ def animate_skyplot(celestial_df: pd.DataFrame, region: str):
 
 def make_sky_plot(region: str, time: dt) -> plt.subplot:
     '''Orchestrates the pipeline to create the skyplot'''
+    load_dotenv()
     data = get_azimuth_data(region, time)
     clean_data = transform_azimuth_data(data)
     return animate_skyplot(clean_data, region)
