@@ -189,3 +189,25 @@ class TestCreateBodyVisibilityMap():
         fig = create_body_visibility_map('Venus')
 
         assert isinstance(fig, plt.Figure)
+
+
+class TestMapAverageCloudCoverage():
+    '''Tests for the map_average_cloud_coverage function.'''
+
+    @patch('aurora_map.get_average_cloud_data')
+    def test_map_average_cloud_coverage(self, mock_get_average_cloud_data):
+        '''Tests that the function returns the expected result when successful.'''
+        mock_get_average_cloud_data.return_value = {'County Durham': 75,
+                                                    'North Yorkshire': 50}
+
+        result = map_average_cloud_coverage()
+        expected_result = {'County Durham': 0.75,
+                           'Darlington': 0.75,
+                           'Hartlepool': 0.75,
+                           'Middlesbrough': 0.5,
+                           'North Yorkshire': 0.5,
+                           'Redcar and Cleveland': 0.5,
+                           'Stockton-on-Tees': 0.75,
+                           'York': 0.5}
+
+        assert result == expected_result
