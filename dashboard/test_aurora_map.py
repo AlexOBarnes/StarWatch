@@ -27,3 +27,25 @@ class TestGetAuroraData():
         result = get_aurora_data()
 
         assert result == 'Yellow'
+
+
+class TestGetCloudData():
+    '''Tests for the get_cloud_data function.'''
+
+    @patch('aurora_map.get_connection')
+    def test_get_cloud_data(self, mock_get_connection):
+        '''Tests that the function returns the expected result when successful.'''
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.fetchall.return_value = [{'county_name': 'County1',
+                                              'cloud_coverage_percent': 75},
+                                             {'county_name': 'County2',
+                                              'cloud_coverage_percent': 50}]
+        mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
+        mock_get_connection.return_value.__enter__.return_value = mock_conn
+
+        result = get_cloud_data()
+        expected_result = {'County1': 75,
+                           'County2': 50}
+
+        assert result == expected_result
