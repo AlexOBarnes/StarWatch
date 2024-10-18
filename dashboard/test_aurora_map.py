@@ -167,3 +167,25 @@ class TestMapBodyVisibilityRegionsColours():
                            'Region3': 'red'}
 
         assert result == expected_result
+
+
+class TestCreateBodyVisibilityMap():
+    '''Tests for the create_body_visibility_map function.'''
+
+    @patch('geopandas.read_file')
+    @patch('aurora_map.map_body_visibility_regions_colours')
+    @patch('aurora_map.map_average_cloud_coverage')
+    def test_create_body_visibility_map(self, mock_map_average_cloud_coverage,
+                                        mock_map_body_visibility_regions_colours, mock_read_file):
+        '''Tests that the function returns the correct data type.'''
+        mock_gdf1 = MagicMock()
+        mock_gdf1.nuts118nm.tolist.return_value = ['Region1', 'Region2']
+        mock_read_file.side_effect = [mock_gdf1, mock_gdf1]
+        mock_map_body_visibility_regions_colours.return_value = {'Region1': 'blue',
+                                                                 'Region2': 'red'}
+        mock_map_average_cloud_coverage.return_value = {'Region1': 0.5,
+                                                        'Region2': 0.75}
+
+        fig = create_body_visibility_map('Venus')
+
+        assert isinstance(fig, plt.Figure)
