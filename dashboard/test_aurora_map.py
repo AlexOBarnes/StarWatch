@@ -161,12 +161,11 @@ class TestMapBodyVisibilityRegionsColours():
     def test_map_body_visibility_regions_colours(self, mock_get_body_visible_regions):
         '''Tests that the function returns the expected result when successful.'''
         mock_get_body_visible_regions.return_value = ['Region1', 'Region2']
-        result = map_body_visibility_regions_colours(
-            'Venus', ['Region1', 'Region3'])
-        expected_result = {
-            'Region1': 'green',
-            'Region3': 'red'
-        }
+        result = map_body_visibility_regions_colours('Venus',
+                                                     ['Region1', 'Region3'])
+        expected_result = {'Region1': 'green',
+                           'Region3': 'red'}
+
         assert result == expected_result
 
 
