@@ -335,7 +335,7 @@ def create_body_visibility_map(body: str) -> plt.Figure:
 
     return fig
 
-  
+
 def get_average_visibility_data() -> dict:
     '''Returns a dict of all counties average visibility 
     in meters for the night 1700-0500.'''
