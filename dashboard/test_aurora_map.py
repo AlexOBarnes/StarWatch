@@ -134,3 +134,21 @@ class TestGetAverageCloudData():
                            'County2': 40.0}
 
         assert result == expected_result
+
+
+class TestGetBodyVisibleRegions():
+    '''Tests for the get_body_visible_regions function.'''
+
+    @patch('aurora_map.get_connection')
+    def test_get_body_visible_regions(self, mock_get_connection):
+        '''Tests that the function returns the expected result when successful.'''
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.fetchall.return_value = [('Region1',), ('Region2',)]
+        mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
+        mock_get_connection.return_value.__enter__.return_value = mock_conn
+
+        result = get_body_visible_regions('Venus')
+        expected_result = ['Region1', 'Region2']
+
+        assert result == expected_result
