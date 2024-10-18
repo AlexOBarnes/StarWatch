@@ -233,3 +233,47 @@ class TestGetAverageVisibilityData():
                            'County2': 55.0}
 
         assert result == expected_result
+
+
+class TestMapAverageVisibilityColour():
+    '''Tests for the map_average_visibility_colour function.'''
+
+    @patch('aurora_map.get_average_visibility_data')
+    def test_map_average_visibility_colour(self, mock_get_average_visibility_data):
+        '''Tests that the function returns the expected result when successful.'''
+        mock_get_average_visibility_data.return_value = {'County Durham': 4000,
+                                                         'North Yorkshire': 50000}
+
+        result = map_average_visibility_colour()
+        expected_result = {'County Durham': 'gray',
+                           'Darlington': 'gray',
+                           'Hartlepool': 'gray',
+                           'Middlesbrough': 'gold',
+                           'North Yorkshire': 'gold',
+                           'Redcar and Cleveland': 'gold',
+                           'Stockton-on-Tees': 'gray',
+                           'York': 'gold'}
+
+        assert result == expected_result
+
+
+class TestCreateVisibilityMap():
+    '''Tests for the create_visibility_map function.'''
+
+    @patch('geopandas.read_file')
+    @patch('aurora_map.map_average_visibility_colour')
+    @patch('aurora_map.map_average_cloud_coverage')
+    def test_create_visibility_map(self, mock_map_average_cloud_coverage,
+                                   mock_map_average_visibility_colour, mock_read_file):
+        '''Tests that the function returns the correct data type.'''
+        mock_gdf1 = MagicMock()
+        mock_gdf1.nuts118nm.tolist.return_value = ['Region1', 'Region2']
+        mock_read_file.side_effect = [mock_gdf1, mock_gdf1]
+        mock_map_average_visibility_colour.return_value = {'Region1': 'blue',
+                                                           'Region2': 'red'}
+        mock_map_average_cloud_coverage.return_value = {'Region1': 0.5,
+                                                        'Region2': 0.75}
+
+        fig = create_visibility_map()
+
+        assert isinstance(fig, plt.Figure)
