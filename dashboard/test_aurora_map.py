@@ -149,8 +149,9 @@ class TestGetBodyVisibleRegions():
         mock_get_connection.return_value.__enter__.return_value = mock_conn
 
         result = get_body_visible_regions('Venus')
+        expected_result = ['Region1', 'Region2']
 
-        assert result == ['Region1', 'Region2']
+        assert result == expected_result
 
 
 class TestMapBodyVisibilityRegionsColours():
